@@ -402,5 +402,164 @@ namespace FICCI_API.Controller.API
                 return StatusCode(500, drp_CategoryList);
             }
         }
+
+
+
+        [HttpGet("GetCOAMaster")]
+        public async Task<IActionResult> GetCOAMaster()
+        {
+            try
+            {
+                var city = await _dbContext.CoaMasters.Where(x => x.IsActive != false).OrderBy(x => x.CoaName).ToListAsync();
+                if (city.Count > 0)
+                {
+                    var cityResponse = city.Select(c => new COAInfo
+                    {
+                        No = c.CoaNo,
+                        Name = c.CoaName,
+                    }).ToList();
+
+                    var response = new
+                    {
+                        status = true,
+                        message = "COA List fetch successfully",
+                        data = cityResponse
+                    };
+                    return Ok(response);
+
+                }
+                else
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No COA list found",
+                        data = city
+                    };
+                    return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetLocation")]
+        public async Task<IActionResult> GetLocation()
+        {
+            try
+            {
+                var city = await _dbContext.Locations.OrderBy(x => x.LocationName).ToListAsync();
+                if (city.Count > 0)
+                {
+                    var cityResponse = city.Select(c => new LoactionInfo
+                    {
+                        code = c.LocationCode,
+                        name = c.LocationName,
+                    }).ToList();
+
+                    var response = new
+                    {
+                        status = true,
+                        message = "Location List fetch successfully",
+                        data = cityResponse
+                    };
+                    return Ok(response);
+
+                }
+                else
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No Location list found",
+                        data = city
+                    };
+                    return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetGSTGroup")]
+        public async Task<IActionResult> GetGSTGroup()
+        {
+            try
+            {
+                var city = await _dbContext.Gstgroups.Where(x => x.IsActive !=false).ToListAsync();
+                if (city.Count > 0)
+                {
+                    var cityResponse = city.Select(c => new GSTGroupInfo
+                    {
+                        Code = c.GroupCode,
+
+                    }).ToList();
+
+                    var response = new
+                    {
+                        status = true,
+                        message = "GSTGroup List fetch successfully",
+                        data = cityResponse
+                    };
+                    return Ok(response);
+
+                }
+                else
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No GSTGroup list found",
+                        data = city
+                    };
+                    return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetHSNSAC")]
+        public async Task<IActionResult> GetHSNSAC(string gstCode)
+        {
+            try
+            {
+                var city = await _dbContext.Hsnsacs.Where(x => x.HsnGroup == gstCode).ToListAsync();
+               // var city = await _dbContext.Hsnsacs.ToListAsync();
+                if (city != null)
+                {
+
+
+                    var response = new
+                    {
+                        status = true,
+                        message = "HSNSAC List fetch successfully",
+                        data = city
+                    };
+                    return Ok(response);
+
+                }
+                else
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No HSNSAC list found",
+                        data = city
+                    };
+                    return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

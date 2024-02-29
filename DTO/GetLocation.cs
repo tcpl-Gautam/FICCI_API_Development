@@ -10,4 +10,11 @@ namespace FICCI_API.DTO
         [JsonProperty("name")]
         public string name { get; set; }
     }
+
+    public class LoactionInfo
+    {
+        public string code { get; set; }
+
+        public string name { get; set; }
+    }
 }

@@ -8,4 +8,10 @@ namespace FICCI_API.DTO
         [JsonProperty("Code")]
         public string Code { get; set; }
     }
+
+    public class GSTGroupInfo
+    {
+        public string Code { get; set; }
+
+    }
 }
