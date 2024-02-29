@@ -1,0 +1,198 @@
+﻿{
+   "CodeGenerationMode": 3,
+   "ContextClassName": "FICCI_DB_APPLICATIONSContext",
+   "ContextNamespace": "ModelsEF",
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": "ModelsEF",
+   "OutputContextPath": "ModelsEF",
+   "OutputPath": "ModelsEF",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "FICCI_API",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": "ModelsEF",
+   "Tables": [
+      {
+         "Name": "[dbo].[City]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[COA_Master]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Country]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ERPCustomer]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_ERP_CUSTOMER_DETAILS]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_ERP_PROJECT_DETAILS]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMAD]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMEM]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMMD]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMMS]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMPI_HEADER]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMPI_LINE]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMUM]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FICCI_IMWD]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[GST_Customer_Type]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[GSTGroup]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HSNSAC]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Location]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PostCode]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[States]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StatusMaster]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tbl_Category_List]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tbl_Configuration_master]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tbl_FICCI_Role]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Userloginlogs]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[VW_CUSTOMER_APPROVAL_LIST]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[VW_INVOICE_APPROVAL_LIST]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[prc_Approval_Customer]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_Approval_Invoice]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_Configuration_Delete]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_Configuration_Detail]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_Configuration_Form]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_Configuration_list]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_drp_categorylist]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_EmployeeMaster_list]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_FICCI_IMUM_list]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_Role_list]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_UserMaster_Delete]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[prc_UserMaster_Form]",
+         "ObjectType": 1
+      }
+   ],
+   "UiHint": "developdemo.FICCI_DB_APPLICATIONS.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
