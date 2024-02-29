@@ -322,7 +322,177 @@ namespace FICCI_API.Controller.API
                 }
             }
         }
-     
+
+        [HttpPost("GetStatusCustomerList")]
+        public async Task<IActionResult> GetStatusCustomerList(StatusCustomerList list)
+        {
+            var result = new CustomerDTO();
+            var resu = new List<CustomerList>();
+            try
+            {
+                if (list.Email == null)
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "Email is Mandatory field",
+                    };
+                    return Ok(response);
+                }
+                var emp_Role = await _dbContext.FicciImums.Where(x => x.ImumEmail == list.Email).Select(a => a.RoleId).FirstOrDefaultAsync();
+                if(list.StatusId == 0)
+                {
+
+                    resu = await _dbContext.FicciErpCustomerDetails.Where(x => x.IsDelete != true && x.IsActive != false || x.CustomerStatus == 5)
+                            .Select(customer => new CustomerList
+                            {
+                                CustomerId = customer.CustomerId,
+                                CustomerCode = customer.CusotmerNo,
+                                CustomerName = customer.CustomerName,
+                                CustomerLastName = customer.CustomerLastname,
+                                Address = customer.CustoemrAddress,
+                                Address2 = customer.CustoemrAddress2,
+                                Contact = customer.CustomerContact,
+                                Email = customer.CustomerEmailId,
+                                PhoneNumber = customer.CustomerPhoneNo,
+                                Pincode = customer.CustomerPinCode,
+                                PAN = customer.CustomerPanNo,
+                                GSTNumber = customer.CustomerGstNo,
+                                IsActive = customer.IsActive,
+                                IsDraft = customer.IsDraft,
+                                CreatedBy = customer.Createdby,
+                                CreatedOn = customer.CreatedOn,
+                                LastUpdateBy = customer.LastUpdateBy,
+                                ModifiedOn = Convert.ToDateTime(customer.CustomerUpdatedOn),
+                                TLApprover = customer.CustomerTlApprover,
+                                CLApprover = customer.CustomerClusterApprover,
+                                ApprovedBy = customer.ApprovedBy,
+                                ApprovedOn = customer.ApprovedOn,
+                                CityList = new CityInfo
+                                {
+                                    cityCode = _dbContext.Cities.Where(x => x.CityCode == customer.CityCode && x.IsActive != false).Select(a => a.CityCode).FirstOrDefault(),
+                                    CityName = _dbContext.Cities.Where(x => x.CityCode == customer.CityCode && x.IsActive != false).Select(a => a.CityName).FirstOrDefault(),
+                                },
+                                StateList = new StateInfo
+                                {
+                                    stateCode = _dbContext.States.Where(x => x.StateCode == customer.StateCode && x.IsActive != false).Select(a => a.StateCode).FirstOrDefault(),
+                                    StateName = _dbContext.States.Where(x => x.StateCode == customer.StateCode && x.IsActive != false).Select(a => a.StateName).FirstOrDefault(),
+                                },
+                                CountryList = new CountryInfo
+                                {
+                                    countryCode = _dbContext.Countries.Where(x => x.CountryCode == customer.CountryCode && x.IsActive != false).Select(a => a.CountryCode).FirstOrDefault(),
+                                    CountryName = _dbContext.Countries.Where(x => x.CountryCode == customer.CountryCode && x.IsActive != false).Select(a => a.CountryName).FirstOrDefault()
+                                },
+
+                                // SGApprover = customer.CustomerSgApprover,
+                                // CustomerStatus = customer.CustomerStatus == 1 ? "Draft":"Pending With TL Approver",
+
+                                CustomerStatus = _dbContext.StatusMasters.Where(x => x.StatusId == customer.CustomerStatus).Select(a => a.StatusName).FirstOrDefault(),
+                                CustomerStatusId = customer.CustomerStatus,
+                                GstType = customer.GstCustomerTypeNavigation == null ? null : new GSTCustomerTypeInfo
+                                {
+                                    GstTypeId = customer.GstCustomerTypeNavigation.CustomerTypeId,
+                                    GstTypeName = customer.GstCustomerTypeNavigation.CustomerTypeName,
+                                },
+
+                                //WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == customer.CustomerId && x.ImwdType == 1).ToList()
+
+                            }).ToListAsync();
+                    var response = new
+                    {
+                        status = true,
+                        message = "No customer list found",
+                        data = resu
+                    };
+                    return Ok(response);
+                }
+
+                resu = await _dbContext.FicciErpCustomerDetails.Where(x => x.IsDelete != true && x.IsActive != false && x.CustomerStatus == list.StatusId)
+                        .Select(customer => new CustomerList
+                        {
+                            CustomerId = customer.CustomerId,
+                            CustomerCode = customer.CusotmerNo,
+                            CustomerName = customer.CustomerName,
+                            CustomerLastName = customer.CustomerLastname,
+                            Address = customer.CustoemrAddress,
+                            Address2 = customer.CustoemrAddress2,
+                            Contact = customer.CustomerContact,
+                            Email = customer.CustomerEmailId,
+                            PhoneNumber = customer.CustomerPhoneNo,
+                            Pincode = customer.CustomerPinCode,
+                            PAN = customer.CustomerPanNo,
+                            GSTNumber = customer.CustomerGstNo,
+                            IsActive = customer.IsActive,
+                            IsDraft = customer.IsDraft,
+                            CreatedBy = customer.Createdby,
+                            CreatedOn = customer.CreatedOn,
+                            LastUpdateBy = customer.LastUpdateBy,
+                            ModifiedOn = Convert.ToDateTime(customer.CustomerUpdatedOn),
+                            TLApprover = customer.CustomerTlApprover,
+                            CLApprover = customer.CustomerClusterApprover,
+                            ApprovedBy = customer.ApprovedBy,
+                            ApprovedOn = customer.ApprovedOn,
+                            CityList = new CityInfo
+                            {
+                                cityCode = _dbContext.Cities.Where(x => x.CityCode == customer.CityCode && x.IsActive != false).Select(a => a.CityCode).FirstOrDefault(),
+                                CityName = _dbContext.Cities.Where(x => x.CityCode == customer.CityCode && x.IsActive != false).Select(a => a.CityName).FirstOrDefault(),
+                            },
+                            StateList = new StateInfo
+                            {
+                                stateCode = _dbContext.States.Where(x => x.StateCode == customer.StateCode && x.IsActive != false).Select(a => a.StateCode).FirstOrDefault(),
+                                StateName = _dbContext.States.Where(x => x.StateCode == customer.StateCode && x.IsActive != false).Select(a => a.StateName).FirstOrDefault(),
+                            },
+                            CountryList = new CountryInfo
+                            {
+                                countryCode = _dbContext.Countries.Where(x => x.CountryCode == customer.CountryCode && x.IsActive != false).Select(a => a.CountryCode).FirstOrDefault(),
+                                CountryName = _dbContext.Countries.Where(x => x.CountryCode == customer.CountryCode && x.IsActive != false).Select(a => a.CountryName).FirstOrDefault()
+                            },
+
+                            // SGApprover = customer.CustomerSgApprover,
+                            // CustomerStatus = customer.CustomerStatus == 1 ? "Draft":"Pending With TL Approver",
+
+                            CustomerStatus = _dbContext.StatusMasters.Where(x => x.StatusId == customer.CustomerStatus).Select(a => a.StatusName).FirstOrDefault(),
+                            CustomerStatusId = customer.CustomerStatus,
+                            GstType = customer.GstCustomerTypeNavigation == null ? null : new GSTCustomerTypeInfo
+                            {
+                                GstTypeId = customer.GstCustomerTypeNavigation.CustomerTypeId,
+                                GstTypeName = customer.GstCustomerTypeNavigation.CustomerTypeName,
+                            },
+
+                            //WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == customer.CustomerId && x.ImwdType == 1).ToList()
+
+                        }).ToListAsync();
+                if (emp_Role != 1)
+                {
+                    resu = resu.Where(m => m.CreatedBy == list.Email).ToList();
+                }
+                if (resu.Count <= 0)
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No customer list found",
+                        data = resu
+                    };
+                    return Ok(response);
+                }
+                var respons = new
+                {
+                    status = true,
+                    message = "Customer List fetch successfully",
+                    data = resu
+                };
+                return Ok(respons);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = false, message = "An error occurred while fetching the detail of Customers." });
+            }
+        }
+
     }
 
 }

@@ -195,5 +195,9 @@ namespace FICCI_API.DTO
         public CountryInfo? CountryList { get; set; }
         public GSTCustomerTypeInfo? GstType { get; set; }
     }
-
+    public class StatusCustomerList
+    {
+        public string Email { get; set; }
+        public int StatusId { get; set; }
+    }
 }
