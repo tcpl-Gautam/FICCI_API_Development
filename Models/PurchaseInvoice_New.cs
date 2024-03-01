@@ -115,31 +115,31 @@ namespace FICCI_API.Models
     public class LineItem_request
     {
 
-        public string ImpiLinePiNo { get; set; }
+        public string? ImpiLinePiNo { get; set; }
 
-        public string ImpiDocumentNo { get; set; }
+        public string? ImpiDocumentNo { get; set; }
 
-        public string ImpiLineNo { get; set; }
+        public string? ImpiLineNo { get; set; }
 
-        public string DocumentType { get; set; }
+        public string? DocumentType { get; set; }
 
-        public string ImpiGlNo { get; set; }
+        public string? ImpiGlNo { get; set; }
 
-        public string ImpiLocationCode { get; set; }
+        public string? ImpiLocationCode { get; set; }
 
-        public string ImpiQuantity { get; set; }
+        public string? ImpiQuantity { get; set; }
 
         public decimal? ImpiUnitPrice { get; set; }
 
         public decimal? ImpiLineAmount { get; set; }
 
-        public string ImpiGstgroupCode { get; set; }
+        public string? ImpiGstgroupCode { get; set; }
 
-        public string ImpiGstgroupType { get; set; }
+        public string? ImpiGstgroupType { get; set; }
 
-        public string ImpiHsnsaccode { get; set; }
+        public string? ImpiHsnsaccode { get; set; }
 
-        public string ImpiType { get; set; }
+        public string? ImpiType { get; set; }
 
         public decimal? ImpiGstBaseAmount { get; set; }
 
