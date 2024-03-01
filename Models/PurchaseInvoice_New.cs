@@ -45,7 +45,7 @@ namespace FICCI_API.Models
         public string ImpiHeaderCustomerPhoneNo { get; set; }
         public string ImpiHeaderCreatedBy { get; set; }
         public decimal? ImpiHeaderTotalInvoiceAmount { get; set; }
-        public List<string> ImpiHeaderAttachment { get; set; }
+        public List<FicciImad> ImpiHeaderAttachment { get; set; }
         public string ImpiHeaderPaymentTerms { get; set; }
         public string ImpiHeaderRemarks { get; set; }
         public DateTime? ImpiHeaderSubmittedDate { get; set; }

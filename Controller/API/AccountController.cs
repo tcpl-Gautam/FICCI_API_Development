@@ -143,14 +143,16 @@ namespace FICCI_API.Controller.API
                         string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
 
                         // Display the result
-                        Console.WriteLine("Values separated by commas:");
+                        List<FicciImad> listing = new List<FicciImad>();
+
                         foreach (string value in valuesArray)
                         {
 
-                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).Select(x => x.ImadFileUrl).FirstOrDefaultAsync();
-                            purchaseInvoice_response.ImpiHeaderAttachment.Add(path);
-                        }
+                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
+                            listing.Add(path);
 
+                        }
+                        purchaseInvoice_response.ImpiHeaderAttachment = listing;
 
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;

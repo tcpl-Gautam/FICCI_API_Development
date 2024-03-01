@@ -327,12 +327,12 @@ namespace FICCI_API.Controller.API
 
                         // Display the result
                         Console.WriteLine("Values separated by commas:");
-                        List<string> listing = new List<string>();
+                        List<FicciImad> listing = new List<FicciImad>();
 
                         foreach (string value in valuesArray)
                         {
 
-                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).Select(x => x.ImadFileUrl).FirstOrDefaultAsync();
+                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
                             listing.Add(path);
                             
                         }
