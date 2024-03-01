@@ -4,8 +4,10 @@ using FICCI_API.ModelsEF;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace FICCI_API.Controller.API
@@ -60,7 +62,7 @@ namespace FICCI_API.Controller.API
                         ficciImpiHeader.ImpiHeaderTotalInvoiceAmount = request.ImpiHeaderTotalInvoiceAmount;
                         if (request.ImpiHeaderAttachment != null)
                         {
-                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment);
+                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId);
                         }
                         ficciImpiHeader.ImpiHeaderPaymentTerms = request.ImpiHeaderPaymentTerms;
                         ficciImpiHeader.ImpiHeaderRemarks = request.ImpiHeaderRemarks;
@@ -99,17 +101,28 @@ namespace FICCI_API.Controller.API
                             foreach (var k in request.lineItem_Requests)
                             {
                                 FicciImpiLine FicciImpiLine = new FicciImpiLine();
-                                FicciImpiLine.ImpiLineDescription = k.impiLineDescription;
-                                FicciImpiLine.ImpiLineQuantity = k.ImpiLineQuantity;
-                                FicciImpiLine.ImpiLineUnitPrice = k.ImpiLineUnitPrice;
-                                FicciImpiLine.ImpiLineDiscount = k.ImpiLineDiscount;
+                                FicciImpiLine.DocumentType = k.DocumentType;
+                                FicciImpiLine.ImpiDocumentNo = k.ImpiDocumentNo;
+                                FicciImpiLine.ImpiGlNo = k.ImpiGlNo;
+                                FicciImpiLine.ImpiGstBaseAmount = k.ImpiGstBaseAmount;
                                 FicciImpiLine.ImpiLineAmount = k.ImpiLineAmount;
                                 FicciImpiLine.ImpiLineActive = true;
-                                FicciImpiLine.ImpiLineCreatedBy = request.ImpiHeaderCreatedBy;
+                                FicciImpiLine.ImpiLineCreatedBy = request.LoginId;
                                 FicciImpiLine.ImpiLineCreatedOn = DateTime.Now;
                                 FicciImpiLine.PiHeaderId = returnid;
                                 FicciImpiLine.IsDeleted = false;
                                 FicciImpiLine.ImpiLinePiNo = DateTime.Now.ToString("yyyyMMddhhmmss");
+                                FicciImpiLine.ImpiTotalGstAmount = k.ImpiTotalGstAmount;
+                                FicciImpiLine.ImpiNetTotal = k.ImpiNetTotal;
+                                FicciImpiLine.ImpiLocationCode = k.ImpiLocationCode;
+                                FicciImpiLine.ImpiQuantity = k.ImpiQuantity;
+                                FicciImpiLine.ImpiUnitPrice = k.ImpiUnitPrice;
+                                FicciImpiLine.ImpiGstgroupCode = k.ImpiGstgroupCode;
+                                FicciImpiLine.ImpiGstgroupType = k.ImpiGstgroupType;
+                                FicciImpiLine.ImpiHsnsaccode = k.ImpiHsnsaccode;
+                                FicciImpiLine.ImpiLineNo = k.ImpiLineNo;
+                                FicciImpiLine.ImpiLinePiNo = k.ImpiLinePiNo;
+                                FicciImpiLine.ImpiType = k.ImpiType;
                                 _dbContext.Add(FicciImpiLine);
                                 _dbContext.SaveChanges();
 
@@ -153,7 +166,7 @@ namespace FICCI_API.Controller.API
                             data.ImpiHeaderTotalInvoiceAmount = request.ImpiHeaderTotalInvoiceAmount;
                             if (request.ImpiHeaderAttachment != null)
                             {
-                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment);
+                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId);
                             }
 
                             data.ImpiHeaderPaymentTerms = request.ImpiHeaderPaymentTerms;
@@ -196,17 +209,28 @@ namespace FICCI_API.Controller.API
 
 
                                     FicciImpiLine FicciImpiLine = new FicciImpiLine();
-                                    FicciImpiLine.ImpiLineDescription = k.impiLineDescription;
-                                    FicciImpiLine.ImpiLineQuantity = k.ImpiLineQuantity;
-                                    FicciImpiLine.ImpiLineUnitPrice = k.ImpiLineUnitPrice;
-                                    FicciImpiLine.ImpiLineDiscount = k.ImpiLineDiscount;
+                                    FicciImpiLine.DocumentType = k.DocumentType;
+                                    FicciImpiLine.ImpiDocumentNo = k.ImpiDocumentNo;
+                                    FicciImpiLine.ImpiGlNo = k.ImpiGlNo;
+                                    FicciImpiLine.ImpiGstBaseAmount = k.ImpiGstBaseAmount;
                                     FicciImpiLine.ImpiLineAmount = k.ImpiLineAmount;
                                     FicciImpiLine.ImpiLineActive = true;
-                                    FicciImpiLine.ImpiLineCreatedBy = request.ImpiHeaderCreatedBy;
+                                    FicciImpiLine.ImpiLineCreatedBy = request.LoginId;
                                     FicciImpiLine.ImpiLineCreatedOn = DateTime.Now;
                                     FicciImpiLine.PiHeaderId = returnid;
                                     FicciImpiLine.IsDeleted = false;
                                     FicciImpiLine.ImpiLinePiNo = DateTime.Now.ToString("yyyyMMddhhmmss");
+                                    FicciImpiLine.ImpiTotalGstAmount = k.ImpiTotalGstAmount;
+                                    FicciImpiLine.ImpiNetTotal = k.ImpiNetTotal;
+                                    FicciImpiLine.ImpiLocationCode = k.ImpiLocationCode;
+                                    FicciImpiLine.ImpiQuantity = k.ImpiQuantity;
+                                    FicciImpiLine.ImpiUnitPrice = k.ImpiUnitPrice;
+                                    FicciImpiLine.ImpiGstgroupCode = k.ImpiGstgroupCode;
+                                    FicciImpiLine.ImpiGstgroupType = k.ImpiGstgroupType;
+                                    FicciImpiLine.ImpiHsnsaccode = k.ImpiHsnsaccode;
+                                    FicciImpiLine.ImpiLineNo = k.ImpiLineNo;
+                                    FicciImpiLine.ImpiLinePiNo = k.ImpiLinePiNo;
+                                    FicciImpiLine.ImpiType = k.ImpiType;
                                     _dbContext.Add(FicciImpiLine);
                                     _dbContext.SaveChanges();
 
@@ -299,7 +323,20 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
-                        purchaseInvoice_response.ImpiHeaderAttachment = k.ImpiHeaderAttachment;
+                        string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
+
+                        // Display the result
+                        Console.WriteLine("Values separated by commas:");
+                        List<string> listing = new List<string>();
+
+                        foreach (string value in valuesArray)
+                        {
+
+                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).Select(x => x.ImadFileUrl).FirstOrDefaultAsync();
+                            listing.Add(path);
+                            
+                        }
+                        purchaseInvoice_response.ImpiHeaderAttachment = listing;
 
                         purchaseInvoice_response.IsDraft = k.IsDraft;
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
@@ -320,11 +357,22 @@ namespace FICCI_API.Controller.API
                             foreach (var l in lindata)
                             {
                                 LineItem_request lineItem_Request = new LineItem_request();
-                                lineItem_Request.impiLineDescription = l.ImpiLineDescription;
-                                lineItem_Request.ImpiLineUnitPrice = l.ImpiLineUnitPrice;
-                                lineItem_Request.ImpiLineQuantity = l.ImpiLineQuantity;
-                                lineItem_Request.ImpiLineDiscount = l.ImpiLineDiscount;
+                                lineItem_Request.DocumentType = l.DocumentType;
+                                lineItem_Request.ImpiDocumentNo = l.ImpiDocumentNo;
+                                lineItem_Request.ImpiGlNo = l.ImpiGlNo;
+                                lineItem_Request.ImpiGstBaseAmount = l.ImpiGstBaseAmount;
                                 lineItem_Request.ImpiLineAmount = l.ImpiLineAmount;
+                                lineItem_Request.ImpiLinePiNo = DateTime.Now.ToString("yyyyMMddhhmmss");
+                                lineItem_Request.ImpiTotalGstAmount = l.ImpiTotalGstAmount;
+                                lineItem_Request.ImpiNetTotal = l.ImpiNetTotal;
+                                lineItem_Request.ImpiLocationCode = l.ImpiLocationCode;
+                                lineItem_Request.ImpiQuantity = l.ImpiQuantity;
+                                lineItem_Request.ImpiUnitPrice = l.ImpiUnitPrice;
+                                lineItem_Request.ImpiGstgroupCode = l.ImpiGstgroupCode;
+                                lineItem_Request.ImpiGstgroupType = l.ImpiGstgroupType;
+                                lineItem_Request.ImpiHsnsaccode = l.ImpiHsnsaccode;
+                                lineItem_Request.ImpiLineNo = l.ImpiLineNo;
+                                lineItem_Request.ImpiLinePiNo = l.ImpiLinePiNo;
                                 lineItem_Requestl.Add(lineItem_Request);
                             }
 
@@ -390,42 +438,77 @@ namespace FICCI_API.Controller.API
 
 
         [NonAction]
-        public string UploadFile(IFormFile? file)
+        public string UploadFile(List<IFormFile>? file1, string loginId)
         {
             string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
-            if (file == null || file.Length == 0)
+            string fileids = "";
+            if (file1 == null || !file1.Any())
             {
                 return null; // Handle invalid file
             }
 
-
-            // Generate a unique filename to avoid conflicts
-            string uniqueFileName = timestamp;
-            var fileExtension = Path.GetExtension(file.FileName);
-            string folderpath = Path.Combine("wwwroot", "PurchaseInvoice");
-            // Combine the path where you want to store the file with the unique filename
-            string filePath = Path.Combine("wwwroot", "PurchaseInvoice", uniqueFileName + fileExtension);
-            string savefilePath = Path.Combine("PurchaseInvoice", uniqueFileName + fileExtension);
-            if (!Directory.Exists(folderpath))
+            foreach (var file in file1)
             {
-                // The folder does not exist, so create it
-                Directory.CreateDirectory(folderpath);
+                // Generate a unique filename to avoid conflicts
+                string uniqueFileName = timestamp;
+                var fileExtension = Path.GetExtension(file.FileName);
+                string folderpath = Path.Combine("wwwroot", "PurchaseInvoice");
+                // Combine the path where you want to store the file with the unique filename
+                string filePath = Path.Combine("wwwroot", "PurchaseInvoice", uniqueFileName + fileExtension);
+                string savefilePath = Path.Combine("PurchaseInvoice", uniqueFileName + fileExtension);
+                if (!Directory.Exists(folderpath))
+                {
+                    // The folder does not exist, so create it
+                    Directory.CreateDirectory(folderpath);
 
+                }
+                // Save the file to the specified path
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                FileInfoModel fileInfoModel = new FileInfoModel();
+
+
+
+                fileInfoModel.FileName = file.FileName;
+                fileInfoModel.Size = file.Length;
+                fileInfoModel.ContentType = file.ContentType;
+                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId);
+                // Return the file path
+                fileids += reurnId + ",";
             }
-            // Save the file to the specified path
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            return fileids.TrimEnd(',');
+        }
+        [NonAction]
+        public int FileMethod(string fileName, long length, string contentType, string path, string loginId)
+        {
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                file.CopyTo(fileStream);
+                try
+                {
+                    FicciImad imad = new FicciImad();
+                     imad.ImadCreatedBy = loginId;
+                    imad.ImadCreatedOn = DateTime.Now;
+                    imad.ImadActive = true;
+                    imad.ImadFileName = fileName;
+                    imad.ImadFileSize = length.ToString();
+                    imad.ImadFileType = contentType;
+                    imad.ImadFileUrl = path;
+                    imad.ImadScreenName = "Invoice";
+                    _dbContext.Add(imad);
+                    _dbContext.SaveChanges();
+                    int returnId = imad.ImadId;
+                    transaction.Commit();
+                    return returnId;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
             }
-            FileInfoModel fileInfoModel = new FileInfoModel();
 
-
-            fileInfoModel.FileName = file.FileName;
-            fileInfoModel.Size = file.Length;
-            fileInfoModel.ContentType = file.ContentType;
-       
-            // Return the file path
-            return savefilePath;
         }
 
     }

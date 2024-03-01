@@ -45,7 +45,7 @@ namespace FICCI_API.Models
         public string ImpiHeaderCustomerPhoneNo { get; set; }
         public string ImpiHeaderCreatedBy { get; set; }
         public decimal? ImpiHeaderTotalInvoiceAmount { get; set; }
-        public string ImpiHeaderAttachment { get; set; }
+        public List<string> ImpiHeaderAttachment { get; set; }
         public string ImpiHeaderPaymentTerms { get; set; }
         public string ImpiHeaderRemarks { get; set; }
         public DateTime? ImpiHeaderSubmittedDate { get; set; }
@@ -95,7 +95,7 @@ namespace FICCI_API.Models
         public string ImpiHeaderCustomerPhoneNo { get; set; }
         public string ImpiHeaderCreatedBy { get; set; }
         public decimal? ImpiHeaderTotalInvoiceAmount { get; set; }
-        public IFormFile? ImpiHeaderAttachment { get; set; }
+        public List<IFormFile>? ImpiHeaderAttachment { get; set; }
         public string ImpiHeaderPaymentTerms { get; set; }
         public string ImpiHeaderRemarks { get; set; }
         public bool? IsDraft { get; set; }
@@ -115,13 +115,37 @@ namespace FICCI_API.Models
     public class LineItem_request
     {
 
-       
-        public string impiLineDescription { get; set; }
-        public decimal ImpiLineQuantity { get; set; }
-        public decimal ImpiLineDiscount { get; set; }
-        public decimal ImpiLineUnitPrice { get; set; }
-        public decimal ImpiLineAmount { get; set; }
+        public string ImpiLinePiNo { get; set; }
 
+        public string ImpiDocumentNo { get; set; }
+
+        public string ImpiLineNo { get; set; }
+
+        public string DocumentType { get; set; }
+
+        public string ImpiGlNo { get; set; }
+
+        public string ImpiLocationCode { get; set; }
+
+        public string ImpiQuantity { get; set; }
+
+        public decimal? ImpiUnitPrice { get; set; }
+
+        public decimal? ImpiLineAmount { get; set; }
+
+        public string ImpiGstgroupCode { get; set; }
+
+        public string ImpiGstgroupType { get; set; }
+
+        public string ImpiHsnsaccode { get; set; }
+
+        public string ImpiType { get; set; }
+
+        public decimal? ImpiGstBaseAmount { get; set; }
+
+        public decimal? ImpiNetTotal { get; set; }
+
+        public decimal? ImpiTotalGstAmount { get; set; }
 
 
     }

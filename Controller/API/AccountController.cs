@@ -140,7 +140,16 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
-                        purchaseInvoice_response.ImpiHeaderAttachment = k.ImpiHeaderAttachment;
+                        string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
+
+                        // Display the result
+                        Console.WriteLine("Values separated by commas:");
+                        foreach (string value in valuesArray)
+                        {
+
+                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).Select(x => x.ImadFileUrl).FirstOrDefaultAsync();
+                            purchaseInvoice_response.ImpiHeaderAttachment.Add(path);
+                        }
 
 
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
@@ -161,11 +170,22 @@ namespace FICCI_API.Controller.API
                             foreach (var l in lindata)
                             {
                                 LineItem_request lineItem_Request = new LineItem_request();
-                                lineItem_Request.impiLineDescription = l.ImpiLineDescription;
-                                lineItem_Request.ImpiLineUnitPrice = l.ImpiLineUnitPrice;
-                                lineItem_Request.ImpiLineQuantity = l.ImpiLineQuantity;
-                                lineItem_Request.ImpiLineDiscount = l.ImpiLineDiscount;
+                                lineItem_Request.DocumentType = l.DocumentType;
+                                lineItem_Request.ImpiDocumentNo = l.ImpiDocumentNo;
+                                lineItem_Request.ImpiGlNo = l.ImpiGlNo;
+                                lineItem_Request.ImpiGstBaseAmount = l.ImpiGstBaseAmount;
                                 lineItem_Request.ImpiLineAmount = l.ImpiLineAmount;
+                                lineItem_Request.ImpiLinePiNo = DateTime.Now.ToString("yyyyMMddhhmmss");
+                                lineItem_Request.ImpiTotalGstAmount = l.ImpiTotalGstAmount;
+                                lineItem_Request.ImpiNetTotal = l.ImpiNetTotal;
+                                lineItem_Request.ImpiLocationCode = l.ImpiLocationCode;
+                                lineItem_Request.ImpiQuantity = l.ImpiQuantity;
+                                lineItem_Request.ImpiUnitPrice = l.ImpiUnitPrice;
+                                lineItem_Request.ImpiGstgroupCode = l.ImpiGstgroupCode;
+                                lineItem_Request.ImpiGstgroupType = l.ImpiGstgroupType;
+                                lineItem_Request.ImpiHsnsaccode = l.ImpiHsnsaccode;
+                                lineItem_Request.ImpiLineNo = l.ImpiLineNo;
+                                lineItem_Request.ImpiLinePiNo = l.ImpiLinePiNo;
                                 lineItem_Requestl.Add(lineItem_Request);
                             }
 

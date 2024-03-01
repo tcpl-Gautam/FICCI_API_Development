@@ -1,5 +1,6 @@
 ﻿using FICCI_API.Models;
 using FICCI_API.ModelsEF;
+using System.Text.Json.Serialization;
 
 namespace FICCI_API.DTO
 {
@@ -103,7 +104,72 @@ namespace FICCI_API.DTO
         public List<CustomerRequest> Data { get; set; }
     }
 
+    public class CustomerResponse
+    {
+        //[JsonProperty("@odata.context")]
+        //public string ODataContext { get; set; }
 
+        //[JsonProperty("@odata.etag")]
+        //public string ODataEtag { get; set; }
+
+        public string No { get; set; }
+        public string Name { get; set; }
+        public string Name2 { get; set; }
+        public string Address { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string Contact { get; set; }
+        public string PostCode { get; set; }
+        public string State_Code { get; set; }
+        public string Country_Region_Code { get; set; }
+        public string GSTRegistrationNo { get; set; }
+        public string GSTCustomerType { get; set; }
+        public string PAN_No { get; set; }
+        public string EMail { get; set; }
+        public string PrimaryContactNo { get; set; }
+
+    }
+
+
+   
+
+    public class CustomerPost
+    {
+        [JsonPropertyName("Name")]
+        public string Name { get; set; }
+        [JsonPropertyName("Name2")]
+        public string Name2 { get; set; }
+        [JsonPropertyName("Address")]
+        public string Address { get; set; }
+        [JsonPropertyName("Address2")]
+        public string Address2 { get; set; }
+        [JsonPropertyName("City")]
+        public string City { get; set; }
+        [JsonPropertyName("Contact")]
+        public string Contact { get; set; }
+        [JsonPropertyName("PostCode")]
+        public string PostCode { get; set; }
+        [JsonPropertyName("State_Code")]
+        public string State_Code { get; set; }
+        [JsonPropertyName("Country_Region_Code")]
+        public string Country_Region_Code { get; set; }
+        [JsonPropertyName("GSTRegistrationNo")]
+        public string GSTRegistrationNo { get; set; }
+        [JsonPropertyName("GSTCustomerType")]
+        public string GSTCustomerType { get; set; }
+        [JsonPropertyName("PAN_No")]
+        public string PAN_No { get; set; }
+        [JsonPropertyName("EMail")]
+        public string EMail { get; set; }
+        [JsonPropertyName("PrimaryContactNo")]
+        public string PrimaryContactNo { get; set; }
+
+        //public Boolean Status { get; set; }
+        //public string Message { get; set; }
+        //public List<CustomerPost> Data { get; set; }
+
+
+    }
 
 
     public class CustomerRequest

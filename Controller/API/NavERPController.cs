@@ -597,37 +597,94 @@ namespace FICCI_API.Controller.API
         }
 
 
-        [HttpPost("PostCustomer")]
+        //[HttpPost("PostCustomer")]
+        [NonAction]
         //Submit customer not drafted
-        public async Task<IActionResult> PostCustomer(CustomerRequest data)
+        public async Task<ApiResponseModel> PostCustomer(CustomerPost data)
         {
             try
             {
-            //    HttpContent content = new StringContent("{'insertPurchInvHeadDetails': '" + insertPurchCreditMemoDetails + "','insertPurchInvLineDetails': '" + insertPurchCreditMemoLineDetails + "' }", System.Text.Encoding.UTF8, "application/json");
+
+                string result = await GetSecurityToken();
+                var httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Add("Authorization", result);
+
+                var insertCustomerDetails = CreateCustomerJson(data);
+
+                HttpContent content = new StringContent(insertCustomerDetails, null, "application/json");
+
+                var response = await httpClient.PostAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/ODataV4/Company('FICCI')/CustomerAPI", content);
 
 
 
-            //    //var username = "TEAMCOMPUTERS.CRM";
-            //    //var password = "gXAXZPsieceCYWsxzjzzCYayJe53ZtAFEXitC+xgA08=";
-            //    //string svcCredentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(username + ":" + password));
-            //    //var httpClient = new HttpClient();
-            //    //httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", svcCredentials);
+                response.EnsureSuccessStatusCode();
 
-            //    var response = httpClient.PostAsync(erpURL + "ODataV4/VMSServiceCreditMemo_InsertPurchaseInvoice?company=FICCI", content);
+                var responseContent = response.Content.ReadAsStringAsync().Result;
 
-            //    response.Result.EnsureSuccessStatusCode();
 
-            //    var responseContent = response.Result.Content.ReadAsStringAsync().Result;
+                CustomerResponse odatavalue = JsonConvert.DeserializeObject<CustomerResponse>(responseContent);
 
-            //    var odata = JsonConvert.DeserializeObject<OData>(responseContent);
-
+                if (odatavalue != null)
+                {
+                    _responseModel.Data = odatavalue;
+                    _responseModel.Status = true;
+                    _responseModel.Message = "Customer Created";
+                }
+                else
+                {
+                    _responseModel.Data = null;
+                    _responseModel.Status = false;
+                    _responseModel.Message = "error";
+                }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 _responseModel.Data = ex;
                 _responseModel.Status = false;
-                _responseModel.Message = ex.Message;                
+                _responseModel.Message = ex.Message;
             }
-            return Ok(_responseModel);
+            return _responseModel;
+        }
+
+        private dynamic CreateCustomerJson(CustomerPost objCustomerModel)
+        {
+
+            string CustomerName = objCustomerModel.Name;
+            string CustomerLastName = objCustomerModel.Name2;
+
+            string Address = objCustomerModel.Address;
+            string Address2 = objCustomerModel.Address2;
+
+            string Contact = objCustomerModel.Contact;
+            string Phone = objCustomerModel.PrimaryContactNo;
+
+
+            string PinCode = objCustomerModel.PostCode;
+            string Email = objCustomerModel.EMail;
+
+
+            string CityCode = objCustomerModel.City;
+
+            string StateCode = objCustomerModel.State_Code;
+
+
+            string CountryCode = objCustomerModel.Country_Region_Code;
+
+            string GSTNumber = objCustomerModel.GSTRegistrationNo;
+
+            string GSTCustomerType = objCustomerModel.GSTCustomerType;
+
+
+            string PAN = objCustomerModel.PAN_No;
+
+            string InsertCustomerDetailsInNAV = CustomerName + "," + CustomerLastName + "," + Address + "," + Address2 + "," + Contact + "," + Phone + "," + PinCode + "," + Email + "," + CityCode + "," + StateCode + "," + CountryCode + "," + GSTNumber + "," + GSTCustomerType + "," + PAN + ";";
+
+
+            string json = JsonConvert.SerializeObject(objCustomerModel);
+            return json;
+
+
         }
 
 

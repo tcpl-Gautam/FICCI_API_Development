@@ -14,6 +14,7 @@ namespace FICCI_API.Controller.API
     {
         private readonly FICCI_DB_APPLICATIONSContext _dbContext;
         private readonly MySettings _mySettings;
+        private readonly NavERPController _NavERPController;
         public ApproveCustomerController(FICCI_DB_APPLICATIONSContext dbContext, IOptions<MySettings> mySettings) : base(dbContext)
         {
             _dbContext = dbContext;
@@ -149,7 +150,9 @@ namespace FICCI_API.Controller.API
                             htmlbody = ApprovalhtmlBody("approved by Accounts approver", _mySettings.Website_link, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo, result.CustomerContact, result.CustomerPhoneNo);
                            // SendEmail(result.CustomerEmailId, "" + result.CustomerTlApprover + "," + result.CustomerClusterApprover + "," + result.CustomerSgApprover + "", subject, htmlbody, _mySettings);
                             MailMethod(result.CustomerEmailId, "" + result.CustomerTlApprover + "," + result.CustomerClusterApprover + "," + result.CustomerSgApprover + "", subject, htmlbody, "Customer", cust.LoginId, Convert.ToInt32(res[0].CustomerId));
-
+                         //   CustomerPost customerPost = new CustomerPost();
+                         //   customerPost.Address = result.CustoemrAddress;
+                           // _NavERPController.PostCustomer(customerPost);
 
                             return StatusCode(200, crud);
                         }

@@ -186,7 +186,7 @@ namespace FICCI_API.Controller
                         smtp.Credentials = NetworkCred;
                         smtp.Port = Convert.ToInt32(_mySettings.Port);
                         smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                          smtp.Send(mail);
+                    //      smtp.Send(mail);
 
 
                     }

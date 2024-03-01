@@ -795,12 +795,35 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.ToTable("FICCI_IMPI_LINE");
 
             entity.Property(e => e.ImpiLineId).HasColumnName("IMPI_LINE_ID");
+            entity.Property(e => e.DocumentType)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ImpiDocumentNo)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_DocumentNo");
+            entity.Property(e => e.ImpiGlNo)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_GL_No");
+            entity.Property(e => e.ImpiGstBaseAmount)
+                .HasColumnType("decimal(18, 0)")
+                .HasColumnName("IMPI_GST Base Amount");
+            entity.Property(e => e.ImpiGstgroupCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_GSTGroupCode");
+            entity.Property(e => e.ImpiGstgroupType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_GSTGroupType");
+            entity.Property(e => e.ImpiHsnsaccode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_HSNSACCode");
             entity.Property(e => e.ImpiLineActive).HasColumnName("IMPI_LINE_ACTIVE");
             entity.Property(e => e.ImpiLineAmount)
-                .HasColumnType("decimal(18, 2)")
-                .HasColumnName("IMPI_LINE_AMOUNT");
+                .HasColumnType("decimal(18, 0)")
+                .HasColumnName("IMPI_LineAmount");
             entity.Property(e => e.ImpiLineCreatedBy)
-                .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_LINE_CREATED_BY");
@@ -808,13 +831,6 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasComputedColumnSql("(getdate())", false)
                 .HasColumnType("datetime")
                 .HasColumnName("IMPI_LINE_CREATED_ON");
-            entity.Property(e => e.ImpiLineDescription)
-                .IsRequired()
-                .IsUnicode(false)
-                .HasColumnName("IMPI_LINE_DESCRIPTION");
-            entity.Property(e => e.ImpiLineDiscount)
-                .HasColumnType("decimal(18, 2)")
-                .HasColumnName("IMPI_LINE_DISCOUNT");
             entity.Property(e => e.ImpiLineModifiedBy)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -822,17 +838,35 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImpiLineModifiedOn)
                 .HasColumnType("datetime")
                 .HasColumnName("IMPI_LINE_MODIFIED_ON");
+            entity.Property(e => e.ImpiLineNo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_LineNo");
             entity.Property(e => e.ImpiLinePiNo)
-                .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_LINE_PI_NO");
-            entity.Property(e => e.ImpiLineQuantity)
+            entity.Property(e => e.ImpiLocationCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_LocationCode");
+            entity.Property(e => e.ImpiNetTotal)
                 .HasColumnType("decimal(18, 0)")
-                .HasColumnName("IMPI_LINE_QUANTITY");
-            entity.Property(e => e.ImpiLineUnitPrice)
-                .HasColumnType("decimal(18, 2)")
-                .HasColumnName("IMPI_LINE_UNIT_PRICE");
+                .HasColumnName("IMPI_Net Total");
+            entity.Property(e => e.ImpiQuantity)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_Quantity");
+            entity.Property(e => e.ImpiTotalGstAmount)
+                .HasColumnType("decimal(18, 0)")
+                .HasColumnName("IMPI_Total GST Amount");
+            entity.Property(e => e.ImpiType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_Type");
+            entity.Property(e => e.ImpiUnitPrice)
+                .HasColumnType("decimal(18, 0)")
+                .HasColumnName("IMPI_UnitPrice");
             entity.Property(e => e.PiHeaderId).HasColumnName("PI_HeaderID");
 
             entity.HasOne(d => d.PiHeader).WithMany(p => p.FicciImpiLines)
