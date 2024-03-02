@@ -335,9 +335,12 @@ namespace FICCI_API.Controller.API
                             foreach (string value in valuesArray)
                             {
 
-                                var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
-                                listing.Add(path);
+                                var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value) && x.ImadActive !=false).FirstOrDefaultAsync();
+                                if (path != null)
+                                {
 
+                                    listing.Add(path);
+                                }
                             }
 
                             purchaseInvoice_response.ImpiHeaderAttachment = listing;
