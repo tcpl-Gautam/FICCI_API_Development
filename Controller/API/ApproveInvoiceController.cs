@@ -66,9 +66,10 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
-                        string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
                         if (k.ImpiHeaderAttachment != null)
                         {
+                            string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
+
                             // Display the result
                             List<FicciImad> listing = new List<FicciImad>();
 
