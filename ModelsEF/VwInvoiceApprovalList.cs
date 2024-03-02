@@ -74,4 +74,12 @@ public partial class VwInvoiceApprovalList
     public string ImpiHeaderProjectCode { get; set; }
 
     public string ApproverEmail { get; set; }
+
+    public string AccountApproverRemarks { get; set; }
+
+    public string ImpiHeaderClusterApproverRemarks { get; set; }
+
+    public string ImpiHeaderFinanceRemarks { get; set; }
+
+    public string ImpiHeaderTlApproverRemarks { get; set; }
 }

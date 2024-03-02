@@ -1260,6 +1260,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasNoKey()
                 .ToView("VW_INVOICE_APPROVAL_LIST");
 
+            entity.Property(e => e.AccountApproverRemarks)
+                .IsUnicode(false)
+                .HasColumnName("Account_Approver_Remarks");
             entity.Property(e => e.ApproverEmail)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1270,6 +1273,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER");
+            entity.Property(e => e.ImpiHeaderClusterApproverRemarks)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER_REMARKS");
             entity.Property(e => e.ImpiHeaderCreatedBy)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -1319,6 +1325,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_FINANCE_APPROVER");
+            entity.Property(e => e.ImpiHeaderFinanceRemarks)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_HEADER_FINANCE_REMARKS");
             entity.Property(e => e.ImpiHeaderGstNo)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1375,6 +1384,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_TL_APPROVER");
+            entity.Property(e => e.ImpiHeaderTlApproverRemarks)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_HEADER_TL_APPROVER_REMARKS");
             entity.Property(e => e.ImpiHeaderTotalInvoiceAmount)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("IMPI_HEADER_TOTAL_INVOICE_AMOUNT");

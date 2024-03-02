@@ -354,6 +354,11 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderTlApprover = k.ImpiHeaderTlApprover;
                         purchaseInvoice_response.ImpiHeaderClusterApprover = k.ImpiHeaderClusterApprover;
                         purchaseInvoice_response.ImpiHeaderFinanceApprover = k.ImpiHeaderFinanceApprover;
+                        purchaseInvoice_response.AccountApproverRemarks = k.AccountApproverRemarks;
+                        purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
+                        purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
+                        purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
+
 
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
@@ -380,6 +385,7 @@ namespace FICCI_API.Controller.API
                                 lineItem_Request.ImpiHsnsaccode = l.ImpiHsnsaccode;
                                 lineItem_Request.ImpiLineNo = l.ImpiLineNo;
                                 lineItem_Request.ImpiLinePiNo = l.ImpiLinePiNo;
+
                                 lineItem_Requestl.Add(lineItem_Request);
                             }
 
