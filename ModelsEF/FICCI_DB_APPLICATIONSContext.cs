@@ -393,7 +393,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImadActive).HasColumnName("IMAD_ACTIVE");
             entity.Property(e => e.ImadCreatedBy)
                 .IsRequired()
-                .HasMaxLength(20)
+                .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("IMAD_CREATED_BY");
             entity.Property(e => e.ImadCreatedOn)
@@ -417,7 +417,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("IMAD_FILE_URL");
             entity.Property(e => e.ImadModifiedBy)
-                .HasMaxLength(20)
+                .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("IMAD_MODIFIED_BY");
             entity.Property(e => e.ImadModifiedOn)
@@ -719,7 +719,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_INVOICE_TYPE");
             entity.Property(e => e.ImpiHeaderModifiedBy)
-                .HasMaxLength(20)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_MODIFIED_BY");
             entity.Property(e => e.ImpiHeaderModifiedOn)
