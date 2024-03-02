@@ -323,21 +323,25 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
-                        string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
-
-                        // Display the result
-                        Console.WriteLine("Values separated by commas:");
-                        List<FicciImad> listing = new List<FicciImad>();
-
-                        foreach (string value in valuesArray)
+                        if (k.ImpiHeaderAttachment != null)
                         {
 
-                            var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
-                            listing.Add(path);
-                            
-                        }
-                        purchaseInvoice_response.ImpiHeaderAttachment = listing;
 
+
+                            string[] valuesArray = k.ImpiHeaderAttachment == null ? null : k.ImpiHeaderAttachment.Split(',');
+                            // Display the result
+                            Console.WriteLine("Values separated by commas:");
+                            List<FicciImad> listing = new List<FicciImad>();
+
+                            foreach (string value in valuesArray)
+                            {
+
+                                var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
+                                listing.Add(path);
+
+                            }
+                            purchaseInvoice_response.ImpiHeaderAttachment = listing;
+                        }
                         purchaseInvoice_response.IsDraft = k.IsDraft;
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
