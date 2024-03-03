@@ -292,7 +292,7 @@ namespace FICCI_API.Controller.API
                 var list = _dbContext.FicciImpiHeaders.Where(m => m.ImpiHeaderActive == true).ToList();
                 if (emp_Role != 1)
                 {
-                    list = list.Where(m => m.ImpiHeaderCreatedBy == email).ToList();
+                    list = list.Where(m => m.ImpiHeaderCreatedBy == email).OrderByDescending(x => x.ImpiHeaderSubmittedDate).ToList();
                 }
 
                 if (list.Count > 0)

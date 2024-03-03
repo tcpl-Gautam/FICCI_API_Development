@@ -48,7 +48,7 @@ namespace FICCI_API.Controller.API
                 }
                 var emp_Role = await _dbContext.FicciImums.Where(x => x.ImumEmail == email).Select(a => a.RoleId).FirstOrDefaultAsync();
 
-                resu = await _dbContext.FicciErpCustomerDetails.Where(x => x.IsDelete != true && x.IsActive != false)
+                resu = await _dbContext.FicciErpCustomerDetails.Where(x => x.IsDelete != true && x.IsActive != false).OrderByDescending(x => x.CreatedOn)
                         .Select(customer => new CustomerList
                         {
                             CustomerId = customer.CustomerId,

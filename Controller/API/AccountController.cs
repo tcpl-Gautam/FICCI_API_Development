@@ -170,6 +170,11 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         // purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
+                        purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
+                        purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
+                        purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
+                        purchaseInvoice_response.AccountApproverRemarks = k.AccountApproverRemarks;
+
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
                         if (lindata.Count > 0)
                         {
