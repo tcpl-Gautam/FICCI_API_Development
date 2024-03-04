@@ -53,12 +53,6 @@ public partial class VwInvoiceApprovalList
 
     public string ImpiHeaderCustomerContactPerson { get; set; }
 
-    public string ImpiHeaderTlApprover { get; set; }
-
-    public string ImpiHeaderClusterApprover { get; set; }
-
-    public string ImpiHeaderFinanceApprover { get; set; }
-
     public string ImpiHeaderPaymentTerms { get; set; }
 
     public string ImpiHeaderRemarks { get; set; }
@@ -75,11 +69,27 @@ public partial class VwInvoiceApprovalList
 
     public string ApproverEmail { get; set; }
 
-    public string AccountApproverRemarks { get; set; }
+    public string ImpiHeaderTlApprover { get; set; }
+
+    public DateTime? ImpiHeaderTlApproverDate { get; set; }
+
+    public string ImpiHeaderTlApproverRemarks { get; set; }
+
+    public string ImpiHeaderClusterApprover { get; set; }
+
+    public DateTime? ImpiHeaderClusterApproverDate { get; set; }
 
     public string ImpiHeaderClusterApproverRemarks { get; set; }
 
+    public string ImpiHeaderFinanceApprover { get; set; }
+
+    public DateTime? ImpiHeaderFinanceApproverDate { get; set; }
+
     public string ImpiHeaderFinanceRemarks { get; set; }
 
-    public string ImpiHeaderTlApproverRemarks { get; set; }
+    public DateTime? AccountApproverDate { get; set; }
+
+    public string AccountApproverRemarks { get; set; }
+
+    public string AccountApprover { get; set; }
 }

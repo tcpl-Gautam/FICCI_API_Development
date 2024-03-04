@@ -30,4 +30,6 @@ public partial class FicciImad
     public string ImadModifiedBy { get; set; }
 
     public DateTime? ImadModifiedOn { get; set; }
+
+    public int? Headerid { get; set; }
 }

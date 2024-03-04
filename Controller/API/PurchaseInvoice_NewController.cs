@@ -60,10 +60,7 @@ namespace FICCI_API.Controller.API
                         ficciImpiHeader.ImpiHeaderCreatedOn = DateTime.Now;
                         ficciImpiHeader.ImpiHeaderActive = true;
                         ficciImpiHeader.ImpiHeaderTotalInvoiceAmount = request.ImpiHeaderTotalInvoiceAmount;
-                        if (request.ImpiHeaderAttachment != null)
-                        {
-                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId);
-                        }
+                       
                         ficciImpiHeader.ImpiHeaderPaymentTerms = request.ImpiHeaderPaymentTerms;
                         ficciImpiHeader.ImpiHeaderRemarks = request.ImpiHeaderRemarks;
                         ficciImpiHeader.ImpiHeaderStatus = request.IsDraft == true ? "Draft" : "Pending";
@@ -82,6 +79,12 @@ namespace FICCI_API.Controller.API
                         _dbContext.Add(ficciImpiHeader);
                         _dbContext.SaveChanges();
                         int returnid = ficciImpiHeader.ImpiHeaderId;
+
+                        if (request.ImpiHeaderAttachment != null)
+                        {
+                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid);
+                        }
+
                         FicciImwd imwd = new FicciImwd();
                         imwd.ImwdScreenName = "Invoice Approver";
                         imwd.CustomerId = returnid;
@@ -164,11 +167,7 @@ namespace FICCI_API.Controller.API
                             data.ImpiHeaderModifiedOn = DateTime.Now;
                             //data.ImpiHeaderActive = true;
                             data.ImpiHeaderTotalInvoiceAmount = request.ImpiHeaderTotalInvoiceAmount;
-                            if (request.ImpiHeaderAttachment != null)
-                            {
-                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId);
-                            }
-
+                            
                             data.ImpiHeaderPaymentTerms = request.ImpiHeaderPaymentTerms;
                             data.ImpiHeaderRemarks = request.ImpiHeaderRemarks;
                             data.ImpiHeaderStatus = request.IsDraft == true ? "Draft" : "Pending";
@@ -179,6 +178,10 @@ namespace FICCI_API.Controller.API
                             //_dbContext.Add(data);
                             _dbContext.SaveChanges();
                             int returnid = data.ImpiHeaderId;
+                            if (request.ImpiHeaderAttachment != null)
+                            {
+                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid);
+                            }
                             FicciImwd imwd = new FicciImwd();
                             imwd.ImwdScreenName = "Invoice Approver";
                             imwd.CustomerId = returnid;
@@ -324,27 +327,27 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
 
-                        //error in auto generated model ImpiHeaderAttachment is not null
-                        if (k.ImpiHeaderAttachment != null)
-                        {
-                            string[]? valuesArray = k.ImpiHeaderAttachment.Split(',');
+                        ////error in auto generated model ImpiHeaderAttachment is not null
+                        //if (k.ImpiHeaderAttachment != null)
+                        //{
+                        //    string[]? valuesArray = k.ImpiHeaderAttachment.Split(',');
 
-                            // Display the result
-                            List<FicciImad> listing = new List<FicciImad>();
+                        //    // Display the result
+                        //    List<FicciImad> listing = new List<FicciImad>();
 
-                            foreach (string value in valuesArray)
-                            {
+                        //    foreach (string value in valuesArray)
+                        //    {
 
-                                var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value) && x.ImadActive !=false).FirstOrDefaultAsync();
-                                if (path != null)
-                                {
+                        //        var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value) && x.ImadActive !=false).FirstOrDefaultAsync();
+                        //        if (path != null)
+                        //        {
 
-                                    listing.Add(path);
-                                }
-                            }
+                        //            listing.Add(path);
+                        //        }
+                        //    }
 
-                            purchaseInvoice_response.ImpiHeaderAttachment = listing;
-                        }
+                        //    purchaseInvoice_response.ImpiHeaderAttachment = listing;
+                        //}
                         purchaseInvoice_response.IsDraft = k.IsDraft;
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
@@ -358,8 +361,12 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
                         purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
-
-
+                        purchaseInvoice_response.AccountApprover = k.AccountApprover;
+                        purchaseInvoice_response.AccountApproveDate = k.AccountApproverDate;
+                        purchaseInvoice_response.TlApproveDate = k.ImpiHeaderTlApproverDate;
+                        purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
+                        purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
+                        purchaseInvoice_response.Attachments = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.Headerid == k.ImpiHeaderId).ToList();
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
@@ -451,7 +458,7 @@ namespace FICCI_API.Controller.API
 
 
         [NonAction]
-        public string UploadFile(List<IFormFile>? file1, string loginId)
+        public string UploadFile(List<IFormFile>? file1, string loginId,int headerid)
         {
             string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
             string fileids = "";
@@ -487,21 +494,21 @@ namespace FICCI_API.Controller.API
                 fileInfoModel.FileName = file.FileName;
                 fileInfoModel.Size = file.Length;
                 fileInfoModel.ContentType = file.ContentType;
-                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId);
+                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId,headerid);
                 // Return the file path
                 fileids += reurnId + ",";
             }
             return fileids.TrimEnd(',');
         }
         [NonAction]
-        public int FileMethod(string fileName, long length, string contentType, string path, string loginId)
+        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
                     FicciImad imad = new FicciImad();
-                     imad.ImadCreatedBy = loginId;
+                    imad.ImadCreatedBy = loginId;
                     imad.ImadCreatedOn = DateTime.Now;
                     imad.ImadActive = true;
                     imad.ImadFileName = fileName;
@@ -509,6 +516,7 @@ namespace FICCI_API.Controller.API
                     imad.ImadFileType = contentType;
                     imad.ImadFileUrl = path;
                     imad.ImadScreenName = "Invoice";
+                    imad.Headerid = headerid;
                     _dbContext.Add(imad);
                     _dbContext.SaveChanges();
                     int returnId = imad.ImadId;

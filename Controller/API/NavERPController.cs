@@ -686,7 +686,147 @@ namespace FICCI_API.Controller.API
 
 
         }
+        [HttpPost("PostPIData")]
+        //Submit customer not drafted
+        public async Task<IActionResult> PostPIData(PURCHASE_INVOICE_HEADER purchase_header)
+        {
+            try
+            {
+                string result = await GetSecurityToken();
+                var httpClient = new HttpClient();
 
+                httpClient.DefaultRequestHeaders.Add("Authorization", result);
+
+                var insertPIDetails = CreatePostPIHeaderJson(purchase_header);
+
+                HttpContent content = new StringContent(insertPIDetails, null, "application/json");
+
+                var response = await httpClient.PostAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/api/FICCI/FICCI/v1.0/companies(2d9345bb-769a-ed11-bff5-000d3af29678)/getPerformaInvoiceInfos", content);
+
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                PURCHASE_INVOICE_HEADER_RESPONSE odatavalue = JsonConvert.DeserializeObject<PURCHASE_INVOICE_HEADER_RESPONSE>(responseContent);
+
+                if (odatavalue.no != null)
+
+                {
+
+                    // var insertPILineDetails = CreatePostPILineJson(purchase_header.purchase_LineModels);
+                    var insertPILineDetails = "";
+                    //insertPILineDetails.documentNo = odatavalue.no;
+
+                    HttpContent contentline = new StringContent(insertPILineDetails, null, "application/json");
+
+                    var responseLine = await httpClient.PostAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/api/FICCI/FICCI/v1.0/companies(2d9345bb-769a-ed11-bff5-000d3af29678)/getPerformaInvoiceInfoLine", contentline);
+
+                    responseLine.EnsureSuccessStatusCode();
+
+                    var responseContentLine = responseLine.Content.ReadAsStringAsync().Result;
+
+                    VMS_PURCHASE_LINE_RESPONSE odatavalueLine = JsonConvert.DeserializeObject<VMS_PURCHASE_LINE_RESPONSE>(responseContentLine);
+
+                }
+
+
+                if (odatavalue != null)
+                {
+                    _responseModel.Data = odatavalue;
+                    _responseModel.Status = true;
+                    _responseModel.Message = "PI Created";
+                }
+                else
+                {
+                    _responseModel.Data = null;
+                    _responseModel.Status = false;
+                    _responseModel.Message = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseModel.Data = ex;
+                _responseModel.Status = false;
+                _responseModel.Message = ex.Message;
+            }
+            return Ok(_responseModel);
+        }
+
+        private dynamic CreatePostPIHeaderJson(PURCHASE_INVOICE_HEADER objPurchaseHeaderModel)
+        {
+
+            //string DocumentType = "Invoice";
+            // string No = objPurchaseHeaderModel.no;
+            string CustomerNo = objPurchaseHeaderModel.sellToCustomerNo;
+            string CustomerName = objPurchaseHeaderModel.sellToCustomerName;
+            string CustomerName2 = objPurchaseHeaderModel.sellToCustomerName2;
+            //string Address = objPurchaseHeaderModel.sellToAddress;
+            //string Address2 = objPurchaseHeaderModel.sellToAddress2;
+            //string City = objPurchaseHeaderModel.sellToCity;
+            //string PostCode = objPurchaseHeaderModel.sellToPostCode;
+            //string CountryRegionCode = objPurchaseHeaderModel.sellToCountryRegionCode;
+            //string GSTNo = objPurchaseHeaderModel.GSTNo;
+            //string PANNo = objPurchaseHeaderModel.PANNo;
+            string ProjectCode = objPurchaseHeaderModel.ProjectCode;
+            string DepartmentName = objPurchaseHeaderModel.DepartmentName;
+            string DepartmentCode = objPurchaseHeaderModel.DepartmentCode;
+            string DivisionCode = objPurchaseHeaderModel.DivisionCode;
+            string DivisionName = objPurchaseHeaderModel.DivisionName;
+            string ApproverTL = objPurchaseHeaderModel.ApproverTL;
+            string ApproverCH = objPurchaseHeaderModel.ApproverCH;
+            string FinanceApprover = objPurchaseHeaderModel.FinanceApprover;
+            string ApproverSupport = objPurchaseHeaderModel.ApproverSupport;
+            bool InvoicePortalOrder = objPurchaseHeaderModel.InvoicePortalOrder;
+            bool InvoicePortalSubmitted = objPurchaseHeaderModel.InvoicePortalSubmitted;
+
+            //  string InsertPIDetailsInNAV = DocumentType + "," + CustomerNo + "," + CustomerName + "," + Address + "," + Address2 + "," + City + "," + PostCode + "," + CountryRegionCode + "," + GSTNo + "," + PANNo + "," + ProjectCode + "," + DepartmentName + "," + DepartmentCode + "," + DivisionCode + "," + DivisionName + "," + ApproverTL + ","+ ApproverCH +","+ FinanceApprover+","+ApproverSupport+","+InvoicePortalOrder+","+InvoicePortalSubmitted+ ";";
+
+            string InsertPIDetailsInNAV = CustomerName2 + "," + CustomerNo + "," + CustomerName + "," + ProjectCode + "," + DepartmentName + "," + DepartmentCode + "," + DivisionCode + "," + DivisionName + "," + ApproverTL + "," + ApproverCH + "," + FinanceApprover + "," + ApproverSupport + "," + InvoicePortalOrder + "," + InvoicePortalSubmitted + ";";
+
+
+            string json = JsonConvert.SerializeObject(objPurchaseHeaderModel);
+            return json;
+
+
+        }
+
+
+        private dynamic CreatePostPILineJson(PURCHASE_INVOICE_LINE[] objPurchaseLineModel)
+        {
+
+            long LINE_NO = 0;
+            foreach (var item in objPurchaseLineModel)
+            {
+                if (LINE_NO <= 0)
+                {
+                    LINE_NO = 10000;
+                }
+                else
+                {
+                    LINE_NO = Convert.ToInt32(LINE_NO) + 10000;
+                }
+
+                long LineNo = item.lineNo;
+                string DocumentNo = item.documentNo;
+                string DocumentType = "Invoice";
+                string Type = "G/L Account";
+                string No_ = item.no_;
+                string LocationCode = item.LocationCode;
+                string Quantity = item.quantity;
+                Nullable<decimal> UnitPrice = item.unitPrice;
+                Nullable<decimal> LineAmount = item.lineAmount;
+                string GSTGroupCode = item.gSTGroupCode;
+                string GST_Group_Type = item.gST_Group_Type;
+                string HSN_SAC_Code = item.hSN_SAC_Code;
+                Nullable<decimal> GSTCredit = item.gSTCredit;
+
+            }
+
+            string json = JsonConvert.SerializeObject(objPurchaseLineModel);
+            return json;
+
+
+        }
 
         #region Private Functions
         private async Task<string> GetSecurityToken()

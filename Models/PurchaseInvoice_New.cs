@@ -56,11 +56,18 @@ namespace FICCI_API.Models
         public string ImpiHeaderClusterApprover { get; set; }
         public string ImpiHeaderFinanceApprover { get; set; }
         public string? ImpiHeaderSupportApprover { get; set; }
+        public string AccountApprover { get; set; }
         public string AccountApproverRemarks { get; set; }
         public string ImpiHeaderClusterApproverRemarks { get; set; }
         public string ImpiHeaderFinanceRemarks { get; set; }
         public string ImpiHeaderTlApproverRemarks { get; set; }
+        public DateTime? AccountApproveDate { get; set; }
+        public DateTime? TlApproveDate { get; set; }
+        public DateTime? ClusterApproveDate { get; set; }
+        public DateTime? FinanceApproveDate { get; set; }
+
         public int? HeaderStatusId { get; set; }
+        public List<FicciImad> Attachments { get; set; }
         public List<FicciImwd>? WorkFlowHistory { get; set; }
         public List<LineItem_request> lineItem_Requests { get; set; }
     }

@@ -49,7 +49,7 @@ namespace FICCI_API.Controller.API.Account
                 }
 
                 // SendEmailData(mail.MailTo,mail.MailCC,mail.MailSubject,mail.MailBody,_mySettings);
-                mail.ResourceType = "Invoice";
+               // mail.ResourceType = "Invoice";
                 var emailAttachments = new List<Attachment>();
                 //if (mail.Attachments != null)
                 //{
@@ -64,7 +64,7 @@ namespace FICCI_API.Controller.API.Account
                 //        }
                     
                 //}
-                var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, mail.ResourceType, mail.LoginId, mail.ResourceId, mail.Attachments);
+                var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, "Invoice", mail.LoginId, mail.ResourceId, mail.Attachments);
                 if (resu == true)
                 {
                     var response = new
@@ -98,7 +98,7 @@ namespace FICCI_API.Controller.API.Account
         {
             try
             {
-                if (mailTo == null || mailCC == null || mailSubject == null || mailBody == null)
+                if (mailTo == null || mailSubject == null || mailBody == null)
                 {
                     return false;
                 }

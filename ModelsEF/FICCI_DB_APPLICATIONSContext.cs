@@ -390,6 +390,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.ToTable("FICCI_IMAD");
 
             entity.Property(e => e.ImadId).HasColumnName("IMAD_ID");
+            entity.Property(e => e.Headerid).HasColumnName("headerid");
             entity.Property(e => e.ImadActive).HasColumnName("IMAD_ACTIVE");
             entity.Property(e => e.ImadCreatedBy)
                 .IsRequired()
@@ -629,6 +630,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.ToTable("FICCI_IMPI_HEADER");
 
             entity.Property(e => e.ImpiHeaderId).HasColumnName("IMPI_HEADER_ID");
+            entity.Property(e => e.AccountApprover)
+                .IsUnicode(false)
+                .HasColumnName("Account_Approver");
             entity.Property(e => e.AccountApproverDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Account_Approver_Date");
@@ -1260,6 +1264,12 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasNoKey()
                 .ToView("VW_INVOICE_APPROVAL_LIST");
 
+            entity.Property(e => e.AccountApprover)
+                .IsUnicode(false)
+                .HasColumnName("Account_approver");
+            entity.Property(e => e.AccountApproverDate)
+                .HasColumnType("datetime")
+                .HasColumnName("Account_Approver_Date");
             entity.Property(e => e.AccountApproverRemarks)
                 .IsUnicode(false)
                 .HasColumnName("Account_Approver_Remarks");
@@ -1273,6 +1283,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER");
+            entity.Property(e => e.ImpiHeaderClusterApproverDate)
+                .HasColumnType("datetime")
+                .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER_DATE");
             entity.Property(e => e.ImpiHeaderClusterApproverRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER_REMARKS");
@@ -1325,6 +1338,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_FINANCE_APPROVER");
+            entity.Property(e => e.ImpiHeaderFinanceApproverDate)
+                .HasColumnType("datetime")
+                .HasColumnName("IMPI_HEADER_FINANCE_APPROVER_DATE");
             entity.Property(e => e.ImpiHeaderFinanceRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_FINANCE_REMARKS");
@@ -1384,6 +1400,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_TL_APPROVER");
+            entity.Property(e => e.ImpiHeaderTlApproverDate)
+                .HasColumnType("datetime")
+                .HasColumnName("IMPI_HEADER_TL_APPROVER_DATE");
             entity.Property(e => e.ImpiHeaderTlApproverRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_TL_APPROVER_REMARKS");
