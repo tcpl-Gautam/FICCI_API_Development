@@ -226,55 +226,55 @@ namespace FICCI_API.Controller.API
                             int returnId = customer.CustomerId;
 
 
-                            if (!data.IsDraft)
-                            {
+                            //if (!data.IsDraft)
+                            //{
 
-                                NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+                            //    NavERPController navERPController = new NavERPController(_configuration, _dbContext);
 
-                                CustomerPost PostData = new CustomerPost();
+                            //    CustomerPost PostData = new CustomerPost();
 
-                                PostData.Name = data.CustomerName;
-                                PostData.Name2 = data.CustomerLastName;
-                                PostData.Address = data.Address;
-                                PostData.Address2 = data.Address2;
-                                PostData.City = data.CityCode;
-                                PostData.State_Code = data.StateCode;
-                                PostData.Country_Region_Code =  data.CountryCode;
+                            //    PostData.Name = data.CustomerName;
+                            //    PostData.Name2 = data.CustomerLastName;
+                            //    PostData.Address = data.Address;
+                            //    PostData.Address2 = data.Address2;
+                            //    PostData.City = data.CityCode;
+                            //    PostData.State_Code = data.StateCode;
+                            //    PostData.Country_Region_Code =  data.CountryCode;
 
-                                PostData.Contact = data.Contact;
-                                PostData.PostCode = data.PinCode;
+                            //    PostData.Contact = data.Contact;
+                            //    PostData.PostCode = data.PinCode;
 
-                                PostData.GSTCustomerType = ""; // data.GSTCustomerType.ToString();
-                                PostData.GSTRegistrationNo = "";//data.GSTNumber;
-                                PostData.PAN_No = data.PAN;
-                                PostData.EMail = data.Email;
-                                PostData.PrimaryContactNo = "";//data.Phone;
-                                                               //PostData.Name = "Ashish Raghav";
-                                                               //PostData.Name2 = "Devloper ok 3";
-                                                               //PostData.Address = "sec 137";
-                                                               //PostData.Address2 = "NOida";
-                                                               //PostData.City = "Noida";
-                                                               //PostData.State_Code = "";
-                                                               //PostData.Country_Region_Code = "";
+                            //    PostData.GSTCustomerType = ""; // data.GSTCustomerType.ToString();
+                            //    PostData.GSTRegistrationNo = "";//data.GSTNumber;
+                            //    PostData.PAN_No = data.PAN;
+                            //    PostData.EMail = data.Email;
+                            //    PostData.PrimaryContactNo = "";//data.Phone;
+                            //                                   //PostData.Name = "Ashish Raghav";
+                            //                                   //PostData.Name2 = "Devloper ok 3";
+                            //                                   //PostData.Address = "sec 137";
+                            //                                   //PostData.Address2 = "NOida";
+                            //                                   //PostData.City = "Noida";
+                            //                                   //PostData.State_Code = "";
+                            //                                   //PostData.Country_Region_Code = "";
 
-                                //PostData.Contact = "878789898";
-                                //PostData.PostCode = "201301";
+                            //    //PostData.Contact = "878789898";
+                            //    //PostData.PostCode = "201301";
 
-                                //PostData.GSTCustomerType = " ";
-                                //PostData.GSTRegistrationNo = "";
-                                //PostData.PAN_No = "";
-                                //PostData.EMail = "";
-                                //PostData.PrimaryContactNo = "";
+                            //    //PostData.GSTCustomerType = " ";
+                            //    //PostData.GSTRegistrationNo = "";
+                            //    //PostData.PAN_No = "";
+                            //    //PostData.EMail = "";
+                            //    //PostData.PrimaryContactNo = "";
 
-                                dynamic erpResponse = await navERPController.PostCustomer(PostData);
-                                var updatedNumber = erpResponse.Data.No;
-                                var resu = _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerId == returnId).FirstOrDefault();
-                                resu.CusotmerNo = updatedNumber;
-                                _dbContext.Update(resu);
-                                _dbContext.SaveChanges();
+                            //    dynamic erpResponse = await navERPController.PostCustomer(PostData);
+                            //    var updatedNumber = erpResponse.Data.No;
+                            //    var resu = _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerId == returnId).FirstOrDefault();
+                            //    resu.CusotmerNo = updatedNumber;
+                            //    _dbContext.Update(resu);
+                            //    _dbContext.SaveChanges();
                                
                               
-                            }
+                            //}
 
 
 

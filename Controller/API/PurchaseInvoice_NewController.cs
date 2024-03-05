@@ -232,7 +232,7 @@ namespace FICCI_API.Controller.API
 
                             if (request.ImpiHeaderAttachment != null)
                             {
-                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder);
+                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim());
                             }
                             FicciImwd imwd = new FicciImwd();
                             imwd.ImwdScreenName = "Invoice Approver";
