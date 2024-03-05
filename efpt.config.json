@@ -124,6 +124,10 @@
          "ObjectType": 3
       },
       {
+         "Name": "[dbo].[Backup_FICCI_Database]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[prc_Approval_Customer]",
          "ObjectType": 1
       },
@@ -170,6 +174,10 @@
       {
          "Name": "[dbo].[prc_UserMaster_Form]",
          "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[FICCI_GETPINUMBERSEQ]",
+         "ObjectType": 2
       }
    ],
    "UiHint": "17675-gautam\\sqlexpress.FICCI_DB_APPLICATIONS.dbo",

@@ -769,6 +769,11 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsRequired()
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_PROJECT_NAME");
+            entity.Property(e => e.ImpiHeaderRecordNo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("([dbo].[FICCI_GETPINUMBERSEQ]())")
+                .HasColumnName("IMPI_HEADER_RECORD_NO");
             entity.Property(e => e.ImpiHeaderRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_REMARKS");
@@ -971,6 +976,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("IMWD_PENDING_AT");
+            entity.Property(e => e.ImwdPendingEmailAt)
+                .IsUnicode(false)
+                .HasColumnName("IMWD_Pending_Email_AT");
             entity.Property(e => e.ImwdRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMWD_REMARKS");
@@ -1419,6 +1427,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
         });
 
         OnModelCreatingGeneratedProcedures(modelBuilder);
+        OnModelCreatingGeneratedFunctions(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 

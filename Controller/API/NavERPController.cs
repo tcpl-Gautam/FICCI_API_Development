@@ -701,33 +701,13 @@ namespace FICCI_API.Controller.API
 
                 HttpContent content = new StringContent(insertPIDetails, null, "application/json");
 
-                var response = await httpClient.PostAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/api/FICCI/FICCI/v1.0/companies(2d9345bb-769a-ed11-bff5-000d3af29678)/getPerformaInvoiceInfos", content);
+                var response = await httpClient.PostAsync(_navURL + "/FICCI_CRM/api/FICCI/FICCI/v1.0/companies(2d9345bb-769a-ed11-bff5-000d3af29678)/getPerformaInvoiceInfos", content);
 
                 response.EnsureSuccessStatusCode();
 
                 var responseContent = response.Content.ReadAsStringAsync().Result;
 
                 PURCHASE_INVOICE_HEADER_RESPONSE odatavalue = JsonConvert.DeserializeObject<PURCHASE_INVOICE_HEADER_RESPONSE>(responseContent);
-
-                if (odatavalue.no != null)
-
-                {
-
-                    // var insertPILineDetails = CreatePostPILineJson(purchase_header.purchase_LineModels);
-                    var insertPILineDetails = "";
-                    //insertPILineDetails.documentNo = odatavalue.no;
-
-                    HttpContent contentline = new StringContent(insertPILineDetails, null, "application/json");
-
-                    var responseLine = await httpClient.PostAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/api/FICCI/FICCI/v1.0/companies(2d9345bb-769a-ed11-bff5-000d3af29678)/getPerformaInvoiceInfoLine", contentline);
-
-                    responseLine.EnsureSuccessStatusCode();
-
-                    var responseContentLine = responseLine.Content.ReadAsStringAsync().Result;
-
-                    VMS_PURCHASE_LINE_RESPONSE odatavalueLine = JsonConvert.DeserializeObject<VMS_PURCHASE_LINE_RESPONSE>(responseContentLine);
-
-                }
 
 
                 if (odatavalue != null)
@@ -750,6 +730,53 @@ namespace FICCI_API.Controller.API
                 _responseModel.Message = ex.Message;
             }
             return Ok(_responseModel);
+        }
+
+
+        [HttpPost("PostPILineData")]
+        public async Task<IActionResult> PostPILineData(PURCHASE_INVOICE_LINE purchase_line)
+        {
+            try
+            {
+                string result = await GetSecurityToken();
+                var httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Add("Authorization", result);
+
+                var insertPIDetails = CreatePostPILineJson(purchase_line);
+
+                HttpContent content = new StringContent(insertPIDetails, null, "application/json");
+
+                var response = await httpClient.PostAsync(_navURL + "/FICCI_CRM/ODataV4/Company('FICCI')/GetPerformaInvoiceInfoLine", content);
+
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                VMS_PURCHASE_LINE_RESPONSE odatavalue = JsonConvert.DeserializeObject<VMS_PURCHASE_LINE_RESPONSE>(responseContent);
+
+
+
+                if (odatavalue != null)
+                {
+                    _responseModel.Data = odatavalue;
+                    _responseModel.Status = true;
+                    _responseModel.Message = "PI Line Created";
+                }
+                else
+                {
+                    _responseModel.Data = null;
+                    _responseModel.Status = false;
+                    _responseModel.Message = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseModel.Data = ex;
+                _responseModel.Status = false;
+                _responseModel.Message = ex.Message;
+            }
+            return Ok();
         }
 
         private dynamic CreatePostPIHeaderJson(PURCHASE_INVOICE_HEADER objPurchaseHeaderModel)
@@ -790,37 +817,53 @@ namespace FICCI_API.Controller.API
 
         }
 
-
-        private dynamic CreatePostPILineJson(PURCHASE_INVOICE_LINE[] objPurchaseLineModel)
+        private string CreatePostPILineJson(PURCHASE_INVOICE_LINE objPurchaseLineModel)
         {
 
-            long LINE_NO = 0;
-            foreach (var item in objPurchaseLineModel)
-            {
-                if (LINE_NO <= 0)
-                {
-                    LINE_NO = 10000;
-                }
-                else
-                {
-                    LINE_NO = Convert.ToInt32(LINE_NO) + 10000;
-                }
+            //long LINE_NO = 0;
 
-                long LineNo = item.lineNo;
-                string DocumentNo = item.documentNo;
-                string DocumentType = "Invoice";
-                string Type = "G/L Account";
-                string No_ = item.no_;
-                string LocationCode = item.LocationCode;
-                string Quantity = item.quantity;
-                Nullable<decimal> UnitPrice = item.unitPrice;
-                Nullable<decimal> LineAmount = item.lineAmount;
-                string GSTGroupCode = item.gSTGroupCode;
-                string GST_Group_Type = item.gST_Group_Type;
-                string HSN_SAC_Code = item.hSN_SAC_Code;
-                Nullable<decimal> GSTCredit = item.gSTCredit;
 
-            }
+
+            // long LineNo = item.lineNo;
+            string DocumentNo = objPurchaseLineModel.documentNo;
+            string DocumentType = "Invoice";
+            string Type = "G/L Account";
+            string No_ = objPurchaseLineModel.no_;
+            string LocationCode = "FICCI-DL"; //item.LocationCode;
+            int Quantity = objPurchaseLineModel.quantity;
+            Nullable<decimal> UnitPrice = objPurchaseLineModel.unitPrice;
+            Nullable<decimal> LineAmount = objPurchaseLineModel.lineAmount;
+            string GSTGroupCode = objPurchaseLineModel.gSTGroupCode;
+            string GST_Group_Type = objPurchaseLineModel.gST_Group_Type;
+            string HSN_SAC_Code = objPurchaseLineModel.hSN_SAC_Code;
+            //  Nullable<decimal> GSTCredit = item.gSTCredit;
+
+            //foreach (var item in objPurchaseLineModel)
+            //{
+            //    if (LINE_NO <= 0)
+            //    {
+            //        LINE_NO = 10000;
+            //    }
+            //    else
+            //    {
+            //        LINE_NO = Convert.ToInt32(LINE_NO) + 10000;
+            //    }
+
+            //   // long LineNo = item.lineNo;
+            //    string DocumentNo = item.documentNo;
+            //    string DocumentType = "Invoice";
+            //    string Type = "G/L Account";
+            //    string No_ = item.no_;
+            //    string LocationCode = "FICCI-DL"; //item.LocationCode;
+            //    int Quantity =item.quantity;
+            //    Nullable<decimal> UnitPrice = item.unitPrice;
+            //    Nullable<decimal> LineAmount = item.lineAmount;
+            //    string GSTGroupCode = item.gSTGroupCode;
+            //    string GST_Group_Type = item.gST_Group_Type;
+            //    string HSN_SAC_Code = item.hSN_SAC_Code;
+            //  //  Nullable<decimal> GSTCredit = item.gSTCredit;
+
+            //}
 
             string json = JsonConvert.SerializeObject(objPurchaseLineModel);
             return json;

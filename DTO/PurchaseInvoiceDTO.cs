@@ -39,8 +39,6 @@ namespace FICCI_API.DTO
 
     }
 
-
-
     public partial class PURCHASE_INVOICE_HEADER
     {
 
@@ -93,27 +91,27 @@ namespace FICCI_API.DTO
         [JsonPropertyName("InvoicePortalSubmitted")]
         public bool InvoicePortalSubmitted { get; set; }
 
-        //[JsonPropertyName("sellToCity")]
-        //public string sellToCity { get; set; }
+        [JsonPropertyName("sellToCity")]
+        public string sellToCity { get; set; }
 
-        //[JsonPropertyName("sellToAddress")]
+        [JsonPropertyName("sellToAddress")]
 
-        //public string sellToAddress { get; set; }
+        public string sellToAddress { get; set; }
 
-        //[JsonPropertyName("sellToAddress2")]
-        //public string sellToAddress2 { get; set; }
+        [JsonPropertyName("sellToAddress2")]
+        public string sellToAddress2 { get; set; }
 
-        //[JsonPropertyName("sellToPostCode")]
-        //public string sellToPostCode { get; set; }
+        [JsonPropertyName("sellToPostCode")]
+        public string sellToPostCode { get; set; }
 
-        //[JsonPropertyName("sellToCountryRegionCode")]
-        //public string sellToCountryRegionCode { get; set; }
+        [JsonPropertyName("sellToCountryRegionCode")]
+        public string sellToCountryRegionCode { get; set; }
 
-        //[JsonPropertyName("GSTNo")]
-        //public string GSTNo { get; set; }
+        [JsonPropertyName("GST_No")]
+        public string GST_No { get; set; }
 
-        //[JsonPropertyName("PANNo")]
-        //public string PANNo { get; set; }       
+        [JsonPropertyName("PAN_No")]
+        public string PAN_No { get; set; }
 
     }
 
@@ -172,20 +170,20 @@ namespace FICCI_API.DTO
 
         public string sellToCountryRegionCode { get; set; }
 
-        public string GSTNo { get; set; }
+        public string GST_No { get; set; }
 
-        public string PANNo { get; set; }
+        public string PAN_No { get; set; }
 
 
     }
     public partial class PURCHASE_INVOICE_LINE
     {
 
-        [JsonPropertyName("documentNo")]
-        public string documentNo { get; set; }
-
         [JsonPropertyName("documentType")]
         public string documentType { get; set; }
+
+        [JsonPropertyName("documentNo")]
+        public string documentNo { get; set; }
 
         [JsonPropertyName("type")]
         public string type { get; set; }
@@ -193,23 +191,18 @@ namespace FICCI_API.DTO
         [JsonPropertyName("no_")]
         public string no_ { get; set; }
 
-        [JsonPropertyName("lineNo")]
-        public long lineNo { get; set; }
-
         [JsonPropertyName("LocationCode")]
         public string LocationCode { get; set; }
 
+
         [JsonPropertyName("quantity")]
-        public string quantity { get; set; }
+        public int quantity { get; set; }
         [JsonPropertyName("unitPrice")]
 
         public Nullable<decimal> unitPrice { get; set; }
 
         [JsonPropertyName("lineAmount")]
         public Nullable<decimal> lineAmount { get; set; }
-
-        [JsonPropertyName("gSTCredit")]
-        public decimal gSTCredit { get; set; }
 
         [JsonPropertyName("gSTGroupCode")]
         public string gSTGroupCode { get; set; }
@@ -219,6 +212,12 @@ namespace FICCI_API.DTO
 
         [JsonPropertyName("hSN_SAC_Code")]
         public string hSN_SAC_Code { get; set; }
+
+        [JsonPropertyName("lineNo")]
+        public long lineNo { get; set; }
+
+        //[JsonPropertyName("gSTCredit")]
+        //public decimal gSTCredit { get; set; }
 
 
     }
@@ -230,15 +229,25 @@ namespace FICCI_API.DTO
         public string documentType { get; set; }
         public string type { get; set; }
         public string no_ { get; set; }
-        public long lineNo { get; set; }
+        //public long lineNo { get; set; }
         public string LocationCode { get; set; }
-        public string quantity { get; set; }
+        public int quantity { get; set; }
         public Nullable<decimal> unitPrice { get; set; }
         public Nullable<decimal> lineAmount { get; set; }
-        public decimal gSTCredit { get; set; }
+        //  public decimal gSTCredit { get; set; }
         public string gSTGroupCode { get; set; }
         public string gST_Group_Type { get; set; }
         public string hSN_SAC_Code { get; set; }
+        public long lineNo { get; set; }
+    }
+
+
+
+    public class CancelEmployee
+    {
+        public string LoginId { get; set; }
+        public string Remarks { get; set; }
+        public int HeaderId { get; set; }
     }
 }
 

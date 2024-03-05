@@ -108,7 +108,7 @@ namespace FICCI_API.Models
         public List<IFormFile>? ImpiHeaderAttachment { get; set; }
         public string ImpiHeaderPaymentTerms { get; set; }
         public string ImpiHeaderRemarks { get; set; }
-        public bool? IsDraft { get; set; }
+        public bool IsDraft { get; set; }
         public string? ImpiHeaderPiNo { get; set; }
         public string LoginId { get; set; }
         public string? HeaderStatus { get; set; }

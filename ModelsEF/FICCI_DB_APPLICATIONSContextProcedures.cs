@@ -58,6 +58,26 @@ namespace FICCI_API.ModelsEF
             _context = context;
         }
 
+        public virtual async Task<int> Backup_FICCI_DatabaseAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                parameterreturnValue,
+            };
+            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[Backup_FICCI_Database]", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<prc_Approval_CustomerResult>> prc_Approval_CustomerAsync(string CustomerId, bool? IsApprove, string LoginId, int? statusid, string Remarks, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter

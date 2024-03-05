@@ -102,14 +102,14 @@ namespace FICCI_API.Controller.API
 
 
         [HttpGet("GetInvoice")]
-        public async Task<IActionResult> GetInvoice()
+        public async Task<IActionResult> GetInvoice(string loginid)
         {
             //var result = new PurchaseInvoice_Response();
             //var resu = new List<InvoiceList>();
             try
             {
                 PurchaseInvoice_New purchaseInvoice_New = new PurchaseInvoice_New();
-                var list = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderActive != false && x.HeaderStatusId == 5).ToListAsync();
+                var list = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderActive != false && x.HeaderStatusId == 5 || x.AccountApprover == loginid).ToListAsync();
 
                 if (list.Count > 0)
                 {

@@ -1,10 +1,12 @@
 ﻿using Azure.Core;
+using FICCI_API.DTO;
 using FICCI_API.Models;
 using FICCI_API.ModelsEF;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Drawing;
 using System.IO;
@@ -18,9 +20,11 @@ namespace FICCI_API.Controller.API
     public class PurchaseInvoice_NewController : BaseController
     {
         private readonly FICCI_DB_APPLICATIONSContext _dbContext;
-        public PurchaseInvoice_NewController(FICCI_DB_APPLICATIONSContext dbContext) : base(dbContext)
+        private readonly IConfiguration _configuration;
+        public PurchaseInvoice_NewController(FICCI_DB_APPLICATIONSContext dbContext, IConfiguration configuration) : base(dbContext)
         {
             _dbContext = dbContext;
+            _configuration = configuration;
         }
         [HttpPost]
         [Consumes("multipart/form-data")]
@@ -79,17 +83,53 @@ namespace FICCI_API.Controller.API
                         _dbContext.Add(ficciImpiHeader);
                         _dbContext.SaveChanges();
                         int returnid = ficciImpiHeader.ImpiHeaderId;
+                        string folder = ficciImpiHeader.ImpiHeaderRecordNo;
 
                         if (request.ImpiHeaderAttachment != null)
                         {
-                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid);
+                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim());
                         }
+
+                        //if (!request.IsDraft)
+                        //{
+                        //    NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+                        //    PURCHASE_INVOICE_HEADER header = new PURCHASE_INVOICE_HEADER();
+                        //    header.sellToCustomerName = request.ImpiHeaderCustomerName;
+                        //    header.sellToCustomerName2 = "";
+                        //    header.sellToCustomerNo = request.ImpiHeaderCustomerCode;
+                        //    header.ProjectCode = request.ImpiHeaderProjectCode;
+                        //    header.DepartmentName = request.ImpiHeaderProjectDepartmentName;
+                        //    header.DepartmentCode = request.ImpiHeaderProjectDepartmentCode;
+                        //    header.DivisionCode = request.ImpiHeaderProjectDivisionCode;
+                        //    header.DivisionName = request.ImpiHeaderProjectDivisionName;
+                        //    header.ApproverTL = request.ImpiHeaderTlApprover;
+                        //    header.ApproverCH = request.ImpiHeaderClusterApprover;
+                        //    header.ApproverSupport = request.ImpiHeaderSupportApprover;
+                        //    header.FinanceApprover = request.ImpiHeaderFinanceApprover;
+                        //    header.InvoicePortalOrder = false;
+                        //    header.InvoicePortalSubmitted = false;
+                        //    header.sellToCity = request.ImpiHeaderCustomerCity;
+                        //    header.sellToAddress = request.ImpiHeaderCustomerAddress;
+                        //    header.sellToAddress2 = "";
+                        //    header.sellToPostCode = request.ImpiHeaderCustomerPinCode;
+                        //    header.sellToCountryRegionCode = "";
+                        //    header.GST_No = request.ImpiHeaderGstNo;
+                        //    header.PAN_No = request.ImpiHeaderPanNo;
+                        //    dynamic response = await navERPController.PostPIData(header);
+                        //    _dbContext.SaveChanges();
+
+                        //}
+
 
                         FicciImwd imwd = new FicciImwd();
                         imwd.ImwdScreenName = "Invoice Approver";
                         imwd.CustomerId = returnid;
                         imwd.ImwdCreatedOn = DateTime.Now;
                         imwd.ImwdCreatedBy = request.LoginId;
+                        if(request.IsDraft == false)
+                        {
+                            imwd.ImwdPendingEmailAt = _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == returnid && x.HeaderStatusId == 2).Select(x => x.ImpiHeaderTlApprover).FirstOrDefault().ToString();
+                        }
                         imwd.ImwdStatus = request.IsDraft == true ? "1" : "2";
                         imwd.ImwdPendingAt = _dbContext.StatusMasters.Where(x => x.StatusId == ficciImpiHeader.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         imwd.ImwdInitiatedBy = request.LoginId;
@@ -129,6 +169,16 @@ namespace FICCI_API.Controller.API
                                 _dbContext.Add(FicciImpiLine);
                                 _dbContext.SaveChanges();
 
+                                //NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+                                //PURCHASE_INVOICE_LINE line = new PURCHASE_INVOICE_LINE();
+                                //line.documentType = k.DocumentType;
+                                //line.documentNo = k.ImpiDocumentNo;
+                                //line.type = "";
+                                //line.no_ = "";
+                                //line.LocationCode = "";
+                                //line.quantity =Convert.ToInt32(k.ImpiQuantity);
+                                //line.unitPrice = k.ImpiUnitPrice;
+                                //line.lineAmount = k.ImpiLineAmount;
 
                             }
 
@@ -178,15 +228,21 @@ namespace FICCI_API.Controller.API
                             //_dbContext.Add(data);
                             _dbContext.SaveChanges();
                             int returnid = data.ImpiHeaderId;
+                            string folder = data.ImpiHeaderRecordNo;
+
                             if (request.ImpiHeaderAttachment != null)
                             {
-                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid);
+                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder);
                             }
                             FicciImwd imwd = new FicciImwd();
                             imwd.ImwdScreenName = "Invoice Approver";
                             imwd.CustomerId = returnid;
                             imwd.ImwdCreatedOn = DateTime.Now;
                             imwd.ImwdCreatedBy = request.LoginId;
+                            if (request.IsDraft == false)
+                            {
+                                imwd.ImwdPendingEmailAt = _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == returnid && x.HeaderStatusId == 2).Select(x => x.ImpiHeaderTlApprover).FirstOrDefault().ToString();
+                            }
                             imwd.ImwdStatus = request.IsDraft == true ? "1" : "2";
                             imwd.ImwdPendingAt = _dbContext.StatusMasters.Where(x => x.StatusId == data.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                             imwd.ImwdInitiatedBy = request.LoginId;
@@ -457,8 +513,68 @@ namespace FICCI_API.Controller.API
         }
 
 
+
+        [HttpPost("CancelEmployee")]
+        public async Task<IActionResult> CancelEmployee(CancelEmployee employee)
+        {
+            try
+            {
+                if(employee.LoginId != null && employee.Remarks != null)
+                {
+                    var result = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == employee.HeaderId).FirstOrDefaultAsync();
+                    if(result == null)
+                    {
+                        return NotFound("No inovice found");
+                    }
+                    result.HeaderStatusId = 13;
+                    result.ImpiCancelBy = employee.LoginId;
+                    result.ImpiHeaderCancelRemarks = employee.Remarks;
+                    result.ImpiCancelOn = DateTime.Now;
+                    await _dbContext.SaveChangesAsync();
+
+                    FicciImwd imwd = new FicciImwd();
+                    imwd.ImwdScreenName = "Invoice Approver";
+                    imwd.CustomerId = employee.HeaderId;
+                    imwd.ImwdCreatedOn = DateTime.Now;
+                    imwd.ImwdCreatedBy = employee.LoginId;
+                    imwd.ImwdStatus = result.HeaderStatusId.ToString();
+                    imwd.ImwdPendingAt = _dbContext.StatusMasters.Where(x => x.StatusId == result.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
+                    imwd.ImwdInitiatedBy = employee.LoginId;
+                    imwd.ImwdRemarks = employee.Remarks;
+                    imwd.ImwdRole = _dbContext.FicciImums.Where(x => x.ImumEmail == employee.LoginId).Select(x => x.Role.RoleName).FirstOrDefault();
+                    imwd.ImwdType = 2;
+                    _dbContext.Add(imwd);
+
+                    _dbContext.SaveChanges();
+                    var responseObject = new
+                    {
+                        status = true,
+                        message = "Invoice has been Cancel",
+                        data = result
+                    };
+                    return StatusCode(200, responseObject);
+                }
+                else
+                {
+                    var responseObject = new
+                    {
+                        status = false,
+                        message = "Some error occured"
+                    };
+                    return StatusCode(200, responseObject);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+
+            }
+        }
+
+
         [NonAction]
-        public string UploadFile(List<IFormFile>? file1, string loginId,int headerid)
+        public string UploadFile(List<IFormFile>? file1, string loginId,int headerid,string? folder)
         {
             string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
             string fileids = "";
@@ -472,10 +588,11 @@ namespace FICCI_API.Controller.API
                 // Generate a unique filename to avoid conflicts
                 string uniqueFileName = timestamp;
                 var fileExtension = Path.GetExtension(file.FileName);
-                string folderpath = Path.Combine("wwwroot", "PurchaseInvoice");
+                string folderpath = Path.Combine("wwwroot", "PurchaseInvoice", folder);
+
                 // Combine the path where you want to store the file with the unique filename
-                string filePath = Path.Combine("wwwroot", "PurchaseInvoice", uniqueFileName + fileExtension);
-                string savefilePath = Path.Combine("PurchaseInvoice", uniqueFileName + fileExtension);
+                string filePath = Path.Combine("wwwroot", "PurchaseInvoice",folder, uniqueFileName + fileExtension);
+                string savefilePath = Path.Combine("PurchaseInvoice", folder, uniqueFileName + fileExtension);
                 if (!Directory.Exists(folderpath))
                 {
                     // The folder does not exist, so create it

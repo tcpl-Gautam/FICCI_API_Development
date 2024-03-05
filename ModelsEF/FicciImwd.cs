@@ -28,4 +28,6 @@ public partial class FicciImwd
     public int? CustomerId { get; set; }
 
     public int? ImwdType { get; set; }
+
+    public string ImwdPendingEmailAt { get; set; }
 }

@@ -107,5 +107,7 @@ public partial class FicciImpiHeader
 
     public string ImpiCancelBy { get; set; }
 
+    public string ImpiHeaderRecordNo { get; set; }
+
     public virtual ICollection<FicciImpiLine> FicciImpiLines { get; set; } = new List<FicciImpiLine>();
 }
