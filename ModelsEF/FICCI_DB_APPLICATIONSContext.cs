@@ -640,11 +640,17 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("Account_Approver_Remarks");
             entity.Property(e => e.HeaderStatusId).HasColumnName("Header_StatusId");
+            entity.Property(e => e.ImpiCancelBy)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_CancelBy");
+            entity.Property(e => e.ImpiCancelOn)
+                .HasColumnType("datetime")
+                .HasColumnName("IMPI_CancelOn");
             entity.Property(e => e.ImpiHeaderActive).HasColumnName("IMPI_HEADER_ACTIVE");
             entity.Property(e => e.ImpiHeaderAttachment).HasColumnName("IMPI_HEADER_ATTACHMENT");
-            entity.Property(e => e.ImpiHeaderCencelRemarks)
+            entity.Property(e => e.ImpiHeaderCancelRemarks)
                 .IsUnicode(false)
-                .HasColumnName("IMPI_HEADER_CENCEL_REMARKS");
+                .HasColumnName("IMPI_HEADER_CANCEL_REMARKS");
             entity.Property(e => e.ImpiHeaderClusterApprover)
                 .HasMaxLength(50)
                 .IsUnicode(false)

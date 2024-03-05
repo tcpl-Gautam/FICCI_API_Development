@@ -198,7 +198,7 @@ namespace FICCI_API.Controller.API
                             _dbContext.SaveChanges();
                             if (returnid != 0 && request.lineItem_Requests.Count > 0)
                             {
-                                var dataline = _dbContext.FicciImpiLines.ToList();
+                                var dataline = _dbContext.FicciImpiLines.Where(x => x.PiHeaderId == data.ImpiHeaderId).ToList();
                                 foreach (var l in dataline)
                                 {
                                     l.IsDeleted = true;
@@ -366,7 +366,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.TlApproveDate = k.ImpiHeaderTlApproverDate;
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
-                        purchaseInvoice_response.Attachments = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.Headerid == k.ImpiHeaderId).ToList();
+                        purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.Headerid == k.ImpiHeaderId).ToList();
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();

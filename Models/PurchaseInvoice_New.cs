@@ -67,7 +67,6 @@ namespace FICCI_API.Models
         public DateTime? FinanceApproveDate { get; set; }
 
         public int? HeaderStatusId { get; set; }
-        public List<FicciImad> Attachments { get; set; }
         public List<FicciImwd>? WorkFlowHistory { get; set; }
         public List<LineItem_request> lineItem_Requests { get; set; }
     }
@@ -121,7 +120,9 @@ namespace FICCI_API.Models
         public string? InvoiceRemarks { get; set; }
         public List<LineItem_request> lineItem_Requests { get; set; }
 
-
+        //public string? CancelRemarks { get; set; }
+        //public string? CancelBy { get; set; }
+        //public DateTime CancelOn { get; set; }
     }
     public class LineItem_request
     {

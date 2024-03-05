@@ -87,7 +87,7 @@ public partial class FicciImpiHeader
 
     public string ImpiHeaderRemarks { get; set; }
 
-    public string ImpiHeaderCencelRemarks { get; set; }
+    public string ImpiHeaderCancelRemarks { get; set; }
 
     public string ImpiHeaderPaymentTerms { get; set; }
 
@@ -102,6 +102,10 @@ public partial class FicciImpiHeader
     public DateTime? AccountApproverDate { get; set; }
 
     public string AccountApproverRemarks { get; set; }
+
+    public DateTime? ImpiCancelOn { get; set; }
+
+    public string ImpiCancelBy { get; set; }
 
     public virtual ICollection<FicciImpiLine> FicciImpiLines { get; set; } = new List<FicciImpiLine>();
 }
