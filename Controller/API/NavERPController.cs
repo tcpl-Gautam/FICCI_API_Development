@@ -830,7 +830,7 @@ namespace FICCI_API.Controller.API
             string Type = "G/L Account";
             string No_ = objPurchaseLineModel.no_;
             string LocationCode = "FICCI-DL"; //item.LocationCode;
-            int Quantity = objPurchaseLineModel.quantity;
+            int Quantity =Convert.ToInt32(objPurchaseLineModel.quantity);
             Nullable<decimal> UnitPrice = objPurchaseLineModel.unitPrice;
             Nullable<decimal> LineAmount = objPurchaseLineModel.lineAmount;
             string GSTGroupCode = objPurchaseLineModel.gSTGroupCode;

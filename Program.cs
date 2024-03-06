@@ -1,4 +1,5 @@
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using FICCI_API.ModelsEF;
 using FICCI_API.Models;
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
-//builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 //builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddControllersWithViews();

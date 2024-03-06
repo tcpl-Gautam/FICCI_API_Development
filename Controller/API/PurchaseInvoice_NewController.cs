@@ -11,6 +11,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 
 namespace FICCI_API.Controller.API
 {
@@ -87,6 +88,7 @@ namespace FICCI_API.Controller.API
                         _dbContext.Add(ficciImpiHeader);
                         _dbContext.SaveChanges();
                         int returnid = ficciImpiHeader.ImpiHeaderId;
+                        string documentNumber = "";
                         string folder = ficciImpiHeader.ImpiHeaderRecordNo;
 
                         if (request.ImpiHeaderAttachment != null)
@@ -94,35 +96,35 @@ namespace FICCI_API.Controller.API
                             ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim());
                         }
 
-                        //if (!request.IsDraft)
-                        //{
-                        //    NavERPController navERPController = new NavERPController(_configuration, _dbContext);
-                        //    PURCHASE_INVOICE_HEADER header = new PURCHASE_INVOICE_HEADER();
-                        //    header.sellToCustomerName = request.ImpiHeaderCustomerName;
-                        //    header.sellToCustomerName2 = "";
-                        //    header.sellToCustomerNo = request.ImpiHeaderCustomerCode;
-                        //    header.ProjectCode = request.ImpiHeaderProjectCode;
-                        //    header.DepartmentName = request.ImpiHeaderProjectDepartmentName;
-                        //    header.DepartmentCode = request.ImpiHeaderProjectDepartmentCode;
-                        //    header.DivisionCode = request.ImpiHeaderProjectDivisionCode;
-                        //    header.DivisionName = request.ImpiHeaderProjectDivisionName;
-                        //    header.ApproverTL = request.ImpiHeaderTlApprover;
-                        //    header.ApproverCH = request.ImpiHeaderClusterApprover;
-                        //    header.ApproverSupport = request.ImpiHeaderSupportApprover;
-                        //    header.FinanceApprover = request.ImpiHeaderFinanceApprover;
-                        //    header.InvoicePortalOrder = false;
-                        //    header.InvoicePortalSubmitted = false;
-                        //    header.sellToCity = request.ImpiHeaderCustomerCity;
-                        //    header.sellToAddress = request.ImpiHeaderCustomerAddress;
-                        //    header.sellToAddress2 = "";
-                        //    header.sellToPostCode = request.ImpiHeaderCustomerPinCode;
-                        //    header.sellToCountryRegionCode = "";
-                        //    header.GST_No = request.ImpiHeaderGstNo;
-                        //    header.PAN_No = request.ImpiHeaderPanNo;
-                        //    dynamic response = await navERPController.PostPIData(header);
-                        //    _dbContext.SaveChanges();
+                        if (!request.IsDraft)
+                        {
+                            NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+                            PURCHASE_INVOICE_HEADER header = new PURCHASE_INVOICE_HEADER();
+                            header.sellToCustomerName = "Ashoka University";
+                            header.sellToCustomerName2 = "-International Foundation for Research & Education";
+                            header.sellToCustomerNo = "C23599";
+                            header.ProjectCode = "GENERAL 3";
+                            header.DepartmentName = "Membership Services";
+                            header.DepartmentCode = "101048";
+                            header.DivisionCode = "1010";
+                            header.DivisionName = "FICCI-Delhi Office";
+                            header.ApproverTL = "NARAYAN.SWAMY";
+                            header.ApproverCH = "JYOTI.VIJ";
+                            header.ApproverSupport = "";
+                            header.FinanceApprover = "VIPIN.DHAMI";
+                            header.InvoicePortalOrder = false;
+                            header.InvoicePortalSubmitted = false;
+                            header.sellToCity = "Sonepat";
+                            header.sellToAddress = "Plot # 2, Rajiv Gandhi Education City,";
+                            header.sellToAddress2 = "National Capital Region, P O Rai,";
+                            header.sellToPostCode = "131029";
+                            header.sellToCountryRegionCode = "IN";
+                            header.GST_No = "06AAAJA2808E1ZV";
+                            header.PAN_No = "AAAJA2808E";
+                            dynamic response = await navERPController.PostPIData(header);
+                            documentNumber = response.Value.Data.no;
 
-                        //}
+                        }
 
 
                         FicciImwd imwd = new FicciImwd();
@@ -143,7 +145,7 @@ namespace FICCI_API.Controller.API
                         _dbContext.Add(imwd);
 
                         _dbContext.SaveChanges();
-                        if (returnid != 0 && request.lineItem_Requests.Count > 0)
+                        if (returnid != 0 && request.lineItem_Requests.Count > 0 && !request.IsDraft)
                         {
                             foreach (var k in request.lineItem_Requests)
                             {
@@ -172,6 +174,47 @@ namespace FICCI_API.Controller.API
                                 FicciImpiLine.ImpiType = k.ImpiType;
                                 _dbContext.Add(FicciImpiLine);
                                 _dbContext.SaveChanges();
+
+
+                                if (documentNumber != "" )
+                                {
+                                    NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+                                    PURCHASE_INVOICE_LINE line = new PURCHASE_INVOICE_LINE();
+                                    line.documentType = "Invoice";
+                                    line.documentNo = "SI210401";
+                                    line.type = "G/L Account";
+                                    line.no_ = "100310";
+                                    line.LocationCode = "FICCI-DL";
+                                    line.quantity = "1";
+                                    line.unitPrice = 4000.0M;
+                                    line.lineAmount =4000.0M;
+                                    line.gSTGroupCode = "GOODS-12";
+                                    line.gST_Group_Type = "Goods";
+                                    line.hSN_SAC_Code = "40169200";
+                                    line.lineNo = 10000;
+                                    line.gSTCredit = 0.0M;
+    //                                "documentNo": "SI210401",
+    //"documentType": "Invoice",
+    //"type": "G/L Account",
+    //"no_": "100310",
+    //"lineNo": 10000,
+    //"LocationCode": "FICCI-DL",
+    //"quantity": "1",
+    //"unitPrice": 4000.0,
+    //"lineAmount": 4000.0,
+    //"gSTCredit": 0.0,
+    //"gSTGroupCode": "GOODS-12",
+    //"gST_Group_Type": "Goods",
+    //"hSN_SAC_Code": "40169200"
+
+
+
+
+                                    dynamic response = await navERPController.PostPILineData(line);
+
+                                }
+
+
 
                                 //NavERPController navERPController = new NavERPController(_configuration, _dbContext);
                                 //PURCHASE_INVOICE_LINE line = new PURCHASE_INVOICE_LINE();

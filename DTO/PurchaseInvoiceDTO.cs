@@ -196,7 +196,7 @@ namespace FICCI_API.DTO
 
 
         [JsonPropertyName("quantity")]
-        public int quantity { get; set; }
+        public string quantity { get; set; }
         [JsonPropertyName("unitPrice")]
 
         public Nullable<decimal> unitPrice { get; set; }
@@ -216,8 +216,8 @@ namespace FICCI_API.DTO
         [JsonPropertyName("lineNo")]
         public long lineNo { get; set; }
 
-        //[JsonPropertyName("gSTCredit")]
-        //public decimal gSTCredit { get; set; }
+        [JsonPropertyName("gSTCredit")]
+        public decimal gSTCredit { get; set; }
 
 
     }
