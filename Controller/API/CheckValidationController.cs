@@ -20,8 +20,9 @@ namespace FICCI_API.Controller.API
         {
             try
             {
-                var resu = await _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerGstNo == GST).FirstOrDefaultAsync();
-                if (resu != null)
+                var resu = await _dbContext.Erpcustomers.Where(x => x.GstregistrationNo == GST).FirstOrDefaultAsync();
+                var res = await _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerGstNo == GST).FirstOrDefaultAsync();
+                if (resu != null || res != null)
                 {
                     var responseObject = new
                     {
@@ -51,8 +52,9 @@ namespace FICCI_API.Controller.API
         {
             try
             {
-                var resu = await _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerPanNo == PAN).FirstOrDefaultAsync();
-                if (resu != null)
+                var resu = await _dbContext.Erpcustomers.Where(x => x.PanNo == PAN).FirstOrDefaultAsync();
+                var res = await _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerPanNo == PAN).FirstOrDefaultAsync();
+                if (resu != null || res != null)
                 {
                     var responseObject = new
                     {
