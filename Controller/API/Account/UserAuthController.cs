@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FICCI_API.Controller;
+using FICCI_API.Models.Services;
 
 namespace FICCI_API.Controller.API.Account
 {
@@ -14,11 +15,11 @@ namespace FICCI_API.Controller.API.Account
     public class UserAuthController : BaseController
     {
         private readonly FICCI_DB_APPLICATIONSContext _dbContext;
-       // private readonly ITokenService _tokenRepo;
-        public UserAuthController(FICCI_DB_APPLICATIONSContext dbContext) : base(dbContext)
+        private readonly IConfiguration _configuration;
+        public UserAuthController(FICCI_DB_APPLICATIONSContext dbContext, IConfiguration configuration) : base(dbContext)
         {
-           // _tokenRepo = tokenRepo ?? throw new ArgumentNullException(nameof(tokenRepo));
             _dbContext = dbContext;
+            _configuration = configuration;
         }
 
 
@@ -33,16 +34,7 @@ namespace FICCI_API.Controller.API.Account
         //}
 
 
-        //private async Task LogUserData(int empId, string generatedToken, bool status)
-        //{
-        //    _dbContext.Userloginlogs.Add(new Userloginlog
-        //    {
-        //        EmpId = empId,
-        //        JwtToken = generatedToken,
-        //        LoginStatus = status,
-        //    });
-        //    await _dbContext.SaveChangesAsync();
-        //}
+
 
         [HttpPost]
         public async Task<IActionResult> Login(UserRequestDto requestData)
@@ -52,7 +44,6 @@ namespace FICCI_API.Controller.API.Account
                 if (requestData != null)
                 {
                   
-
                     //check if email exist in database
                     bool emailValid = await _dbContext.FicciImums.AnyAsync(x => x.ImumEmail == requestData.Email);
                     if (!emailValid)
@@ -64,7 +55,10 @@ namespace FICCI_API.Controller.API.Account
                         };
                         return StatusCode(200, response);
                     }
-                   
+
+                    TokenService token = new TokenService(_configuration);
+                    var generateToken = await token.CreateToken(requestData);
+
                     //checks password and email for authenticate
                     var res = await _dbContext.FicciImums
                         .Where(x => x.ImumEmail == requestData.Email && x.ImumPassword == requestData.Password && x.ImumActive != false)
@@ -77,7 +71,7 @@ namespace FICCI_API.Controller.API.Account
                             RoleName = _dbContext.TblFicciRoles.Where(m => m.RoleId == user.RoleId).Select(x => x.RoleName).FirstOrDefault().ToString(),
                             IsApprover =  _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email|| m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
                             Invoice_IsApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email || m.ImpiHeaderClusterApprover == requestData.Email || m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
-                            Token = user.ImumEmail
+                            Token = generateToken
                         })
                         .FirstOrDefaultAsync();
 
@@ -109,6 +103,17 @@ namespace FICCI_API.Controller.API.Account
             {
                 return StatusCode(500, new { status = false, message = "An error occurred while fetching the detail of Customers." });
             }
-        }   
+        }
+
+        private async Task LogUserData(int empId, string generatedToken, bool status)
+        {
+            _dbContext.Userloginlogs.Add(new Userloginlog
+            {
+                EmpId = empId,
+                JwtToken = generatedToken,
+                LoginStatus = status,
+            });
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

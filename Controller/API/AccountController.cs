@@ -109,7 +109,7 @@ namespace FICCI_API.Controller.API
             try
             {
                 PurchaseInvoice_New purchaseInvoice_New = new PurchaseInvoice_New();
-                var list = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderActive != false && x.HeaderStatusId == 5 || x.AccountApprover == loginid).ToListAsync();
+                var list = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderActive != false && x.HeaderStatusId == 5  || (x.AccountApprover == loginid && x.AccountApproverDate != null)).ToListAsync();
 
                 if (list.Count > 0)
                 {

@@ -3,11 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using FICCI_API.ModelsEF;
 using FICCI_API.Models;
 using System.Runtime;
+using FICCI_API.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+//builder.Services.AddIdentityServices(builder.Configuration);
+//builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<FICCI_DB_APPLICATIONSContext>(
@@ -40,6 +43,6 @@ app.UseRouting();
 app.MapControllerRoute(name: "default", pattern: "{controller=Swagger}/{action=Index}");
 app.UseAuthorization();
 
-
+app.UseAuthentication();
 
 app.Run();

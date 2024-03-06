@@ -74,6 +74,10 @@ namespace FICCI_API.Controller.API
                         ficciImpiHeader.ImpiHeaderTlApprover = "amit.jha@teamcomputers.com";//request.ImpiHeaderTlApprover + "@ficci.com";
                         ficciImpiHeader.ImpiHeaderClusterApprover = "debananda.panda@teamcomputers.com";//request.ImpiHeaderClusterApprover + "@ficci.com";
                         ficciImpiHeader.ImpiHeaderFinanceApprover = "gautam.v@teamcomputers.com";//request.ImpiHeaderFinanceApprover + "@ficci.com";
+                        ficciImpiHeader.ImpiHeaderTlApproverDate = null;
+                        ficciImpiHeader.ImpiHeaderClusterApproverDate = null;
+                        ficciImpiHeader.ImpiHeaderFinanceApproverDate = null;
+                        ficciImpiHeader.AccountApproverDate = null;
                         if (request.ImpiHeaderSupportApprover != null)
                         {
                             ficciImpiHeader.ImpiHeaderSupportApprover = request.ImpiHeaderSupportApprover + "@ficci.com";
@@ -223,7 +227,10 @@ namespace FICCI_API.Controller.API
                             data.ImpiHeaderStatus = request.IsDraft == true ? "Draft" : "Pending";
                             data.IsDraft = request.IsDraft;
                             data.HeaderStatusId = request.IsDraft == true ? 1 : 2;
-
+                            data.ImpiHeaderTlApproverDate = null;
+                            data.ImpiHeaderClusterApproverDate = null;
+                            data.ImpiHeaderFinanceApproverDate = null;
+                            data.AccountApproverDate = null;
 
                             //_dbContext.Add(data);
                             _dbContext.SaveChanges();
@@ -420,6 +427,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.AccountApprover = k.AccountApprover;
                         purchaseInvoice_response.AccountApproveDate = k.AccountApproverDate;
                         purchaseInvoice_response.TlApproveDate = k.ImpiHeaderTlApproverDate;
+                        purchaseInvoice_response.HeaderStatusId = k.HeaderStatusId;
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
                         purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.Headerid == k.ImpiHeaderId).ToList();
