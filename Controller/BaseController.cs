@@ -10,21 +10,26 @@ using Microsoft.Extensions.Options;
 using System.Reflection.PortableExecutable;
 using FICCI_API.DTO;
 using System.IO;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FICCI_API.Controller
 {
     public class BaseController : ControllerBase
     {
       public readonly FICCI_DB_APPLICATIONSContext _context;
-       
-        public BaseController(FICCI_DB_APPLICATIONSContext context)
+        //private readonly SymmetricSecurityKey _key;
+
+        public BaseController(FICCI_DB_APPLICATIONSContext context/*, IConfiguration config*/)
         {
             this._context = context;
+            //_key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
         }
 
 
-     
+
         [NonAction]
         public string AssignhtmlBody(string EmailLink, string custName, string CityCode, string PAN, string GST, string ContactPerson, string? PhoneNo)
         {
@@ -112,7 +117,7 @@ namespace FICCI_API.Controller
                         smtp.Credentials = NetworkCred;
                         smtp.Port = Convert.ToInt32(_mySettings.Port);
                         smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                        smtp.Send(mail);
+                        //smtp.Send(mail);
 
 
                     }
@@ -208,6 +213,36 @@ namespace FICCI_API.Controller
             }
 
         }
+
+        //[NonAction]
+        //public bool CheckToken(string loginId, string token)
+        //{
+        //    try
+        //    {
+        //        var tokenHandler = new JwtSecurityTokenHandler();
+        //        var validationParameters = new TokenValidationParameters
+        //        {
+        //            ValidateIssuerSigningKey = true,
+        //            IssuerSigningKey = _key,
+        //            ValidateIssuer = false,
+        //            ValidateAudience = false,
+        //            ClockSkew = TimeSpan.Zero
+        //        };
+        //        SecurityToken validatedToken;
+        //        var resu = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+        //        if (validatedToken is JwtSecurityToken jwtSecurityToken)
+        //        {
+        //            var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
+        //            return email == loginId;
+        //        }
+        //        return false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return false;
+        //    }
+        //}
+
     }
 }
 

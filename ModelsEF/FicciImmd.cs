@@ -40,4 +40,6 @@ public partial class FicciImmd
     public int? ResourceId { get; set; }
 
     public bool? IsSent { get; set; }
+
+    public int? ResourceTypeId { get; set; }
 }

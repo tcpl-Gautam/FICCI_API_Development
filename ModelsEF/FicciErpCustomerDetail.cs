@@ -103,5 +103,7 @@ public partial class FicciErpCustomerDetail
 
     public string AccountRemarks { get; set; }
 
+    public string CusotmerRecordNo { get; set; }
+
     public virtual GstCustomerType GstCustomerTypeNavigation { get; set; }
 }

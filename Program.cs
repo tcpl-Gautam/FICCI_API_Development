@@ -5,14 +5,20 @@ using FICCI_API.ModelsEF;
 using FICCI_API.Models;
 using System.Runtime;
 using FICCI_API.Extension;
+using Microsoft.Extensions.Logging;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var path = Directory.GetCurrentDirectory();
 // Add services to the container.
 builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
 builder.Services.AddIdentityServices(builder.Configuration);
 //builder.Services.AddApplicationServices(builder.Configuration);
-
+builder.Services.AddLogging(builder =>
+{
+    builder.AddConsole(); // Add console logging
+    builder.AddFile($"{path}\\Logs\\"); // Add file logging
+});
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<FICCI_DB_APPLICATIONSContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

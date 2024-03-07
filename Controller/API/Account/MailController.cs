@@ -43,7 +43,7 @@ namespace FICCI_API.Controller.API.Account
             try
             {
                 // mail.ResourceType = "Customer";
-                if (mail == null)
+                if (mail == null || mail.ResourceId < 0)
                 {
                     return BadRequest(new { status = false, message = "Invalid Data" });
                 }
@@ -62,9 +62,10 @@ namespace FICCI_API.Controller.API.Account
                 //            Attachment fileAttachment = new Attachment(ms, mail.Attachments.FileName);
                 //            emailAttachments.Add(fileAttachment);
                 //        }
-                    
+
                 //}
-                var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, "Invoice", mail.LoginId, mail.ResourceId, mail.Attachments);
+                
+                var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, "Invoice", mail.LoginId, mail.ResourceId, mail.Attachments,2);
                 if (resu == true)
                 {
                     var response = new
@@ -93,8 +94,39 @@ namespace FICCI_API.Controller.API.Account
             }
         }
 
+        [HttpGet("LastestEmail")]
+        public async Task<IActionResult> LastestEmail(int invoiceId)
+        {
+            try
+            {
+                var resu = await _dbContext.FicciImmds.Where(x => x.ResourceId == invoiceId && x.ResourceTypeId ==2 && x.ImmdActive != false).OrderByDescending(x => x.ImmdMailSentOn).FirstOrDefaultAsync();
+               if(resu == null)
+                {
+                    var result = new
+                    {
+                        status = false,
+                        message = "Cannot find Mail details",
+                        data = resu
+                    };
+                    return StatusCode(200, result);
+                }
+                var response = new
+                {
+                    status = true,
+                    message = "Mail details fetch successfully",
+                    data = resu
+                };
+                return StatusCode(200, response);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
         [NonAction]
-        public bool MailMethod(string mailTo, string mailCC, string mailSubject, string mailBody, string? ResourceType, string LoginId, int? resourceId,IFormFile emailAttachment)
+        public bool MailMethod(string mailTo, string mailCC, string mailSubject, string mailBody, string? ResourceType, string LoginId, int? resourceId,IFormFile emailAttachment,int ResourceTypeId)
         {
             try
             {
@@ -116,6 +148,7 @@ namespace FICCI_API.Controller.API.Account
                 immd.ResourceId = resourceId;
                 immd.ImmdMailSentOn = DateTime.Now;
                 immd.ImmdCreatedOn = DateTime.Now;
+                immd.ResourceTypeId = ResourceTypeId;
                 _dbContext.Add(immd);
                 _dbContext.SaveChanges();
 

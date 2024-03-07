@@ -10,6 +10,12 @@ namespace FICCI_API.ModelsEF
     public partial class FICCI_DB_APPLICATIONSContext
     {
 
+        [DbFunction("FICCI_GETCUSTOMERNUMBERSEQ", "dbo")]
+        public static string FICCI_GETCUSTOMERNUMBERSEQ()
+        {
+            throw new NotSupportedException("This method can only be called from Entity Framework Core queries");
+        }
+
         [DbFunction("FICCI_GETPINUMBERSEQ", "dbo")]
         public static string FICCI_GETPINUMBERSEQ()
         {

@@ -176,6 +176,10 @@
          "ObjectType": 1
       },
       {
+         "Name": "[dbo].[FICCI_GETCUSTOMERNUMBERSEQ]",
+         "ObjectType": 2
+      },
+      {
          "Name": "[dbo].[FICCI_GETPINUMBERSEQ]",
          "ObjectType": 2
       }

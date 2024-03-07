@@ -145,7 +145,7 @@ namespace FICCI_API.Controller.API
                         _dbContext.Add(imwd);
 
                         _dbContext.SaveChanges();
-                        if (returnid != 0 && request.lineItem_Requests.Count > 0 && !request.IsDraft)
+                        if (returnid != 0 && request.lineItem_Requests.Count > 0)
                         {
                             foreach (var k in request.lineItem_Requests)
                             {
@@ -176,7 +176,7 @@ namespace FICCI_API.Controller.API
                                 _dbContext.SaveChanges();
 
 
-                                if (documentNumber != "" )
+                                if (documentNumber != "" && !request.IsDraft)
                                 {
                                     NavERPController navERPController = new NavERPController(_configuration, _dbContext);
                                     PURCHASE_INVOICE_LINE line = new PURCHASE_INVOICE_LINE();

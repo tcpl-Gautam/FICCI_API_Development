@@ -16,9 +16,11 @@ namespace FICCI_API.Controller.API
     public class DropDownController : BaseController
     {
         private readonly FICCI_DB_APPLICATIONSContext _dbContext;
-        public DropDownController(FICCI_DB_APPLICATIONSContext dbContext) : base(dbContext)
+        private readonly ILogger<DropDownController> _logger;
+        public DropDownController(FICCI_DB_APPLICATIONSContext dbContext, ILogger<DropDownController> logger) : base(dbContext)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet("GetRole")]
@@ -117,6 +119,14 @@ namespace FICCI_API.Controller.API
         {
             try
             {
+                // Retrieve the bearer token from the Authorization header
+                string accessToken = HttpContext.Request.Headers["Authorization"].ToString();
+
+                // Remove the "Bearer " prefix to get just the token value
+                accessToken = accessToken.Replace("Bearer ", "");
+                _logger.LogWarning("Waring");
+                _logger.LogInformation("Waring");
+                _logger.LogDebug("Waring");
                 var city = await _dbContext.Cities.Where(x => x.IsDelete != true && x.IsActive != false).OrderBy(x => x.CityName).ToListAsync();
                 if (city.Count > 0)
                 {

@@ -213,6 +213,11 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("CUSOTMER_NO");
+            entity.Property(e => e.CusotmerRecordNo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("([dbo].[FICCI_GETCUSTOMERNUMBERSEQ]())")
+                .HasColumnName("CUSOTMER_RECORD_NO");
             entity.Property(e => e.CustoemrAddress)
                 .IsUnicode(false)
                 .HasColumnName("CUSTOEMR_ADDRESS");
@@ -621,6 +626,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Resource_Type");
+            entity.Property(e => e.ResourceTypeId).HasColumnName("Resource_Type_Id");
         });
 
         modelBuilder.Entity<FicciImpiHeader>(entity =>
