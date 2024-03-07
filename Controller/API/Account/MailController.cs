@@ -53,8 +53,10 @@ namespace FICCI_API.Controller.API.Account
                 
                 
                 var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, "Invoice", mail.LoginId, mail.ResourceId, mail.Attachments,3);
+                
                 if (resu == true)
                 {
+                    _dbContext.Database.ExecuteSqlRaw($"Update FICCI_IMPI_HEADER set Header_StatusId = 14 where IMPI_HEADER_ID = {mail.ResourceId}");
                     var response = new
                     {
                         status = true,
