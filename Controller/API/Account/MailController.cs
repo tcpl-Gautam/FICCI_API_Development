@@ -90,7 +90,7 @@ namespace FICCI_API.Controller.API.Account
             {
                var resu = await _dbContext.FicciImmds.Where(x => x.ResourceId == invoiceId && x.ResourceTypeId == 3 && x.ImmdActive != false).OrderByDescending(x => x.ImmdMailSentOn).FirstOrDefaultAsync();
                // resu.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId).ToList();
-
+               
                 if (resu == null)
                 {
                     var resp = new
@@ -101,7 +101,7 @@ namespace FICCI_API.Controller.API.Account
                     };
                     return StatusCode(200, resp);
                 }
-                var result = await _dbContext.FicciImads.Where(x => x.ResourceId == resu.ImmdId).ToListAsync();
+                var result = await _dbContext.FicciImads.Where(x => x.ResourceId == resu.ImmdId && x.ResourceTypeId == 3).ToListAsync();
 
                 var response = new
                 {
