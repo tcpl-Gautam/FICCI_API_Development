@@ -395,7 +395,6 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.ToTable("FICCI_IMAD");
 
             entity.Property(e => e.ImadId).HasColumnName("IMAD_ID");
-            entity.Property(e => e.Headerid).HasColumnName("headerid");
             entity.Property(e => e.ImadActive).HasColumnName("IMAD_ACTIVE");
             entity.Property(e => e.ImadCreatedBy)
                 .IsRequired()
@@ -436,6 +435,11 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImadScreenName)
                 .IsUnicode(false)
                 .HasColumnName("IMAD_SCREEN_NAME");
+            entity.Property(e => e.ResourceType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Resource_Type");
+            entity.Property(e => e.ResourceTypeId).HasColumnName("Resource_Type_Id");
         });
 
         modelBuilder.Entity<FicciImem>(entity =>
@@ -1188,9 +1192,14 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
         {
             entity.HasKey(e => e.UserLoginLogId).HasName("PK__Userlogi__AB731A61DD30867F");
 
+            entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
             entity.Property(e => e.LoginDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.LoginId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwCustomerApprovalList>(entity =>

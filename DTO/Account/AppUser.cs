@@ -12,6 +12,29 @@ namespace FICCI_API.DTO.Account
         public string UserId { get; set; }
 
     }
+    public class Users
+    {
+        public string UserName
+        {
+            get;
+            set;
+        }
+        public Guid Id
+        {
+            get;
+            set;
+        }
+        public string EmailId
+        {
+            get;
+            set;
+        }
+        public string Password
+        {
+            get;
+            set;
+        }
+    }
     public class UserRequestDto
     {
         public string Email { get; set; }

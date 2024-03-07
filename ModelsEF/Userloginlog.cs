@@ -9,11 +9,13 @@ public partial class Userloginlog
 {
     public int UserLoginLogId { get; set; }
 
-    public int EmpId { get; set; }
+    public string LoginId { get; set; }
 
     public DateTime? LoginDate { get; set; }
 
     public string JwtToken { get; set; }
 
     public bool? LoginStatus { get; set; }
+
+    public DateTime? ExpiryDate { get; set; }
 }

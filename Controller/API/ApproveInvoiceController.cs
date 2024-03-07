@@ -102,7 +102,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
                         purchaseInvoice_response.AccountApproverRemarks = k.AccountApproverRemarks;
-                        purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.Headerid == k.ImpiHeaderId).ToList();
+                        purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
                         if (lindata.Count > 0)
                         {

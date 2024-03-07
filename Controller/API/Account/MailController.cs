@@ -48,24 +48,11 @@ namespace FICCI_API.Controller.API.Account
                     return BadRequest(new { status = false, message = "Invalid Data" });
                 }
 
-                // SendEmailData(mail.MailTo,mail.MailCC,mail.MailSubject,mail.MailBody,_mySettings);
-               // mail.ResourceType = "Invoice";
-                var emailAttachments = new List<Attachment>();
-                //if (mail.Attachments != null)
-                //{
-                //    //foreach (var attachment in mail.Attachments)
-                //    //{
-                //        using (MemoryStream ms = new MemoryStream())
-                //        {
-                //            mail.Attachments.CopyTo(ms);
-                //            ms.Seek(0, SeekOrigin.Begin);
-                //            Attachment fileAttachment = new Attachment(ms, mail.Attachments.FileName);
-                //            emailAttachments.Add(fileAttachment);
-                //        }
 
-                //}
+                var emailAttachments = new List<Attachment>();
                 
-                var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, "Invoice", mail.LoginId, mail.ResourceId, mail.Attachments,2);
+                
+                var resu = MailMethod(mail.MailTo, mail.MailCC, mail.MailSubject, mail.MailBody, "Invoice", mail.LoginId, mail.ResourceId, mail.Attachments,3);
                 if (resu == true)
                 {
                     var response = new
@@ -99,22 +86,27 @@ namespace FICCI_API.Controller.API.Account
         {
             try
             {
-                var resu = await _dbContext.FicciImmds.Where(x => x.ResourceId == invoiceId && x.ResourceTypeId ==2 && x.ImmdActive != false).OrderByDescending(x => x.ImmdMailSentOn).FirstOrDefaultAsync();
-               if(resu == null)
+               var resu = await _dbContext.FicciImmds.Where(x => x.ResourceId == invoiceId && x.ResourceTypeId == 3 && x.ImmdActive != false).OrderByDescending(x => x.ImmdMailSentOn).FirstOrDefaultAsync();
+               // resu.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId).ToList();
+
+                if (resu == null)
                 {
-                    var result = new
+                    var resp = new
                     {
                         status = false,
                         message = "Cannot find Mail details",
                         data = resu
                     };
-                    return StatusCode(200, result);
+                    return StatusCode(200, resp);
                 }
+                var result = await _dbContext.FicciImads.Where(x => x.ResourceId == resu.ImmdId).ToListAsync();
+
                 var response = new
                 {
                     status = true,
                     message = "Mail details fetch successfully",
-                    data = resu
+                    data = resu,
+                    attachment = result
                 };
                 return StatusCode(200, response);
             }
@@ -126,7 +118,7 @@ namespace FICCI_API.Controller.API.Account
 
 
         [NonAction]
-        public bool MailMethod(string mailTo, string mailCC, string mailSubject, string mailBody, string? ResourceType, string LoginId, int? resourceId,IFormFile emailAttachment,int ResourceTypeId)
+        public bool MailMethod(string mailTo, string mailCC, string mailSubject, string mailBody, string? ResourceType, string LoginId, int? resourceId,List<IFormFile>? emailAttachment,int ResourceTypeId)
         {
             try
             {
@@ -151,7 +143,11 @@ namespace FICCI_API.Controller.API.Account
                 immd.ResourceTypeId = ResourceTypeId;
                 _dbContext.Add(immd);
                 _dbContext.SaveChanges();
-
+                int returnid = immd.ImmdId;
+                if(returnid != null)
+                {
+                    UploadFile(emailAttachment, LoginId, returnid, "Invoice_Mail_Attachment",3,"Invoice_Header_Mail","Invoice_Account_Setting");
+                }
                 return isEmailSent;
 
             }

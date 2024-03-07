@@ -93,7 +93,7 @@ namespace FICCI_API.Controller.API
 
                         if (request.ImpiHeaderAttachment != null)
                         {
-                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim());
+                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim(), 2,"Invoice_Header","Invoice");
                         }
 
                         if (!request.IsDraft)
@@ -282,7 +282,7 @@ namespace FICCI_API.Controller.API
 
                             if (request.ImpiHeaderAttachment != null)
                             {
-                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim());
+                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim(), 2, "Invoice_Header", "Invoice");
                             }
                             FicciImwd imwd = new FicciImwd();
                             imwd.ImwdScreenName = "Invoice Approver";
@@ -473,7 +473,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.HeaderStatusId = k.HeaderStatusId;
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
-                        purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.Headerid == k.ImpiHeaderId).ToList();
+                        purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
@@ -621,83 +621,6 @@ namespace FICCI_API.Controller.API
                 return BadRequest(ex.Message);
 
             }
-        }
-
-
-        [NonAction]
-        public string UploadFile(List<IFormFile>? file1, string loginId,int headerid,string? folder)
-        {
-            string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
-            string fileids = "";
-            if (file1 == null || !file1.Any())
-            {
-                return null; // Handle invalid file
-            }
-
-            foreach (var file in file1)
-            {
-                // Generate a unique filename to avoid conflicts
-                string uniqueFileName = timestamp;
-                var fileExtension = Path.GetExtension(file.FileName);
-                string folderpath = Path.Combine("wwwroot", "PurchaseInvoice", folder);
-
-                // Combine the path where you want to store the file with the unique filename
-                string filePath = Path.Combine("wwwroot", "PurchaseInvoice",folder, uniqueFileName + fileExtension);
-                string savefilePath = Path.Combine("PurchaseInvoice", folder, uniqueFileName + fileExtension);
-                if (!Directory.Exists(folderpath))
-                {
-                    // The folder does not exist, so create it
-                    Directory.CreateDirectory(folderpath);
-
-                }
-                // Save the file to the specified path
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
-                FileInfoModel fileInfoModel = new FileInfoModel();
-
-
-
-                fileInfoModel.FileName = file.FileName;
-                fileInfoModel.Size = file.Length;
-                fileInfoModel.ContentType = file.ContentType;
-                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId,headerid);
-                // Return the file path
-                fileids += reurnId + ",";
-            }
-            return fileids.TrimEnd(',');
-        }
-        [NonAction]
-        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid)
-        {
-            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
-            {
-                try
-                {
-                    FicciImad imad = new FicciImad();
-                    imad.ImadCreatedBy = loginId;
-                    imad.ImadCreatedOn = DateTime.Now;
-                    imad.ImadActive = true;
-                    imad.ImadFileName = fileName;
-                    imad.ImadFileSize = length.ToString();
-                    imad.ImadFileType = contentType;
-                    imad.ImadFileUrl = path;
-                    imad.ImadScreenName = "Invoice";
-                    imad.Headerid = headerid;
-                    _dbContext.Add(imad);
-                    _dbContext.SaveChanges();
-                    int returnId = imad.ImadId;
-                    transaction.Commit();
-                    return returnId;
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-
         }
 
     }

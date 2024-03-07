@@ -8,7 +8,7 @@
         public string MailBody { get; set; }
         public string LoginId { get; set; }
         public int? ResourceId { get; set; }
-        public  IFormFile? Attachments { get; set; }
+        public  List<IFormFile>? Attachments { get; set; }
 
     }
 }

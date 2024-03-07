@@ -13,18 +13,18 @@ using System.IO;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FICCI_API.Controller.API;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FICCI_API.Controller
 {
     public class BaseController : ControllerBase
     {
       public readonly FICCI_DB_APPLICATIONSContext _context;
-        //private readonly SymmetricSecurityKey _key;
 
-        public BaseController(FICCI_DB_APPLICATIONSContext context/*, IConfiguration config*/)
+        public BaseController(FICCI_DB_APPLICATIONSContext context)
         {
             this._context = context;
-            //_key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
         }
 
@@ -125,7 +125,7 @@ namespace FICCI_API.Controller
                 catch (Exception ex)
                 {
 
-
+                    throw;
 
                 }
             }
@@ -136,7 +136,7 @@ namespace FICCI_API.Controller
 
         }
         [NonAction]
-        public bool SendEmailData(string MailTo, string MailCC, string MailSubject, string MailBody, MySettings? _mySettings,IFormFile? attachments)
+        public bool SendEmailData(string MailTo, string MailCC, string MailSubject, string MailBody, MySettings? _mySettings,List<IFormFile>? attachments)
         {
             if (Convert.ToBoolean(_mySettings.MailFlag))
             {
@@ -167,15 +167,19 @@ namespace FICCI_API.Controller
                                 mail.Bcc.Add(item);
                             }
                         }
-                        if (attachments != null && attachments.Length > 0)
+                        if (attachments != null && attachments.Any())
                         {
-                            MemoryStream ms = new MemoryStream();
-                            
-                                attachments.CopyTo(ms);
+                            foreach(var item in attachments)
+                            {
+                                MemoryStream ms = new MemoryStream();
+
+                                item.CopyTo(ms);
                                 ms.Seek(0, SeekOrigin.Begin);
-                                Attachment fileAttachment = new Attachment(ms, attachments.FileName);
+                                Attachment fileAttachment = new Attachment(ms, item.FileName);
                                 mail.Attachments.Add(fileAttachment);
                                 ms.Flush();
+                            }
+                           
                             
                         }
 
@@ -214,34 +218,102 @@ namespace FICCI_API.Controller
 
         }
 
-        //[NonAction]
-        //public bool CheckToken(string loginId, string token)
-        //{
-        //    try
-        //    {
-        //        var tokenHandler = new JwtSecurityTokenHandler();
-        //        var validationParameters = new TokenValidationParameters
-        //        {
-        //            ValidateIssuerSigningKey = true,
-        //            IssuerSigningKey = _key,
-        //            ValidateIssuer = false,
-        //            ValidateAudience = false,
-        //            ClockSkew = TimeSpan.Zero
-        //        };
-        //        SecurityToken validatedToken;
-        //        var resu = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-        //        if (validatedToken is JwtSecurityToken jwtSecurityToken)
-        //        {
-        //            var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
-        //            return email == loginId;
-        //        }
-        //        return false;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return false;
-        //    }
-        //}
+        [NonAction]
+        public bool CheckToken(string token)
+        {
+            try
+            {
+               var resu = _context.Userloginlogs.Where(x => x.JwtToken == token).OrderByDescending(x => x.LoginDate).FirstOrDefault();
+                if (resu != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        [NonAction]
+        public string UploadFile(List<IFormFile>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName)
+        {
+            string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string fileids = "";
+            if (file1 == null || !file1.Any())
+            {
+                return null; // Handle invalid file
+            }
+
+            foreach (var file in file1)
+            {
+                // Generate a unique filename to avoid conflicts
+                string uniqueFileName = timestamp;
+                var fileExtension = Path.GetExtension(file.FileName);
+                string folderpath = Path.Combine("wwwroot", "PurchaseInvoice", folder);
+
+                // Combine the path where you want to store the file with the unique filename
+                string filePath = Path.Combine("wwwroot", "PurchaseInvoice", folder, uniqueFileName + fileExtension);
+                string savefilePath = Path.Combine("PurchaseInvoice", folder, uniqueFileName + fileExtension);
+                if (!Directory.Exists(folderpath))
+                {
+                    // The folder does not exist, so create it
+                    Directory.CreateDirectory(folderpath);
+
+                }
+                // Save the file to the specified path
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                FileInfoModel fileInfoModel = new FileInfoModel();
+
+
+
+                fileInfoModel.FileName = file.FileName;
+                fileInfoModel.Size = file.Length;
+                fileInfoModel.ContentType = file.ContentType;
+                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId, headerid, ResourceTypeId, ResourceType, ScreenName);
+                // Return the file path
+                fileids += reurnId + ",";
+            }
+            return fileids.TrimEnd(',');
+        }
+        [NonAction]
+        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid, int ResourceTypeId,string ResourceType, string ScreenName)
+        {
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    FicciImad imad = new FicciImad();
+                    imad.ImadCreatedBy = loginId;
+                    imad.ImadCreatedOn = DateTime.Now;
+                    imad.ImadActive = true;
+                    imad.ImadFileName = fileName;
+                    imad.ImadFileSize = length.ToString();
+                    imad.ImadFileType = contentType;
+                    imad.ImadFileUrl = path;
+                    imad.ImadScreenName = ScreenName;
+                    imad.ResourceTypeId = ResourceTypeId;
+                    imad.ResourceType = ResourceType;
+                    imad.ResourceId = headerid;
+                    _context.Add(imad);
+                    _context.SaveChanges();
+                    int returnId = imad.ImadId;
+                    transaction.Commit();
+                    return returnId;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
+        }
 
     }
 }

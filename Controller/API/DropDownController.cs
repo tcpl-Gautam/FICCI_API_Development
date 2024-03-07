@@ -3,6 +3,7 @@ using FICCI_API.DTO;
 using FICCI_API.Interface;
 using FICCI_API.Models;
 using FICCI_API.ModelsEF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -124,6 +125,11 @@ namespace FICCI_API.Controller.API
 
                 // Remove the "Bearer " prefix to get just the token value
                 accessToken = accessToken.Replace("Bearer ", "");
+                CheckToken(accessToken);
+                if(CheckToken == null)
+                {
+                    return Unauthorized("Token is expire");
+                }
                 _logger.LogWarning("Waring");
                 _logger.LogInformation("Waring");
                 _logger.LogDebug("Waring");

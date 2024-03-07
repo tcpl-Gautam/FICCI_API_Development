@@ -31,5 +31,9 @@ public partial class FicciImad
 
     public DateTime? ImadModifiedOn { get; set; }
 
-    public int? Headerid { get; set; }
+    public int? ResourceId { get; set; }
+
+    public string ResourceType { get; set; }
+
+    public int? ResourceTypeId { get; set; }
 }
