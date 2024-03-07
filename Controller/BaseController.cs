@@ -85,14 +85,14 @@ namespace FICCI_API.Controller
 
                         mail.To.Add("nikhil.vig@teamcomputers.com");
 
-                        //string ccEmail = _mySettings.MailCc;
-                        //if (!string.IsNullOrEmpty(ccEmail))
-                        //{
-                        //    foreach (string item in ccEmail.Split(new char[] { ';', ',' }))
-                        //    {
-                        //        mail.CC.Add(item);
-                        //    }
-                        //}
+                        string ccEmail = _mySettings.MailCc;
+                        if (!string.IsNullOrEmpty(ccEmail))
+                        {
+                            foreach (string item in ccEmail.Split(new char[] { ';', ',' }))
+                            {
+                                mail.CC.Add(item);
+                            }
+                        }
                         mail.CC.Add("gautam.v@teamcomputers.com");
 
                         //string bccEmail = _mySettings.MailBcc;
@@ -195,7 +195,7 @@ namespace FICCI_API.Controller
                         smtp.Credentials = NetworkCred;
                         smtp.Port = Convert.ToInt32(_mySettings.Port);
                         smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                    //      smtp.Send(mail);
+                         smtp.Send(mail);
 
 
                     }

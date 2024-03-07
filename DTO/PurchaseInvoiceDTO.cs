@@ -112,6 +112,16 @@ namespace FICCI_API.DTO
 
         [JsonPropertyName("PAN_No")]
         public string PAN_No { get; set; }
+        [JsonPropertyName("Cancelled")]
+        public bool Cancelled { get; set; }
+        [JsonPropertyName("CancelRemark")]
+        public string CancelRemark { get; set; }
+
+        [JsonPropertyName("Status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("CreatedByUser")]
+        public string CreatedByUser { get; set; }
 
     }
 
@@ -249,5 +259,103 @@ namespace FICCI_API.DTO
         public string Remarks { get; set; }
         public int HeaderId { get; set; }
     }
+
+    public partial class TAX_INVOICE_HEADER_RESPONSE
+    {
+
+        public string no { get; set; }
+        public string PostingDate { get; set; }
+        public string Invoice_no { get; set; }
+        public string sellToCustomerNo { get; set; }
+        public string sellToCustomerName { get; set; }
+        public string sellToCustomerName2 { get; set; }
+
+        public string ProjectCode { get; set; }
+        public string DimensionSetID { get; set; }
+
+        public string DepartmentName { get; set; }
+
+        public string DepartmentCode { get; set; }
+
+        public string DivisionCode { get; set; }
+
+        public string DivisionName { get; set; }
+
+
+        public string ApproverTL { get; set; }
+
+        public string ApproverCH { get; set; }
+
+        public string ApproverSupport { get; set; }
+
+        public string FinanceApprover { get; set; }
+
+
+        public bool InvoicePortalOrder { get; set; }
+
+        public bool InvoicePortalSubmitted { get; set; }
+
+        public string CreatedByUser { get; set; }
+
+
+        public string sellToCity { get; set; }
+
+
+        public string sellToAddress { get; set; }
+
+
+        public string sellToAddress2 { get; set; }
+        public string sellToPostCode { get; set; }
+        public string sellToCountryRegionCode { get; set; }
+        public string GST_No { get; set; }
+        public string PAN_NO { get; set; }
+        public bool Cancelled { get; set; }
+
+        public string CancelRemark { get; set; }
+
+
+        public string Status { get; set; }
+
+
+       // public string CreatedByUser { get; set; }
+
+        public TAX_INVOICE_LINE_RESPONSE[] TaxLineDetails { get; set; }
+
+    }
+    public partial class TAX_INVOICE_LINE_RESPONSE
+    {
+
+        public string documentNo { get; set; }
+        public string Type { get; set; }
+        public string no_ { get; set; }
+        public string lineNo { get; set; }
+        public string LocationCode { get; set; }
+        public string quantity { get; set; }
+
+        public string unitPrice { get; set; }
+        public string lineAmount { get; set; }
+
+        public string gSTCredit { get; set; }
+
+        public string gSTGroupCode { get; set; }
+
+        public string gST_Group_Type { get; set; }
+
+        public string hSN_SAC_Code { get; set; }
+
+    }
+    public partial class TAX_INVOICE_ATTACHMENT
+    {
+
+        public int Line_No { get; set; }
+        public string InvoiceNo { get; set; }
+        public string Document_Type { get; set; }
+        public string FileExtension { get; set; }
+        public string FileType { get; set; }
+        public string FileName { get; set; }
+        public string Attachment { get; set; }
+    }
+
+
 }
 

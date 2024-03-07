@@ -93,7 +93,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<CoaMaster>(entity =>
         {
-            entity.HasKey(e => e.CoaId).HasName("PK__COA_Mast__B09E7793D1201498");
+            entity.HasKey(e => e.CoaId).HasName("PK__COA_Mast__B09E7793BF4CE87E");
 
             entity.ToTable("COA_Master");
 
@@ -136,7 +136,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Erpcustomer>(entity =>
         {
-            entity.HasKey(e => e.CustId).HasName("PK__ERPCusto__049E3AA96CEA6AA9");
+            entity.HasKey(e => e.CustId).HasName("PK__ERPCusto__049E3AA900AD957B");
 
             entity.ToTable("ERPCustomer");
 
@@ -1011,7 +1011,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<GstCustomerType>(entity =>
         {
-            entity.HasKey(e => e.CustomerTypeId).HasName("PK__GST_Cust__0ECA2EDB4C8B9D7E");
+            entity.HasKey(e => e.CustomerTypeId).HasName("PK__GST_Cust__0ECA2EDB4BB6DB1D");
 
             entity.ToTable("GST_Customer_Type");
 
@@ -1030,7 +1030,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Gstgroup>(entity =>
         {
-            entity.HasKey(e => e.GroupId).HasName("PK__GSTGroup__149AF36AF8805188");
+            entity.HasKey(e => e.GroupId).HasName("PK__GSTGroup__149AF36A523FA60F");
 
             entity.ToTable("GSTGroup");
 
@@ -1045,7 +1045,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Hsnsac>(entity =>
         {
-            entity.HasKey(e => e.HsnId).HasName("PK__HSNSAC__957B8D78A0D44BD8");
+            entity.HasKey(e => e.HsnId).HasName("PK__HSNSAC__957B8D78AAE809A8");
 
             entity.ToTable("HSNSAC");
 
@@ -1058,7 +1058,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Location>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC07D13B23CA");
+            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC073FB924FE");
 
             entity.ToTable("Location");
 
@@ -1071,7 +1071,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<PostCode>(entity =>
         {
-            entity.HasKey(e => e.PostCodeId).HasName("PK__PostCode__8579AD92B0A8FCA2");
+            entity.HasKey(e => e.PostCodeId).HasName("PK__PostCode__8579AD92FAA77F2C");
 
             entity.ToTable("PostCode");
 
@@ -1113,7 +1113,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<StatusMaster>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__StatusMa__C8EE20637A1BDE63");
+            entity.HasKey(e => e.StatusId).HasName("PK__StatusMa__C8EE20630B81C647");
 
             entity.ToTable("StatusMaster");
 
@@ -1122,7 +1122,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<TblCategoryList>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tbl_Cate__3214EC070A91C007");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_Cate__3214EC075D2B0FE9");
 
             entity.ToTable("tbl_Category_List");
 
@@ -1140,7 +1140,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<TblConfigurationMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tbl_Conf__3214EC079D3B5B88");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_Conf__3214EC07A3CE59C4");
 
             entity.ToTable("tbl_Configuration_master");
 
@@ -1161,12 +1161,12 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.TblConfigurationMasters)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__tbl_Confi__Categ__07C12930");
+                .HasConstraintName("FK__tbl_Confi__Categ__151B244E");
         });
 
         modelBuilder.Entity<TblFicciRole>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__tbl_FICC__D80BB0933DB0A6D8");
+            entity.HasKey(e => e.RoleId).HasName("PK__tbl_FICC__D80BB093A0D5E1EE");
 
             entity.ToTable("tbl_FICCI_Role");
 

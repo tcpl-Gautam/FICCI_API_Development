@@ -18,13 +18,13 @@ namespace FICCI_API.Controller.API.Account
     {
         private readonly FICCI_DB_APPLICATIONSContext _dbContext;
         private readonly IConfiguration _configuration;
-        private readonly JwtSettings jwtSettings;
+        //private readonly JwtSettings jwtSettings;
 
-        public UserAuthController(FICCI_DB_APPLICATIONSContext dbContext, IConfiguration configuration, JwtSettings jwtSettings) : base(dbContext)
+        public UserAuthController(FICCI_DB_APPLICATIONSContext dbContext, IConfiguration configuration) : base(dbContext)
         {
             _dbContext = dbContext;
             _configuration = configuration;
-            this.jwtSettings = jwtSettings;
+           // this.jwtSettings = jwtSettings;
         }
 
         [HttpPost]
@@ -50,12 +50,12 @@ namespace FICCI_API.Controller.API.Account
                     //TokenService token = new TokenService(_configuration);
                     //var generateToken = await token.CreateToken(requestData);
 
-                    var userlog = LogUserData(requestData.Email,"123",true);
-                    if(userlog == false)
-                    {
-                        return StatusCode(500, new { status = false, message = "An error occurred while saving data ." });
+                    //var userlog = LogUserData(requestData.Email,"123",true);
+                    //if(userlog == false)
+                    //{
+                    //    return StatusCode(500, new { status = false, message = "An error occurred while saving data ." });
 
-                    }
+                    //}
                     //checks password and email for authenticate
                     var res = await _dbContext.FicciImums
                         .Where(x => x.ImumEmail == requestData.Email && x.ImumPassword == requestData.Password && x.ImumActive != false)
@@ -114,13 +114,13 @@ namespace FICCI_API.Controller.API.Account
                 if (Valid)
                 {
                     var user = logins.FirstOrDefault(x => x.UserName.Equals(userLogins.Email, StringComparison.OrdinalIgnoreCase));
-                    Token = JwtHelpers.GenTokenkey(new UserTokens()
-                    {
-                        EmailId = user.EmailId,
-                        GuidId = Guid.NewGuid(),
-                        UserName = user.UserName,
-                        Id = user.Id,
-                    }, jwtSettings);
+                    //Token = JwtHelpers.GenTokenkey(new UserTokens()
+                    //{
+                    //    EmailId = user.EmailId,
+                    //    GuidId = Guid.NewGuid(),
+                    //    UserName = user.UserName,
+                    //    Id = user.Id
+                    //}, jwtSettings);
                 }
                 else
                 {

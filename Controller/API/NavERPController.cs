@@ -871,6 +871,150 @@ namespace FICCI_API.Controller.API
 
         }
 
+        [HttpGet("GetInvoiceSummary")]
+        public async Task<ApiResponseModel> GetInvoiceSummary()
+        {
+            try
+            {
+                string result = await GetSecurityToken();
+                var httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Add("prefer", "odata.maxpagesize=10");
+                httpClient.DefaultRequestHeaders.Add("Authorization", result);
+
+                string URL = _navURL + "/FICCI_CRM/ODataV4/Company('FICCI')/GetTaxInvoiceSummary";
+
+                var response = await httpClient.GetAsync(URL);
+
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                List<TAX_INVOICE_HEADER_RESPONSE> list = JsonConvert.DeserializeObject<ODataResponse<TAX_INVOICE_HEADER_RESPONSE>>(responseContent).Value.ToList();
+
+
+                if (list != null)
+                {
+                    _responseModel.Data = list;
+                    _responseModel.Status = true;
+                    _responseModel.Message = "list fetched";
+                }
+                else
+                {
+                    _responseModel.Data = null;
+                    _responseModel.Status = false;
+                    _responseModel.Message = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseModel.Data = ex;
+                _responseModel.Status = false;
+                _responseModel.Message = ex.Message;
+            }
+            return _responseModel;
+
+
+        }
+
+        [HttpGet("GetTaxInvoiceInformation")]
+        public async Task<ApiResponseModel> GetTaxInvoiceInformation()
+        {
+            try
+            {
+
+                string result = await GetSecurityToken();
+                var httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Add("prefer", "odata.maxpagesize=5");
+                httpClient.DefaultRequestHeaders.Add("Authorization", result);
+
+                var response = await httpClient.GetAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/api/FICCI/FICCI/v1.0/companies(2d9345bb-769a-ed11-bff5-000d3af29678)/GetTaxInvoiceInfos?$expand=GetTaxInvoiceInfoLines");
+
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                List<TAX_INVOICE_HEADER_RESPONSE> FinalResult = JsonConvert.DeserializeObject<ODataResponse<TAX_INVOICE_HEADER_RESPONSE>>(responseContent).Value.ToList();
+
+
+                //   PURCHASE_INVOICE_HEADER_RESPONSE odatavalue = JsonConvert.DeserializeObject<PURCHASE_INVOICE_HEADER_RESPONSE>(responseContent);
+
+                if (FinalResult != null)
+                {
+                    _responseModel.Data = FinalResult;
+                    _responseModel.Status = true;
+                    _responseModel.Message = "list fetched";
+                }
+                else
+                {
+                    _responseModel.Data = null;
+                    _responseModel.Status = false;
+                    _responseModel.Message = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseModel.Data = ex;
+                _responseModel.Status = false;
+                _responseModel.Message = ex.Message;
+            }
+            return _responseModel;
+
+
+        }
+
+        [HttpGet("GetTaxInvoiceAttachment")]
+        public async Task<ApiResponseModel> GetTaxInvoiceAttachment()
+        {
+            try
+            {
+
+
+                string result = await GetSecurityToken();
+                var httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Add("prefer", "odata.maxpagesize=5");
+                httpClient.DefaultRequestHeaders.Add("Authorization", result);
+
+                var response = await httpClient.GetAsync("https://api.businesscentral.dynamics.com/v2.0/d3a55687-ec5c-433b-9eaa-9d952c913e94/FICCI_CRM/ODataV4/Company('FICCI')/GetTaxInvoiceAttachment");
+
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+
+                List<TAX_INVOICE_ATTACHMENT> odatavalue = JsonConvert.DeserializeObject<ODataResponse<TAX_INVOICE_ATTACHMENT>>(responseContent).Value.ToList();
+
+
+                if (odatavalue != null)
+                {
+                    _responseModel.Data = odatavalue;
+                    _responseModel.Status = true;
+                    _responseModel.Message = "list fetched";
+                }
+                else
+                {
+                    _responseModel.Data = null;
+                    _responseModel.Status = false;
+                    _responseModel.Message = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseModel.Data = ex;
+                _responseModel.Status = false;
+                _responseModel.Message = ex.Message;
+            }
+            return _responseModel;
+
+
+        }
+
+
+
+
+
         #region Private Functions
         private async Task<string> GetSecurityToken()
         {
