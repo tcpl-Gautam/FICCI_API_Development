@@ -53,6 +53,14 @@ public partial class VwInvoiceApprovalList
 
     public string ImpiHeaderCustomerContactPerson { get; set; }
 
+    public string ImpiHeaderCancelRemarks { get; set; }
+
+    public string ImpiCancelBy { get; set; }
+
+    public DateTime? ImpiCancelOn { get; set; }
+
+    public bool? IsCancel { get; set; }
+
     public string ImpiHeaderPaymentTerms { get; set; }
 
     public string ImpiHeaderRemarks { get; set; }

@@ -69,6 +69,7 @@ namespace FICCI_API.Controller.API
                         cust.ModifiedOn = k.CustomerUpdatedOn;
                         cust.IsDraft = k.IsDraft;
                         cust.LastUpdateBy = k.LastUpdateBy;
+                        
                         cust.CityList = new CityInfo
                         {
                             cityCode = _dbContext.Cities.Where(x => x.CityCode == k.CityCode && x.IsActive != false).Select(a => a.CityCode).FirstOrDefault(),

@@ -50,6 +50,8 @@ namespace FICCI_API.Controller.API
                             CustomerStatusId = customer.CustomerStatus,
                             ApprovedBy = customer.ApprovedBy,
                             ApprovedOn = customer.ApprovedOn,
+                            customerRemarks = customer.CustomerRemarks,
+                            accountRemarks = customer.AccountRemarks,
                             GstType = customer.GstCustomerTypeNavigation == null ? null : new GSTCustomerTypeInfo
                             {
                                 GstTypeId = customer.GstCustomerTypeNavigation.CustomerTypeId,
@@ -71,7 +73,9 @@ namespace FICCI_API.Controller.API
                                 countryCode = _dbContext.Countries.Where(x => x.CountryCode == customer.CountryCode && x.IsActive != false).Select(a => a.CountryCode).FirstOrDefault(),
                                 CountryName = _dbContext.Countries.Where(x => x.CountryCode == customer.CountryCode && x.IsActive != false).Select(a => a.CountryName).FirstOrDefault()
                             },
-                            
+                            WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == customer.CustomerId && x.ImwdType == 1).ToList()
+
+
                         }).ToListAsync();
 
                 if (resu.Count <= 0)
@@ -140,22 +144,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
-                        //if (k.ImpiHeaderAttachment != null)
-                        //{
-                        //    string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
-
-                        //    // Display the result
-                        //    List<FicciImad> listing = new List<FicciImad>();
-
-                        //    foreach (string value in valuesArray)
-                        //    {
-
-                        //        var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
-                        //        listing.Add(path);
-
-                        //    }
-                        //    purchaseInvoice_response.ImpiHeaderAttachment = listing;
-                        //}
+                        
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
                         purchaseInvoice_response.ImpiHeaderPaymentTerms = k.ImpiHeaderPaymentTerms;
@@ -170,13 +159,15 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
-                        // purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
+                        purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
                         purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
                         purchaseInvoice_response.AccountApproverRemarks = k.AccountApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
-
+                        purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
+                        purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
+                        purchaseInvoice_response.IsCancel = k.IsCancel;
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
                         if (lindata.Count > 0)
                         {

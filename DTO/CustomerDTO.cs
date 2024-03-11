@@ -54,7 +54,9 @@ namespace FICCI_API.DTO
         public DateTime ModifiedOn { get; set; }
         public string? TLApprover { get; set; }
         public string? CLApprover { get; set; }
-   //     public string? SGApprover { get; set; }
+        public string? customerRemarks { get; set; }
+        public string? accountRemarks { get; set; }
+        //     public string? SGApprover { get; set; }
         public string? CustomerStatus { get; set; }
         public int? CustomerStatusId { get; set; }
         public string? ApprovedBy { get; set; }

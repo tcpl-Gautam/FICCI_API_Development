@@ -73,6 +73,8 @@ namespace FICCI_API.Controller.API
                             CLApprover = customer.CustomerClusterApprover,
                             ApprovedBy = customer.ApprovedBy,
                             ApprovedOn = customer.ApprovedOn,
+                            customerRemarks = customer.CustomerRemarks,
+                            accountRemarks = customer.AccountRemarks,
                             CityList = new CityInfo
                             {
                                 cityCode = _dbContext.Cities.Where(x => x.CityCode == customer.CityCode && x.IsActive != false).Select(a => a.CityCode).FirstOrDefault(),

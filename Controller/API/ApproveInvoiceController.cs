@@ -66,23 +66,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
-                        //if (k.ImpiHeaderAttachment != null)
-                        //{
-                        //    string[] valuesArray = k.ImpiHeaderAttachment.Split(',');
-
-                        //    // Display the result
-                        //    List<FicciImad> listing = new List<FicciImad>();
-
-                        //    foreach (string value in valuesArray)
-                        //    {
-
-                        //        var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value)).FirstOrDefaultAsync();
-                        //        listing.Add(path);
-
-                        //    }
-                        //    purchaseInvoice_response.ImpiHeaderAttachment = listing;
-                        //}
-
+                        
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
                         purchaseInvoice_response.ImpiHeaderPaymentTerms = k.ImpiHeaderPaymentTerms;
@@ -96,8 +80,12 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.TlApproveDate = k.ImpiHeaderTlApproverDate;
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
+                        purchaseInvoice_response.CancelRemarks = k.ImpiHeaderCancelRemarks;
+                        purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
+                        purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
+                        purchaseInvoice_response.IsCancel = k.IsCancel;
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
-                        // purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
+                        purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
                         purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;

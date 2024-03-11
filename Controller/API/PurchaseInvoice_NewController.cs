@@ -433,27 +433,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
 
-                        ////error in auto generated model ImpiHeaderAttachment is not null
-                        //if (k.ImpiHeaderAttachment != null)
-                        //{
-                        //    string[]? valuesArray = k.ImpiHeaderAttachment.Split(',');
-
-                        //    // Display the result
-                        //    List<FicciImad> listing = new List<FicciImad>();
-
-                        //    foreach (string value in valuesArray)
-                        //    {
-
-                        //        var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value) && x.ImadActive !=false).FirstOrDefaultAsync();
-                        //        if (path != null)
-                        //        {
-
-                        //            listing.Add(path);
-                        //        }
-                        //    }
-
-                        //    purchaseInvoice_response.ImpiHeaderAttachment = listing;
-                        //}
+                      
                         purchaseInvoice_response.IsDraft = k.IsDraft;
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
@@ -473,6 +453,10 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.HeaderStatusId = k.HeaderStatusId;
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
+                        purchaseInvoice_response.CancelRemarks = k.ImpiHeaderCancelRemarks;
+                        purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
+                        purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
+                        purchaseInvoice_response.IsCancel = k.IsCancel;
                         purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
@@ -581,6 +565,7 @@ namespace FICCI_API.Controller.API
                     result.ImpiCancelBy = employee.LoginId;
                     result.ImpiHeaderCancelRemarks = employee.Remarks;
                     result.ImpiCancelOn = DateTime.Now;
+                    result.IsCancel = true;
                     await _dbContext.SaveChangesAsync();
 
                     FicciImwd imwd = new FicciImwd();
