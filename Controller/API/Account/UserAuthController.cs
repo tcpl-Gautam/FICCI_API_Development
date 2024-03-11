@@ -68,6 +68,9 @@ namespace FICCI_API.Controller.API.Account
                             RoleName = _dbContext.TblFicciRoles.Where(m => m.RoleId == user.RoleId).Select(x => x.RoleName).FirstOrDefault().ToString(),
                             IsApprover =  _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email|| m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
                             Invoice_IsApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email || m.ImpiHeaderClusterApprover == requestData.Email || m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                            Invoice_IsTLApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                            Invoice_IsCHApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderClusterApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                            Invoice_IsFinanceApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
                             Token = "123"
                         })
                         .FirstOrDefaultAsync();

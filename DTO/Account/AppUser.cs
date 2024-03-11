@@ -49,7 +49,11 @@ namespace FICCI_API.DTO.Account
 
         public bool IsApprover { get; set; }
         public bool Invoice_IsApprover { get; set; }
-        
+        public bool Invoice_IsTLApprover { get; set; }
+        public bool Invoice_IsCHApprover { get; set; }
+        public bool Invoice_IsFinanceApprover { get; set; }
+
+
         public string? Token { get; set; }
     }
 }
