@@ -111,7 +111,7 @@ namespace FICCI_API.Models
         public string ImpiHeaderCustomerPhoneNo { get; set; }
         public string ImpiHeaderCreatedBy { get; set; }
         public decimal? ImpiHeaderTotalInvoiceAmount { get; set; }
-        public List<ImpiHeaderAttachment>? ImpiHeaderAttachment { get; set; }
+        public List<ImpiHeaderAttachment>? DocType { get; set; }
         public string ImpiHeaderPaymentTerms { get; set; }
         public string ImpiHeaderRemarks { get; set; }
         public bool IsDraft { get; set; }
@@ -131,10 +131,15 @@ namespace FICCI_API.Models
 
     }
 
+    //public class ImpiHeaderAttachment
+    //{
+    //    public List<IFormFile> Attachment { get; set; }
+    //    public string? TypeofAttachment { get; set; }
+    //}
     public class ImpiHeaderAttachment
     {
-        public List<IFormFile> Attachment { get; set; }
-        public string? TypeofAttachment { get; set; }
+        public string doctype { get; set; }
+        public List<IFormFile> content { get; set; }
     }
     public class LineItem_request
     {

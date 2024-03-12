@@ -299,7 +299,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
 
 
         [NonAction]
-        public string UploadFile(List<IFormFile>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName, List<ImpiHeaderAttachment> typeofattachment)
+        public string UploadFile1(List<IFormFile>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName)
         {
             string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
             string fileids = "";
@@ -310,6 +310,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
 
             foreach (var file in file1)
             {
+
                 // Generate a unique filename to avoid conflicts
                 string uniqueFileName = timestamp;
                 var fileExtension = Path.GetExtension(file.FileName);
@@ -336,14 +337,66 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
                 fileInfoModel.FileName = file.FileName;
                 fileInfoModel.Size = file.Length;
                 fileInfoModel.ContentType = file.ContentType;
-                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId, headerid, ResourceTypeId, ResourceType, ScreenName, List<ImpiHeaderAttachment> typeofattachment);
+                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId, headerid, ResourceTypeId, ResourceType, ScreenName, "");
                 // Return the file path
                 fileids += reurnId + ",";
+            }
+
+            return fileids.TrimEnd(',');
+        }
+
+        [NonAction]
+        public string UploadFile(List<ImpiHeaderAttachment>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName)
+        {
+            string fileids = "";
+
+
+            if (file1 == null || !file1.Any())
+            {
+                return null; // Handle invalid file
+            }
+
+            foreach (var item in file1)
+            {
+                foreach (var file in item.content)
+                {
+                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                    fileids = "";
+                    // Generate a unique filename to avoid conflicts
+                    string uniqueFileName = timestamp;
+                    var fileExtension = Path.GetExtension(file.FileName);
+                    string folderpath = Path.Combine("wwwroot", "PurchaseInvoice", folder, item.doctype);
+
+                    // Combine the path where you want to store the file with the unique filename
+                    string filePath = Path.Combine("wwwroot", "PurchaseInvoice", folder, item.doctype, uniqueFileName + fileExtension);
+                    string savefilePath = Path.Combine("PurchaseInvoice", folder, item.doctype, uniqueFileName + fileExtension);
+                    if (!Directory.Exists(folderpath))
+                    {
+                        // The folder does not exist, so create it
+                        Directory.CreateDirectory(folderpath);
+
+                    }
+                    // Save the file to the specified path
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    FileInfoModel fileInfoModel = new FileInfoModel();
+
+
+
+                    fileInfoModel.FileName = file.FileName;
+                    fileInfoModel.Size = file.Length;
+                    fileInfoModel.ContentType = file.ContentType;
+                    int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId, headerid, ResourceTypeId, ResourceType, ScreenName, item.doctype);
+                    // Return the file path
+                    fileids += reurnId + ",";
+                }
             }
             return fileids.TrimEnd(',');
         }
         [NonAction]
-        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid, int ResourceTypeId,string ResourceType, string ScreenName, List<ImpiHeaderAttachment> typeofattachment)
+        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid, int ResourceTypeId, string ResourceType, string ScreenName, string doctype)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -361,7 +414,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
                     imad.ResourceTypeId = ResourceTypeId;
                     imad.ResourceType = ResourceType;
                     imad.ResourceId = headerid;
-                    imad.TypeOfAttachment = typeofattachment;
+                    imad.Doctype = doctype;
                     _context.Add(imad);
                     _context.SaveChanges();
                     int returnId = imad.ImadId;
@@ -376,7 +429,6 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
             }
 
         }
-
     }
 }
 

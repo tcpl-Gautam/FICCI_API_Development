@@ -403,6 +403,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.ToTable("FICCI_IMAD");
 
             entity.Property(e => e.ImadId).HasColumnName("IMAD_ID");
+            entity.Property(e => e.Doctype)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.ImadActive).HasColumnName("IMAD_ACTIVE");
             entity.Property(e => e.ImadCreatedBy)
                 .IsRequired()
@@ -448,10 +451,6 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("Resource_Type");
             entity.Property(e => e.ResourceTypeId).HasColumnName("Resource_Type_Id");
-            entity.Property(e => e.TypeOfAttachment)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("TYPE_OF_ATTACHMENT");
         });
 
         modelBuilder.Entity<FicciImem>(entity =>

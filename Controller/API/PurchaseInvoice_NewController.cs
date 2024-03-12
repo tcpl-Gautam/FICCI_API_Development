@@ -97,9 +97,9 @@ namespace FICCI_API.Controller.API
                         string documentNumber = "";
                         string folder = ficciImpiHeader.ImpiHeaderRecordNo;
 
-                        if (request.ImpiHeaderAttachment != null)
+                        if (request.DocType != null)
                         {
-                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim(), 2,"Invoice_Header","Invoice");
+                            ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.DocType, request.LoginId, returnid, folder.Trim(), 2,"Invoice_Header","Invoice");
                         }
 
                         FicciImwd imwd = new FicciImwd();
@@ -311,9 +311,9 @@ namespace FICCI_API.Controller.API
                             int returnid = data.ImpiHeaderId;
                             string folder = data.ImpiHeaderRecordNo;
 
-                            if (request.ImpiHeaderAttachment != null)
+                            if (request.DocType != null)
                             {
-                                data.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim(), 2, "Invoice_Header", "Invoice");
+                                data.ImpiHeaderAttachment = UploadFile(request.DocType, request.LoginId, returnid, folder.Trim(), 2, "Invoice_Header", "Invoice");
                             }
                             FicciImwd imwd = new FicciImwd();
                             imwd.ImwdScreenName = "Invoice Approver";

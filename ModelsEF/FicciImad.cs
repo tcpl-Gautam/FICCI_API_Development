@@ -37,5 +37,5 @@ public partial class FicciImad
 
     public int? ResourceTypeId { get; set; }
 
-    public string TypeOfAttachment { get; set; }
+    public string Doctype { get; set; }
 }

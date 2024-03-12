@@ -148,7 +148,7 @@ namespace FICCI_API.Controller.API.Account
                 int returnid = immd.ImmdId;
                 if(returnid != null)
                 {
-                    UploadFile(emailAttachment, LoginId, returnid, "Invoice_Mail_Attachment",3,"Invoice_Header_Mail","Invoice_Account_Setting","dummy");
+                    UploadFile1(emailAttachment, LoginId, returnid, "Invoice_Mail_Attachment", 3, "Invoice_Header_Mail", "Invoice_Account_Setting");
                 }
                 return isEmailSent;
 
