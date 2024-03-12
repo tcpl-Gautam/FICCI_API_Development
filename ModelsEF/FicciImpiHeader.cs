@@ -111,5 +111,9 @@ public partial class FicciImpiHeader
 
     public bool? IsCancel { get; set; }
 
+    public string ProjectStartDate { get; set; }
+
+    public string ProjectEndDate { get; set; }
+
     public virtual ICollection<FicciImpiLine> FicciImpiLines { get; set; } = new List<FicciImpiLine>();
 }

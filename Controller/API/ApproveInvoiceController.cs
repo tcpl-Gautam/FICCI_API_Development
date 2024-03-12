@@ -71,21 +71,23 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderRemarks = k.ImpiHeaderRemarks;
                         purchaseInvoice_response.ImpiHeaderModifiedDate = k.ImpiHeaderModifiedOn;
                         purchaseInvoice_response.ImpiHeaderTlApprover = k.ImpiHeaderTlApprover;
-                        purchaseInvoice_response.ImpiHeaderClusterApprover = k.ImpiHeaderClusterApprover;
+                       // purchaseInvoice_response.ImpiHeaderClusterApprover = k.ImpiHeaderClusterApprover;
                         purchaseInvoice_response.ImpiHeaderFinanceApprover = k.ImpiHeaderFinanceApprover;
                         purchaseInvoice_response.AccountApprover = k.AccountApprover;
                         purchaseInvoice_response.AccountApproveDate = k.AccountApproverDate;
                         purchaseInvoice_response.TlApproveDate = k.ImpiHeaderTlApproverDate;
-                        purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
+                       // purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
                         purchaseInvoice_response.CancelRemarks = k.ImpiHeaderCancelRemarks;
                         purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
                         purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
                         purchaseInvoice_response.IsCancel = k.IsCancel;
+                        purchaseInvoice_response.startDate = k.ProjectStartDate;
+                        purchaseInvoice_response.endDate = k.ProjectEndDate;
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
                         purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
-                        purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
+                       // purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
                         purchaseInvoice_response.AccountApproverRemarks = k.AccountApproverRemarks;
                         purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
@@ -297,56 +299,56 @@ namespace FICCI_API.Controller.API
                 var res = await _dbContext.GetProcedures().prc_Approval_InvoiceAsync(cust.HeaderId.ToString(), cust.IsApproved, cust.LoginId, cust.StatusId, cust.Remarks);
                 if (res[0].returncode == 1)
                 {
-                   // var result = await _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerId == Convert.ToInt32(res[0].CustomerId)).FirstOrDefaultAsync();
-                  //  string subject = "";
-                    //if (cust.IsApproved)
-                    //{
-                    //    if (cust.StatusId == 2)
-                    //    {
-                    //        subject = "New Customer Approved by TL : " + result.CustomerName + "";
-                    //        htmlbody = ApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.CusotmerNo, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo);
-                    //        SendEmail(result.CustomerClusterApprover, result.CustomerEmailId, subject, htmlbody, _mySettings);
-                    //    }
-                    //    else if (cust.StatusId == 3)
-                    //    {
-                    //        subject = "New Customer Approved by CH : " + result.CustomerName + "";
-                    //        htmlbody = ApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.CusotmerNo, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo);
-                    //        SendEmail(res[0].InitiatedBy, result.CustomerEmailId, subject, htmlbody, _mySettings);
-                    //    }
-                    //    else if (cust.StatusId == 11)
-                    //    {
-                    //        subject = "New Customer Approved by Finance : " + result.CustomerName + "";
-                    //        htmlbody = ApprovalhtmlBody("approved by Finance approver", _mySettings.Website_link, result.CusotmerNo, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo);
-                    //        SendEmail(result.CustomerEmailId, "" + result.CustomerTlApprover + "," + result.CustomerClusterApprover + "," + result.CustomerSgApprover + "", subject, htmlbody, _mySettings);
-                    //        return StatusCode(200, crud);
-                    //    }
-                    //    else if (cust.StatusId == 5)
-                    //    {
-                    //        subject = "New Customer Approved by Account : " + result.CustomerName + "";
-                    //        htmlbody = ApprovalhtmlBody("approved by Accounts approver", _mySettings.Website_link, result.CusotmerNo, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo);
-                    //        SendEmail(result.CustomerEmailId, "" + result.CustomerTlApprover + "," + result.CustomerClusterApprover + "," + result.CustomerSgApprover + "", subject, htmlbody, _mySettings);
-                    //        return StatusCode(200, crud);
-                    //    }
+                    var result = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == Convert.ToInt32(res[0].HeaderId)).FirstOrDefaultAsync();
+                    string subject = "";
+                    if (cust.IsApproved)
+                    {
+                        if (cust.StatusId == 2)
+                        {
+                            subject = "New PI Approved by TL : " + result.ImpiHeaderCustomerName + "";
+                            htmlbody = InvoiceApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.ImpiHeaderCustomerCode, result.ImpiHeaderCustomerName, result.ImpiHeaderCustomerCity, result.ImpiHeaderPanNo, result.ImpiHeaderCustomerGstNo, result.ImpiHeaderProjectName, result.ImpiHeaderProjectCode);
+                            MailMethod(result.ImpiHeaderTlApprover, result.ImpiHeaderCustomerEmailId, subject, htmlbody, "Invoice", cust.LoginId, Convert.ToInt32(res[0].HeaderId));
+                        }
+                        else if (cust.StatusId == 3)
+                        {
+                            subject = "New PI Approved by CH : " + result.ImpiHeaderCustomerName + "";
+                            htmlbody = InvoiceApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.ImpiHeaderCustomerCode, result.ImpiHeaderCustomerName, result.ImpiHeaderCustomerCity, result.ImpiHeaderPanNo, result.ImpiHeaderCustomerGstNo, result.ImpiHeaderProjectName, result.ImpiHeaderProjectCode);
+                            MailMethod(res[0].InitiatedBy, result.ImpiHeaderCustomerEmailId, subject, htmlbody, "Invoice", cust.LoginId, Convert.ToInt32(res[0].HeaderId));
+                        }
+                        else if (cust.StatusId == 11)
+                        {
+                            subject = "New PI Approved by Finance : " + result.ImpiHeaderCustomerName + "";
+                            htmlbody = InvoiceApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.ImpiHeaderCustomerCode, result.ImpiHeaderCustomerName, result.ImpiHeaderCustomerCity, result.ImpiHeaderPanNo, result.ImpiHeaderCustomerGstNo, result.ImpiHeaderProjectName, result.ImpiHeaderProjectCode);
+                            MailMethod(result.ImpiHeaderCustomerEmailId, "" + result.ImpiHeaderTlApprover + "," + result.ImpiHeaderClusterApprover + "," + result.ImpiHeaderSupportApprover + "", subject, htmlbody, "Invoice", cust.LoginId, Convert.ToInt32(res[0].HeaderId));
+                            return StatusCode(200, crud);
+                        }
+                        //else if (cust.StatusId == 5)
+                        //{
+                        //    subject = "New Customer Approved by Account : " + result.CustomerName + "";
+                        //    htmlbody = ApprovalhtmlBody("approved by Accounts approver", _mySettings.Website_link, result.CusotmerNo, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo);
+                        //    SendEmail(result.CustomerEmailId, "" + result.CustomerTlApprover + "," + result.CustomerClusterApprover + "," + result.CustomerSgApprover + "", subject, htmlbody, _mySettings);
+                        //    return StatusCode(200, crud);
+                        //}
 
-                    //}
-                    //if (!cust.IsApproved)
-                    //{
-                    //    if (cust.StatusId == 2)
-                    //    {
-                    //        subject = "New Customer Rejected by TL : " + result.CustomerName + "";
-                    //    }
-                    //    else if (cust.StatusId == 3)
-                    //    {
-                    //        subject = "New Customer Rejected by CH : " + result.CustomerName + "";
-                    //    }
-                    //    else if (cust.StatusId == 5)
-                    //    {
-                    //        subject = "New Customer Rejected by Account : " + result.CustomerName + "";
-                    //    }
-                    //    htmlbody = ApprovalhtmlBody("rejected by the approver", _mySettings.Website_link, result.CusotmerNo, result.CustomerName, result.CityCode, result.CustomerPanNo, result.CustomerGstNo);
-                    //    SendEmail(result.CustomerEmailId, "" + result.CustomerTlApprover + "," + result.CustomerClusterApprover + "," + result.CustomerSgApprover + "", subject, htmlbody, _mySettings);
-                    //    return StatusCode(200, crud);
-                    //}
+                    }
+                    if (!cust.IsApproved)
+                    {
+                        if (cust.StatusId == 2)
+                        {
+                            subject = "New PI Rejected by TL : " + result.ImpiHeaderCustomerName + "";
+                        }
+                        else if (cust.StatusId == 3)
+                        {
+                            subject = "New PI Rejected by CH : " + result.ImpiHeaderCustomerName + "";
+                        }
+                        //else if (cust.StatusId == 5)
+                        //{
+                        //    subject = "New PI Rejected by Account : " + result.CustomerName + "";
+                        //}
+                        htmlbody = InvoiceApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.ImpiHeaderCustomerCode, result.ImpiHeaderCustomerName, result.ImpiHeaderCustomerCity, result.ImpiHeaderPanNo, result.ImpiHeaderCustomerGstNo, result.ImpiHeaderProjectName, result.ImpiHeaderCustomerCode);
+                        MailMethod(result.ImpiHeaderCustomerEmailId, "" + result.ImpiHeaderTlApprover + "," + result.ImpiHeaderClusterApprover + "," + result.ImpiHeaderSupportApprover + "", subject, htmlbody, "Invoice", cust.LoginId, Convert.ToInt32(res[0].HeaderId));
+                        return StatusCode(200, crud);
+                    }
 
 
 
@@ -361,6 +363,40 @@ namespace FICCI_API.Controller.API
                 crud.status = false;
                 crud.message = ex.InnerException.Message.ToString();
                 return StatusCode(500, crud);
+            }
+        }
+        [NonAction]
+        public bool MailMethod(string mailTo, string mailCC, string mailSubject, string mailBody, string? ResourceType, string LoginId, int ResourceId)
+        {
+            try
+            {
+                if (mailTo == null || mailCC == null || mailSubject == null || mailBody == null)
+                {
+                    return false;
+                }
+                bool isEmailSent = SendEmailData(mailTo, mailCC, mailSubject, mailBody, _mySettings, null);
+
+                FicciImmd immd = new FicciImmd();
+                immd.ImmdMailTo = mailTo;
+                immd.ImmdMailCc = mailCC;
+                immd.ImmdMailSubject = mailSubject;
+                immd.ImmdMailBody = mailBody;
+                immd.ImmdActive = true;
+                immd.ResourceType = ResourceType;
+                immd.ImmdCreatedBy = LoginId;
+                immd.IsSent = isEmailSent;
+                immd.ResourceId = ResourceId;
+                immd.ImmdCreatedOn = DateTime.Now;
+                immd.ImmdMailSentOn = DateTime.Now;
+                _dbContext.Add(immd);
+                _dbContext.SaveChanges();
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

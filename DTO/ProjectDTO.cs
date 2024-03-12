@@ -25,8 +25,8 @@
 
         public string? supportApprover { get; set; }
 
-        // public bool? projectActive { get; set; }
-
+        public string? startDate { get; set; }
+        public string? endDate { get; set; }
     }
     public class AllProjectList
     {

@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using FICCI_API.Controller.API;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Collections.Generic;
 
 namespace FICCI_API.Controller
 {
@@ -101,7 +102,35 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
 
         }
 
+        [NonAction]
+        public string InvoiceApprovalhtmlBody(string header, string EmailLink, string customerCode, string custName, string CityCode, string PAN, string GST, string projectName, string projectCode)
+        {
+            //string template = $@"Dear User,</br>Following Customer has been  {header} in the Invoice portal:
+            //                   <br/><strong>Customer No:</strong> {customerNo}
+            //                   <br/><strong>Customer Name:</strong> {custName}
+            //                   <br/><strong>Customer City:</strong> {CityCode}
+            //                   <br/><strong>Customer PAN No:</strong>{PAN}
+            //                   <br/><strong>Customer GST No:</strong>{GST}
+            //                  <br/>To Access Invoice Portal: <a href='{EmailLink}' class='cta-button'>Click Here</a>
+            //                  <br/>Note:To open the Invoice portal, please open it in Microsoft Edge or In Google Chrome
+            //                  <br/><br/>Regards
+            //                  <br/>FICCI Team";
 
+            string template = $@"<p style=""font-family: Arial, sans-serif; font-size: 13px;"">Dear User,<br><br>
+ Performa Invoice has been {header} in the Invoice Portal:<br><br>
+<strong>Project Code</strong>   : {projectCode} <br>
+<strong>Project Name</strong>   : {projectName} <br>
+<strong>Customer Code</strong>   : {customerCode} <br>
+<strong>Customer Name</strong>   : {custName} <br>
+<strong>Customer City</strong> : {CityCode}<br>
+<strong>Customer PAN No</strong>. : {PAN}<br>
+<strong>Customer GST No</strong>. : {GST}<br>
+<br>To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
+<strong>Note</strong>: To open the Invoice portal, please open it in Microsoft Edge or In Google Chrome Regards <strong>FICCI Team</strong><br><br>
+<strong>Regards</strong><br>FICCI Team";
+            return template;
+
+        }
 
         [NonAction]
         public void SendEmail(string MailTo, string MailCC, string MailSubject, string MailBody, MySettings? _mySettings)
@@ -270,7 +299,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
 
 
         [NonAction]
-        public string UploadFile(List<IFormFile>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName)
+        public string UploadFile(List<IFormFile>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName, List<ImpiHeaderAttachment> typeofattachment)
         {
             string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
             string fileids = "";
@@ -307,14 +336,14 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
                 fileInfoModel.FileName = file.FileName;
                 fileInfoModel.Size = file.Length;
                 fileInfoModel.ContentType = file.ContentType;
-                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId, headerid, ResourceTypeId, ResourceType, ScreenName);
+                int reurnId = FileMethod(fileInfoModel.FileName, fileInfoModel.Size, fileInfoModel.ContentType, savefilePath, loginId, headerid, ResourceTypeId, ResourceType, ScreenName, List<ImpiHeaderAttachment> typeofattachment);
                 // Return the file path
                 fileids += reurnId + ",";
             }
             return fileids.TrimEnd(',');
         }
         [NonAction]
-        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid, int ResourceTypeId,string ResourceType, string ScreenName)
+        public int FileMethod(string fileName, long length, string contentType, string path, string loginId, int headerid, int ResourceTypeId,string ResourceType, string ScreenName, List<ImpiHeaderAttachment> typeofattachment)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -332,6 +361,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
                     imad.ResourceTypeId = ResourceTypeId;
                     imad.ResourceType = ResourceType;
                     imad.ResourceId = headerid;
+                    imad.TypeOfAttachment = typeofattachment;
                     _context.Add(imad);
                     _context.SaveChanges();
                     int returnId = imad.ImadId;

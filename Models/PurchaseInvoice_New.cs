@@ -69,7 +69,8 @@ namespace FICCI_API.Models
         public DateTime? CancelOn { get; set; }
         public string? CancelBy { get; set; }
         public bool? IsCancel { get; set; }
-
+        public string? startDate { get; set; }
+        public string? endDate { get; set; }
 
         public int? HeaderStatusId { get; set; }
         public List<FicciImwd>? WorkFlowHistory { get; set; }
@@ -110,7 +111,7 @@ namespace FICCI_API.Models
         public string ImpiHeaderCustomerPhoneNo { get; set; }
         public string ImpiHeaderCreatedBy { get; set; }
         public decimal? ImpiHeaderTotalInvoiceAmount { get; set; }
-        public List<IFormFile>? ImpiHeaderAttachment { get; set; }
+        public List<ImpiHeaderAttachment>? ImpiHeaderAttachment { get; set; }
         public string ImpiHeaderPaymentTerms { get; set; }
         public string ImpiHeaderRemarks { get; set; }
         public bool IsDraft { get; set; }
@@ -123,11 +124,17 @@ namespace FICCI_API.Models
         public string? ImpiHeaderSupportApprover { get; set; }
         public string RoleName { get; set; }
         public string? InvoiceRemarks { get; set; }
+        public string? startDate { get; set; }
+        public string? endDate { get; set; }
+
         public List<LineItem_request> lineItem_Requests { get; set; }
 
-        //public string? CancelRemarks { get; set; }
-        //public string? CancelBy { get; set; }
-        //public DateTime CancelOn { get; set; }
+    }
+
+    public class ImpiHeaderAttachment
+    {
+        public List<IFormFile> Attachment { get; set; }
+        public string? TypeofAttachment { get; set; }
     }
     public class LineItem_request
     {

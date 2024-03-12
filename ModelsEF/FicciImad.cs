@@ -36,4 +36,6 @@ public partial class FicciImad
     public string ResourceType { get; set; }
 
     public int? ResourceTypeId { get; set; }
+
+    public string TypeOfAttachment { get; set; }
 }

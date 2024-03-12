@@ -83,6 +83,8 @@ namespace FICCI_API.Controller.API
                         ficciImpiHeader.ImpiHeaderClusterApproverDate = null;
                         ficciImpiHeader.ImpiHeaderFinanceApproverDate = null;
                         ficciImpiHeader.AccountApproverDate = null;
+                        ficciImpiHeader.ProjectStartDate = request.startDate;
+                        ficciImpiHeader.ProjectEndDate = request.endDate;
                         if (request.ImpiHeaderSupportApprover != null)
                         {
                             ficciImpiHeader.ImpiHeaderSupportApprover = request.ImpiHeaderSupportApprover + "@ficci.com";
@@ -301,6 +303,8 @@ namespace FICCI_API.Controller.API
                             data.ImpiHeaderClusterApproverDate = null;
                             data.ImpiHeaderFinanceApproverDate = null;
                             data.AccountApproverDate = null;
+                            data.ProjectStartDate = request.startDate;
+                            data.ProjectEndDate = request.endDate;
 
                             //_dbContext.Add(data);
                             _dbContext.SaveChanges();
@@ -590,6 +594,8 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
                         purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
                         purchaseInvoice_response.IsCancel = k.IsCancel;
+                        purchaseInvoice_response.startDate = k.ProjectStartDate;
+                        purchaseInvoice_response.endDate = k.ProjectEndDate;
                         purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
@@ -849,6 +855,8 @@ namespace FICCI_API.Controller.API
             {
                 if (employee.LoginId != null && employee.Remarks != null)
                 {
+                    string subject = "";
+                    string htmlbody = "";
                     var result = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == employee.HeaderId).FirstOrDefaultAsync();
                     if (result == null)
                     {
@@ -860,6 +868,10 @@ namespace FICCI_API.Controller.API
                     result.ImpiCancelOn = DateTime.Now;
                     result.IsCancel = true;
                     await _dbContext.SaveChangesAsync();
+                    var status = _dbContext.StatusMasters.Where(x => x.StatusId == result.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
+                    subject = "PI is Cancel by : " + result.ImpiHeaderCustomerName + "";
+                    htmlbody = InvoiceApprovalhtmlBody(status, _mySettings.Website_link, result.ImpiHeaderCustomerCode, result.ImpiHeaderCustomerName, result.ImpiHeaderCustomerCity, result.ImpiHeaderPanNo, result.ImpiHeaderCustomerGstNo, result.ImpiHeaderProjectName, result.ImpiHeaderProjectCode);
+                    MailMethod(result.ImpiHeaderFinanceApprover, result.ImpiHeaderCustomerEmailId, subject, htmlbody, "Cancel", employee.LoginId, result.ImpiHeaderId);
 
                     if (result != null)
                     {
@@ -940,6 +952,40 @@ namespace FICCI_API.Controller.API
             }
         }
 
+        [NonAction]
+        public bool MailMethod(string mailTo, string mailCC, string mailSubject, string mailBody, string? ResourceType, string LoginId, int ResourceId)
+        {
+            try
+            {
+                if (mailTo == null || mailCC == null || mailSubject == null || mailBody == null)
+                {
+                    return false;
+                }
+                bool isEmailSent = SendEmailData(mailTo, mailCC, mailSubject, mailBody, _mySettings, null);
+
+                FicciImmd immd = new FicciImmd();
+                immd.ImmdMailTo = mailTo;
+                immd.ImmdMailCc = mailCC;
+                immd.ImmdMailSubject = mailSubject;
+                immd.ImmdMailBody = mailBody;
+                immd.ImmdActive = true;
+                immd.ResourceType = ResourceType;
+                immd.ImmdCreatedBy = LoginId;
+                immd.IsSent = isEmailSent;
+                immd.ResourceId = ResourceId;
+                immd.ImmdCreatedOn = DateTime.Now;
+                immd.ImmdMailSentOn = DateTime.Now;
+                _dbContext.Add(immd);
+                _dbContext.SaveChanges();
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         //[HttpPost("CancelEmployee")]
         //public async Task<IActionResult> CancelEmployee(CancelEmployee employee)

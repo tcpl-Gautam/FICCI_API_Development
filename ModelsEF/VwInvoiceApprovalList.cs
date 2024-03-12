@@ -61,6 +61,10 @@ public partial class VwInvoiceApprovalList
 
     public bool? IsCancel { get; set; }
 
+    public string ProjectEndDate { get; set; }
+
+    public string ProjectStartDate { get; set; }
+
     public string ImpiHeaderPaymentTerms { get; set; }
 
     public string ImpiHeaderRemarks { get; set; }
@@ -82,12 +86,6 @@ public partial class VwInvoiceApprovalList
     public DateTime? ImpiHeaderTlApproverDate { get; set; }
 
     public string ImpiHeaderTlApproverRemarks { get; set; }
-
-    public string ImpiHeaderClusterApprover { get; set; }
-
-    public DateTime? ImpiHeaderClusterApproverDate { get; set; }
-
-    public string ImpiHeaderClusterApproverRemarks { get; set; }
 
     public string ImpiHeaderFinanceApprover { get; set; }
 

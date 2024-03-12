@@ -188,7 +188,7 @@
          "ObjectType": 2
       }
    ],
-   "UiHint": "developdemo.FICCI_DB_APPLICATIONS_FINAL.dbo",
+   "UiHint": "17675-gautam\\sqlexpress.FICCI_DB_APPLICATIONS.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

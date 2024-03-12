@@ -36,5 +36,11 @@ namespace FICCI_API.Models
 
         [JsonProperty("SupportApprover")]
         public string? SupportApprover { get; set; }
+
+        [JsonProperty("StartDate")]
+        public string? StartDate { get; set; }
+
+        [JsonProperty("Enddate")]
+        public string? Enddate { get; set; }
     }
 }

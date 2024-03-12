@@ -73,8 +73,8 @@ namespace FICCI_API.Controller.API
                             CLApprover = customer.CustomerClusterApprover,
                             ApprovedBy = customer.ApprovedBy,
                             ApprovedOn = customer.ApprovedOn,
-                            AccountsRemarks =customer.AccountRemarks,
-                            CustomerRemarks =customer.CustomerRemarks,
+                            accountsRemarks =customer.AccountRemarks,
+                            customerRemarks =customer.CustomerRemarks,
                             
                             CityList = new CityInfo
                             {

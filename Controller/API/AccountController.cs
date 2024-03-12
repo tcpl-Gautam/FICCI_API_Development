@@ -51,8 +51,8 @@ namespace FICCI_API.Controller.API
                             ApprovedBy = customer.ApprovedBy,
                             ApprovedOn = customer.ApprovedOn,
 
-                            AccountsRemarks = customer.AccountRemarks,
-                            CustomerRemarks = customer.CustomerRemarks,
+                            accountsRemarks = customer.AccountRemarks,
+                            customerRemarks = customer.CustomerRemarks,
 
 
                             GstType = customer.GstCustomerTypeNavigation == null ? null : new GSTCustomerTypeInfo
@@ -171,6 +171,8 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
                         purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
                         purchaseInvoice_response.IsCancel = k.IsCancel;
+                        purchaseInvoice_response.startDate = k.ProjectStartDate;
+                        purchaseInvoice_response.endDate = k.ProjectEndDate;
                         var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
                         if (lindata.Count > 0)
                         {

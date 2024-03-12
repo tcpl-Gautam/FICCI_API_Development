@@ -99,10 +99,9 @@ namespace FICCI_API.DTO
    //     public string? SGApprover { get; set; }
         public string? CustomerStatus { get; set; }
 
+        public string? customerRemarks { get; set; }
 
-        public string? CustomerRemarks { get; set; }
-
-        public string? AccountsRemarks { get; set; }
+        public string? accountsRemarks { get; set; }
 
    
         public int? CustomerStatusId { get; set; }

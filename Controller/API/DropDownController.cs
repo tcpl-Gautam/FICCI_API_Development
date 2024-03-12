@@ -313,7 +313,9 @@ namespace FICCI_API.Controller.API
                         tlApprover =c.TlApprover,
                         chApprover =c.ChApprover,
                         financeApprover =c.FinanceApprover,
-                        supportApprover =c.SupportApprover
+                        supportApprover =c.SupportApprover,
+                        startDate = c.ProjectStartDate,
+                        endDate = c.ProjectEndDate,
                     }).ToList();
 
                     if (id > 0)

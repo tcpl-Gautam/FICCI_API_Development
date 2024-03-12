@@ -93,7 +93,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<CoaMaster>(entity =>
         {
-            entity.HasKey(e => e.CoaId).HasName("PK__COA_Mast__B09E779328628D68");
+            entity.HasKey(e => e.CoaId).HasName("PK__COA_Mast__B09E7793D1201498");
 
             entity.ToTable("COA_Master");
 
@@ -136,7 +136,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Erpcustomer>(entity =>
         {
-            entity.HasKey(e => e.CustId).HasName("PK__ERPCusto__049E3AA9E001CA05");
+            entity.HasKey(e => e.CustId).HasName("PK__ERPCusto__049E3AA96CEA6AA9");
 
             entity.ToTable("ERPCustomer");
 
@@ -375,10 +375,18 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ProjectDivisionName)
                 .IsUnicode(false)
                 .HasColumnName("PROJECT_DIVISION_NAME");
+            entity.Property(e => e.ProjectEndDate)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PROJECT_END_DATE");
             entity.Property(e => e.ProjectName)
                 .IsRequired()
                 .IsUnicode(false)
                 .HasColumnName("PROJECT_NAME");
+            entity.Property(e => e.ProjectStartDate)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PROJECT_START_DATE");
             entity.Property(e => e.SupportApprover)
                 .IsUnicode(false)
                 .HasColumnName("SUPPORT_APPROVER");
@@ -440,6 +448,10 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("Resource_Type");
             entity.Property(e => e.ResourceTypeId).HasColumnName("Resource_Type_Id");
+            entity.Property(e => e.TypeOfAttachment)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("TYPE_OF_ATTACHMENT");
         });
 
         modelBuilder.Entity<FicciImem>(entity =>
@@ -812,6 +824,14 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasColumnName("IMPI_HEADER_TOTAL_INVOICE_AMOUNT");
             entity.Property(e => e.IsCancel).HasDefaultValueSql("((0))");
             entity.Property(e => e.IsDraft).HasDefaultValueSql("((1))");
+            entity.Property(e => e.ProjectEndDate)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Project_End_Date");
+            entity.Property(e => e.ProjectStartDate)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Project_Start_Date");
         });
 
         modelBuilder.Entity<FicciImpiLine>(entity =>
@@ -1012,7 +1032,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<GstCustomerType>(entity =>
         {
-            entity.HasKey(e => e.CustomerTypeId).HasName("PK__GST_Cust__0ECA2EDBFB2F16FF");
+            entity.HasKey(e => e.CustomerTypeId).HasName("PK__GST_Cust__0ECA2EDB4C8B9D7E");
 
             entity.ToTable("GST_Customer_Type");
 
@@ -1031,7 +1051,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Gstgroup>(entity =>
         {
-            entity.HasKey(e => e.GroupId).HasName("PK__GSTGroup__149AF36A969249BD");
+            entity.HasKey(e => e.GroupId).HasName("PK__GSTGroup__149AF36AF8805188");
 
             entity.ToTable("GSTGroup");
 
@@ -1046,7 +1066,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Hsnsac>(entity =>
         {
-            entity.HasKey(e => e.HsnId).HasName("PK__HSNSAC__957B8D7823B2C6B7");
+            entity.HasKey(e => e.HsnId).HasName("PK__HSNSAC__957B8D78A0D44BD8");
 
             entity.ToTable("HSNSAC");
 
@@ -1059,7 +1079,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Location>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC07EF66AD08");
+            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC07D13B23CA");
 
             entity.ToTable("Location");
 
@@ -1072,7 +1092,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<PostCode>(entity =>
         {
-            entity.HasKey(e => e.PostCodeId).HasName("PK__PostCode__8579AD922D8DE1F9");
+            entity.HasKey(e => e.PostCodeId).HasName("PK__PostCode__8579AD92B0A8FCA2");
 
             entity.ToTable("PostCode");
 
@@ -1114,7 +1134,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<StatusMaster>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__StatusMa__C8EE2063918EC9DA");
+            entity.HasKey(e => e.StatusId).HasName("PK__StatusMa__C8EE20637A1BDE63");
 
             entity.ToTable("StatusMaster");
 
@@ -1123,7 +1143,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<TblCategoryList>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tbl_Cate__3214EC0750D4BD2E");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_Cate__3214EC070A91C007");
 
             entity.ToTable("tbl_Category_List");
 
@@ -1141,7 +1161,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<TblConfigurationMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tbl_Conf__3214EC0721763A50");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_Conf__3214EC079D3B5B88");
 
             entity.ToTable("tbl_Configuration_master");
 
@@ -1162,12 +1182,12 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.TblConfigurationMasters)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__tbl_Confi__Categ__160F4887");
+                .HasConstraintName("FK__tbl_Confi__Categ__07C12930");
         });
 
         modelBuilder.Entity<TblFicciRole>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__tbl_FICC__D80BB09390E51B4B");
+            entity.HasKey(e => e.RoleId).HasName("PK__tbl_FICC__D80BB0933DB0A6D8");
 
             entity.ToTable("tbl_FICCI_Role");
 
@@ -1318,16 +1338,6 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImpiHeaderCancelRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_CANCEL_REMARKS");
-            entity.Property(e => e.ImpiHeaderClusterApprover)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER");
-            entity.Property(e => e.ImpiHeaderClusterApproverDate)
-                .HasColumnType("datetime")
-                .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER_DATE");
-            entity.Property(e => e.ImpiHeaderClusterApproverRemarks)
-                .IsUnicode(false)
-                .HasColumnName("IMPI_HEADER_CLUSTER_APPROVER_REMARKS");
             entity.Property(e => e.ImpiHeaderCreatedBy)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -1448,6 +1458,14 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImpiHeaderTotalInvoiceAmount)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("IMPI_HEADER_TOTAL_INVOICE_AMOUNT");
+            entity.Property(e => e.ProjectEndDate)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Project_End_Date");
+            entity.Property(e => e.ProjectStartDate)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Project_Start_Date");
             entity.Property(e => e.StatusName).IsUnicode(false);
         });
 

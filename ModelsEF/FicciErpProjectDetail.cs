@@ -34,4 +34,8 @@ public partial class FicciErpProjectDetail
     public bool IsDelete { get; set; }
 
     public string DimensionCode { get; set; }
+
+    public string ProjectStartDate { get; set; }
+
+    public string ProjectEndDate { get; set; }
 }

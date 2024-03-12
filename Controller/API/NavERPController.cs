@@ -571,6 +571,10 @@ namespace FICCI_API.Controller.API
             try
             {
                 List<ProjectModel> cityList = await GetList<ProjectModel>("Project");
+                //if(cityList != null)
+                //{
+                //    cityList
+                //}
                 _dbContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE FICCI_ERP_PROJECT_DETAILS");
                 foreach (var k in cityList)
                 {
@@ -586,6 +590,8 @@ namespace FICCI_API.Controller.API
                     proj.FinanceApprover = k.FinanceApprover;
                     proj.SupportApprover = k.SupportApprover;
                     proj.DimensionCode = k.Dimension_Code;
+                    proj.ProjectStartDate = k.StartDate;
+                    proj.ProjectEndDate = k.Enddate;
                     _dbContext.Add(proj);
                     _dbContext.SaveChanges();
                 }
