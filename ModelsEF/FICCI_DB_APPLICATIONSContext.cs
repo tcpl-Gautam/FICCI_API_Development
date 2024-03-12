@@ -93,7 +93,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<CoaMaster>(entity =>
         {
-            entity.HasKey(e => e.CoaId).HasName("PK__COA_Mast__B09E7793BF4CE87E");
+            entity.HasKey(e => e.CoaId).HasName("PK__COA_Mast__B09E779328628D68");
 
             entity.ToTable("COA_Master");
 
@@ -136,7 +136,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Erpcustomer>(entity =>
         {
-            entity.HasKey(e => e.CustId).HasName("PK__ERPCusto__049E3AA900AD957B");
+            entity.HasKey(e => e.CustId).HasName("PK__ERPCusto__049E3AA9E001CA05");
 
             entity.ToTable("ERPCustomer");
 
@@ -810,6 +810,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImpiHeaderTotalInvoiceAmount)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("IMPI_HEADER_TOTAL_INVOICE_AMOUNT");
+            entity.Property(e => e.IsCancel).HasDefaultValueSql("((0))");
             entity.Property(e => e.IsDraft).HasDefaultValueSql("((1))");
         });
 
@@ -1011,7 +1012,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<GstCustomerType>(entity =>
         {
-            entity.HasKey(e => e.CustomerTypeId).HasName("PK__GST_Cust__0ECA2EDB4BB6DB1D");
+            entity.HasKey(e => e.CustomerTypeId).HasName("PK__GST_Cust__0ECA2EDBFB2F16FF");
 
             entity.ToTable("GST_Customer_Type");
 
@@ -1030,7 +1031,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Gstgroup>(entity =>
         {
-            entity.HasKey(e => e.GroupId).HasName("PK__GSTGroup__149AF36A523FA60F");
+            entity.HasKey(e => e.GroupId).HasName("PK__GSTGroup__149AF36A969249BD");
 
             entity.ToTable("GSTGroup");
 
@@ -1045,7 +1046,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Hsnsac>(entity =>
         {
-            entity.HasKey(e => e.HsnId).HasName("PK__HSNSAC__957B8D78AAE809A8");
+            entity.HasKey(e => e.HsnId).HasName("PK__HSNSAC__957B8D7823B2C6B7");
 
             entity.ToTable("HSNSAC");
 
@@ -1058,7 +1059,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<Location>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC073FB924FE");
+            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC07EF66AD08");
 
             entity.ToTable("Location");
 
@@ -1071,7 +1072,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<PostCode>(entity =>
         {
-            entity.HasKey(e => e.PostCodeId).HasName("PK__PostCode__8579AD92FAA77F2C");
+            entity.HasKey(e => e.PostCodeId).HasName("PK__PostCode__8579AD922D8DE1F9");
 
             entity.ToTable("PostCode");
 
@@ -1113,7 +1114,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<StatusMaster>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__StatusMa__C8EE20630B81C647");
+            entity.HasKey(e => e.StatusId).HasName("PK__StatusMa__C8EE2063918EC9DA");
 
             entity.ToTable("StatusMaster");
 
@@ -1122,7 +1123,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<TblCategoryList>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tbl_Cate__3214EC075D2B0FE9");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_Cate__3214EC0750D4BD2E");
 
             entity.ToTable("tbl_Category_List");
 
@@ -1140,7 +1141,7 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
 
         modelBuilder.Entity<TblConfigurationMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tbl_Conf__3214EC07A3CE59C4");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_Conf__3214EC0721763A50");
 
             entity.ToTable("tbl_Configuration_master");
 
@@ -1161,12 +1162,12 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.TblConfigurationMasters)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__tbl_Confi__Categ__151B244E");
+                .HasConstraintName("FK__tbl_Confi__Categ__160F4887");
         });
 
         modelBuilder.Entity<TblFicciRole>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__tbl_FICC__D80BB093A0D5E1EE");
+            entity.HasKey(e => e.RoleId).HasName("PK__tbl_FICC__D80BB09390E51B4B");
 
             entity.ToTable("tbl_FICCI_Role");
 
@@ -1307,7 +1308,16 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("Approver_Email");
             entity.Property(e => e.HeaderStatusId).HasColumnName("Header_StatusId");
+            entity.Property(e => e.ImpiCancelBy)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_CancelBy");
+            entity.Property(e => e.ImpiCancelOn)
+                .HasColumnType("datetime")
+                .HasColumnName("IMPI_CancelOn");
             entity.Property(e => e.ImpiHeaderAttachment).HasColumnName("IMPI_HEADER_ATTACHMENT");
+            entity.Property(e => e.ImpiHeaderCancelRemarks)
+                .IsUnicode(false)
+                .HasColumnName("IMPI_HEADER_CANCEL_REMARKS");
             entity.Property(e => e.ImpiHeaderClusterApprover)
                 .HasMaxLength(50)
                 .IsUnicode(false)

@@ -73,6 +73,9 @@ namespace FICCI_API.Controller.API
                             CLApprover = customer.CustomerClusterApprover,
                             ApprovedBy = customer.ApprovedBy,
                             ApprovedOn = customer.ApprovedOn,
+                            AccountsRemarks =customer.AccountRemarks,
+                            CustomerRemarks =customer.CustomerRemarks,
+                            
                             CityList = new CityInfo
                             {
                                 cityCode = _dbContext.Cities.Where(x => x.CityCode == customer.CityCode && x.IsActive != false).Select(a => a.CityCode).FirstOrDefault(),
@@ -200,6 +203,7 @@ namespace FICCI_API.Controller.API
                             customer.CustomerUpdatedOn = DateTime.Now;
                             //customer.CustomerCity = data.Cityid;
                             customer.CustomerPhoneNo = data.Phone;
+                           
                             customer.GstCustomerType = data.GSTCustomerType;
                             customer.IsPending = true;
                             customer.IsDraft = data.IsDraft;
@@ -226,7 +230,7 @@ namespace FICCI_API.Controller.API
                             int returnId = customer.CustomerId;
 
 
-                            if (!data.IsDraft)
+                            if (returnId != 0)
                             {
 
                                 NavERPController navERPController = new NavERPController(_configuration, _dbContext);
@@ -238,33 +242,17 @@ namespace FICCI_API.Controller.API
                                 PostData.Address = data.Address;
                                 PostData.Address2 = data.Address2;
                                 PostData.City = data.CityCode;
-                                PostData.State_Code = "";//data.StateCode;
-                                PostData.Country_Region_Code = "";// data.CountryCode;
-
-                                PostData.Contact = data.Contact;
                                 PostData.PostCode = data.PinCode;
+                                PostData.State_Code = data.StateCode;
+                                PostData.Country_Region_Code = data.CountryCode;
+                                PostData.Contact = data.Contact;
 
-                                PostData.GSTCustomerType = ""; // data.GSTCustomerType.ToString();
-                                PostData.GSTRegistrationNo = "";//data.GSTNumber;
-                                PostData.PAN_No = "";// data.PAN;
-                                PostData.EMail = ""; //data.Email;
-                                PostData.PrimaryContactNo = "";//data.Phone;
-                                //PostData.Name = "Ashish Raghav";
-                                //PostData.Name2 = "Devloper ok 3";
-                                //PostData.Address = "sec 137";
-                                //PostData.Address2 = "NOida";
-                                //PostData.City = "Noida";
-                                //PostData.State_Code = "";
-                                //PostData.Country_Region_Code = "";
+                                PostData.PAN_No = data.PAN;
+                                PostData.GSTCustomerType = "Registered"; ;// data.GSTCustomerType.ToString();
+                                PostData.GSTRegistrationNo = data.GSTNumber;
+                                PostData.EMail = data.Email;
+                                //   PostData.PrimaryContactNo =data.Phone;
 
-                                //PostData.Contact = "878789898";
-                                //PostData.PostCode = "201301";
-
-                                //PostData.GSTCustomerType = " ";
-                                //PostData.GSTRegistrationNo = "";
-                                //PostData.PAN_No = "";
-                                //PostData.EMail = "";
-                                //PostData.PrimaryContactNo = "";
 
                                 dynamic erpResponse = await navERPController.PostCustomer(PostData);
                                 var updatedNumber = erpResponse.Data.No;
@@ -273,13 +261,33 @@ namespace FICCI_API.Controller.API
                                 _dbContext.Update(resu);
                                 _dbContext.SaveChanges();
 
+
+                                Erpcustomer customerERP = new Erpcustomer();
+
+                                customerERP.CustName = data.CustomerName;
+                                customerERP.CustName2 = data.CustomerLastName;
+                                customerERP.CustAddress = data.Address;
+                                customerERP.CustAddress2 = data.Address2;
+                                customerERP.City = data.CityCode;
+                                customerERP.PinCode = data.PinCode;
+                                customerERP.StateCode = data.StateCode;
+                                customerERP.CountryRegionCode = data.CountryCode;
+                                customerERP.Contact = data.Contact;
+                                customerERP.PanNo = data.PAN;
+                                customerERP.GstcustomerType = "Registered"; ;// data.GSTCustomerType.ToString();
+                                customerERP.GstregistrationNo = data.GSTNumber;
+                                customerERP.Email = data.Email;
+                                customerERP.CustNo = resu.CusotmerNo;
+                                customerERP.PrimaryContactNo = data.Phone;
+                                _dbContext.Add(customerERP);
+                                _dbContext.SaveChanges();
                             }
 
-                            int returnid = customer.CustomerId;
+
 
                             FicciImwd imwd = new FicciImwd();
                             imwd.ImwdScreenName = "Customer Approver";
-                            imwd.CustomerId = returnid;
+                            imwd.CustomerId = returnId;
                             imwd.ImwdCreatedOn = DateTime.Now;
                             imwd.ImwdCreatedBy = data.LoginId;
                             imwd.ImwdStatus = data.IsDraft == true ? "1" : "5";
@@ -346,7 +354,63 @@ namespace FICCI_API.Controller.API
 
                                 _dbContext.SaveChanges();
 
-                             
+
+                                var resultERP = await _dbContext.Erpcustomers.Where(x => x.CustNo == result.CusotmerNo).FirstOrDefaultAsync();
+
+                                if (resultERP != null)
+
+                                {
+                                    resultERP.CustName = data.CustomerName;
+                                    resultERP.CustName2 = data.CustomerLastName;
+                                    resultERP.CustAddress = data.Address;
+                                    resultERP.CustAddress2 = data.Address2;
+                                    resultERP.City = data.CityCode;
+                                    resultERP.PinCode = data.PinCode;
+                                    resultERP.StateCode = data.StateCode;
+                                    resultERP.CountryRegionCode = data.CountryCode;
+                                    resultERP.Contact = data.Contact;
+                                    resultERP.PanNo = data.PAN;
+                                    resultERP.GstcustomerType = "Registered"; ;// data.GSTCustomerType.ToString();
+                                    resultERP.GstregistrationNo = data.GSTNumber;
+                                    resultERP.Email = data.Email;
+                                    resultERP.PrimaryContactNo = data.Phone;
+
+                                    _dbContext.SaveChanges();
+
+                                }
+                                if (result != null && result.CusotmerNo != null)
+                                {
+
+                                    NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+
+                                    CustomerPostUpdate PostData = new CustomerPostUpdate();
+
+                                    PostData.No = data.CustomerCode;
+                                    PostData.Name = data.CustomerName;
+                                    PostData.Name2 = data.CustomerLastName;
+                                    PostData.Address = data.Address;
+                                    PostData.Address2 = data.Address2;
+                                    PostData.City = data.CityCode;
+                                    PostData.PostCode = data.PinCode;
+                                    PostData.State_Code = data.StateCode;
+                                    PostData.Country_Region_Code = data.CountryCode;
+                                    PostData.Contact = data.Contact;
+
+                                    PostData.PAN_No = data.PAN;
+                                    PostData.GSTCustomerType = "Registered"; ;// data.GSTCustomerType.ToString();
+                                    PostData.GSTRegistrationNo = data.GSTNumber;
+                                    PostData.EMail = data.Email;
+                                    //   PostData.PrimaryContactNo =data.Phone;
+
+                                    dynamic erpResponse = await navERPController.PostUpdateCustomer(PostData);
+                                    //var updatedNumber = erpResponse.Data.No;
+                                    //var resu = _dbContext.FicciErpCustomerDetails.Where(x => x.CustomerId == returnId).FirstOrDefault();
+                                    //resu.CusotmerNo = updatedNumber;
+                                    //_dbContext.Update(resu);
+                                    //_dbContext.SaveChanges();
+
+                                }
+
 
 
                                 transaction.Commit();

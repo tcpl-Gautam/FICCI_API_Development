@@ -34,7 +34,7 @@ namespace FICCI_API.Controller.API.Account
             {
                 if (requestData != null)
                 {
-                  
+
                     //check if email exist in database
                     bool emailValid = await _dbContext.FicciImums.AnyAsync(x => x.ImumEmail == requestData.Email);
                     if (!emailValid)
@@ -60,14 +60,17 @@ namespace FICCI_API.Controller.API.Account
                     var res = await _dbContext.FicciImums
                         .Where(x => x.ImumEmail == requestData.Email && x.ImumPassword == requestData.Password && x.ImumActive != false)
                         .Include(x => x.Role)
-                        .Select(user  => new LoginData
+                        .Select(user => new LoginData
                         {
                             Email = user.ImumEmail,
                             Name = user.ImumName,
                             EmpId = user.ImumEmpid,
                             RoleName = _dbContext.TblFicciRoles.Where(m => m.RoleId == user.RoleId).Select(x => x.RoleName).FirstOrDefault().ToString(),
-                            IsApprover =  _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email|| m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
+                            IsApprover = _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email || m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
                             Invoice_IsApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email || m.ImpiHeaderClusterApprover == requestData.Email || m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                            Invoice_IsTLApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                            Invoice_IsCHApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderClusterApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                            Invoice_IsFinanceApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
                             Token = "123"
                         })
                         .FirstOrDefaultAsync();
@@ -103,6 +106,84 @@ namespace FICCI_API.Controller.API.Account
                 return StatusCode(500, new { status = false, message = "An error occurred." });
             }
         }
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> Login(UserRequestDto requestData)
+        //{
+        //    try
+        //    {
+        //        if (requestData != null)
+        //        {
+
+        //            //check if email exist in database
+        //            bool emailValid = await _dbContext.FicciImums.AnyAsync(x => x.ImumEmail == requestData.Email);
+        //            if (!emailValid)
+        //            {
+        //                var response = new
+        //                {
+        //                    status = false,
+        //                    message = "Email does not exist",
+        //                };
+        //                return StatusCode(200, response);
+        //            }
+
+        //            //TokenService token = new TokenService(_configuration);
+        //            //var generateToken = await token.CreateToken(requestData);
+
+        //            //var userlog = LogUserData(requestData.Email,"123",true);
+        //            //if(userlog == false)
+        //            //{
+        //            //    return StatusCode(500, new { status = false, message = "An error occurred while saving data ." });
+
+        //            //}
+        //            //checks password and email for authenticate
+        //            var res = await _dbContext.FicciImums
+        //                .Where(x => x.ImumEmail == requestData.Email && x.ImumPassword == requestData.Password && x.ImumActive != false)
+        //                .Include(x => x.Role)
+        //                .Select(user  => new LoginData
+        //                {
+        //                    Email = user.ImumEmail,
+        //                    Name = user.ImumName,
+        //                    EmpId = user.ImumEmpid,
+        //                    RoleName = _dbContext.TblFicciRoles.Where(m => m.RoleId == user.RoleId).Select(x => x.RoleName).FirstOrDefault().ToString(),
+        //                    IsApprover =  _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email|| m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
+        //                    Invoice_IsApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email || m.ImpiHeaderClusterApprover == requestData.Email || m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
+        //                    Token = "123"
+        //                })
+        //                .FirstOrDefaultAsync();
+
+
+
+        //            if (res == null)
+        //            {
+        //                var response = new
+        //                {
+        //                    status = false,
+        //                    message = "Password is incorrect",
+        //                    data = res
+        //                };
+        //                return Ok(response);
+        //            }
+        //            var respons = new
+        //            {
+        //                status = true,
+        //                message = "Login Successful",
+        //                data = res,
+        //            };
+        //            return Ok(respons);
+        //        }
+        //        else
+        //        {
+        //            return Unauthorized("User does not exist. Please check Email and Password");
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { status = false, message = "An error occurred." });
+        //    }
+        //}
 
         [HttpPost("GetToken")]
         public IActionResult GetToken(UserRequestDto userLogins)

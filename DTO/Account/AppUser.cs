@@ -40,6 +40,7 @@ namespace FICCI_API.DTO.Account
         public string Email { get; set; }
         public string Password { get; set; }
     }
+
     public class LoginData
     {
         public string Email { get; set; }
@@ -49,7 +50,25 @@ namespace FICCI_API.DTO.Account
 
         public bool IsApprover { get; set; }
         public bool Invoice_IsApprover { get; set; }
-        
+        public bool Invoice_IsTLApprover { get; set; }
+        public bool Invoice_IsCHApprover { get; set; }
+        public bool Invoice_IsFinanceApprover { get; set; }
+
+
         public string? Token { get; set; }
     }
+
+    //public class LoginData
+    //{
+    //    public string Email { get; set; }
+    //    public string Name { get; set; }
+    //    public string EmpId { get; set; }
+    //    public string RoleName { get; set; }
+
+    //    public bool IsApprover { get; set; }
+    //    public bool Invoice_IsApprover { get; set; }
+
+    //    public string? Token { get; set; }
+    //}
+
 }

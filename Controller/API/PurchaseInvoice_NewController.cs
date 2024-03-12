@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Drawing;
 using System.IO;
@@ -22,10 +23,13 @@ namespace FICCI_API.Controller.API
     {
         private readonly FICCI_DB_APPLICATIONSContext _dbContext;
         private readonly IConfiguration _configuration;
-        public PurchaseInvoice_NewController(FICCI_DB_APPLICATIONSContext dbContext, IConfiguration configuration) : base(dbContext)
+
+        private readonly MySettings _mySettings;
+        public PurchaseInvoice_NewController(FICCI_DB_APPLICATIONSContext dbContext, IConfiguration configuration, IOptions<MySettings> mySettings) : base(dbContext)
         {
             _dbContext = dbContext;
             _configuration = configuration;
+            _mySettings = mySettings.Value;
         }
         [HttpPost]
         [Consumes("multipart/form-data")]
@@ -96,37 +100,6 @@ namespace FICCI_API.Controller.API
                             ficciImpiHeader.ImpiHeaderAttachment = UploadFile(request.ImpiHeaderAttachment, request.LoginId, returnid, folder.Trim(), 2,"Invoice_Header","Invoice");
                         }
 
-                        if (!request.IsDraft)
-                        {
-                            NavERPController navERPController = new NavERPController(_configuration, _dbContext);
-                            PURCHASE_INVOICE_HEADER header = new PURCHASE_INVOICE_HEADER();
-                            header.sellToCustomerName = "Ashoka University";
-                            header.sellToCustomerName2 = "-International Foundation for Research & Education";
-                            header.sellToCustomerNo = "C23599";
-                            header.ProjectCode = "GENERAL 3";
-                            header.DepartmentName = "Membership Services";
-                            header.DepartmentCode = "101048";
-                            header.DivisionCode = "1010";
-                            header.DivisionName = "FICCI-Delhi Office";
-                            header.ApproverTL = "NARAYAN.SWAMY";
-                            header.ApproverCH = "JYOTI.VIJ";
-                            header.ApproverSupport = "";
-                            header.FinanceApprover = "VIPIN.DHAMI";
-                            header.InvoicePortalOrder = false;
-                            header.InvoicePortalSubmitted = false;
-                            header.sellToCity = "Sonepat";
-                            header.sellToAddress = "Plot # 2, Rajiv Gandhi Education City,";
-                            header.sellToAddress2 = "National Capital Region, P O Rai,";
-                            header.sellToPostCode = "131029";
-                            header.sellToCountryRegionCode = "IN";
-                            header.GST_No = "06AAAJA2808E1ZV";
-                            header.PAN_No = "AAAJA2808E";
-                            dynamic response = await navERPController.PostPIData(header);
-                            documentNumber = response.Value.Data.no;
-
-                        }
-
-
                         FicciImwd imwd = new FicciImwd();
                         imwd.ImwdScreenName = "Invoice Approver";
                         imwd.CustomerId = returnid;
@@ -176,56 +149,110 @@ namespace FICCI_API.Controller.API
                                 _dbContext.SaveChanges();
 
 
-                                if (documentNumber != "" && !request.IsDraft)
+                               
+                            }
+
+                        }
+
+                        if (request.IsDraft == false)
+                        {
+                            string htmlbody = InvoiceAssignhtmlBody(_mySettings.Website_link, ficciImpiHeader.ImpiHeaderCustomerName, ficciImpiHeader.ImpiHeaderCustomerCity, ficciImpiHeader.ImpiHeaderPanNo, ficciImpiHeader.ImpiHeaderCustomerGstNo, ficciImpiHeader.ImpiHeaderCustomerContactPerson, ficciImpiHeader.ImpiHeaderCustomerPhoneNo, ficciImpiHeader.ImpiHeaderProjectCode, ficciImpiHeader.ImpiHeaderProjectName, ficciImpiHeader.ImpiHeaderCustomerCode);
+                            SendEmail(ficciImpiHeader.ImpiHeaderTlApprover, ficciImpiHeader.ImpiHeaderCustomerEmailId, $"New PI Assigned for Approval : {ficciImpiHeader.ImpiHeaderCustomerName}", htmlbody, _mySettings);
+
+                        }
+
+
+
+                        if (ficciImpiHeader.ImpiHeaderId != 0 && ficciImpiHeader.ImpiHeaderPiNo == null)
+                        {
+                            NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+
+                            PURCHASE_INVOICE_HEADER PostData = new PURCHASE_INVOICE_HEADER();
+
+                            PostData.sellToCustomerNo = request.ImpiHeaderCustomerCode;
+                            PostData.sellToCustomerName = request.ImpiHeaderCustomerName;
+                            //  PostData.sellToCustomerName2 = request.cus;
+                            PostData.sellToCity = request.ImpiHeaderCustomerCity;
+                            PostData.sellToAddress = request.ImpiHeaderCustomerAddress;
+                            PostData.sellToAddress2 = request.ImpiHeaderCustomerAddress;
+                            PostData.sellToPostCode = request.ImpiHeaderCustomerPinCode;
+                            //PostData.sellToCountryRegionCode = request.cpi;
+                            PostData.GST_No = request.ImpiHeaderCustomerGstNo;
+                            PostData.PAN_No = request.ImpiHeaderPanNo;
+
+                            PostData.DepartmentCode = request.ImpiHeaderProjectDepartmentCode;
+                            PostData.DepartmentName = request.ImpiHeaderProjectDepartmentName;
+                            PostData.ProjectCode = request.ImpiHeaderProjectCode;
+
+                            PostData.DivisionCode = request.ImpiHeaderProjectDivisionCode;
+                            PostData.DivisionName = request.ImpiHeaderProjectDivisionName;
+                            PostData.ApproverTL = request.ImpiHeaderTlApprover;
+                            PostData.ApproverCH = request.ImpiHeaderClusterApprover;
+                            PostData.ApproverSupport = request.ImpiHeaderSupportApprover;
+                            PostData.FinanceApprover = request.ImpiHeaderFinanceApprover;
+                            PostData.InvoicePortalOrder = false;
+                            PostData.InvoicePortalSubmitted = false;
+                            PostData.Cancelled = false;
+                            PostData.CancelRemark = request.InvoiceRemarks;
+                            PostData.CreatedByUser = "";
+
+                            dynamic erpResponse = await navERPController.PostPIData(PostData);
+                            var updatedNumber = erpResponse.Value.Data.no;
+                            var resu = _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == ficciImpiHeader.ImpiHeaderId).FirstOrDefault();
+                            resu.ImpiHeaderPiNo = updatedNumber;
+                            _dbContext.Update(resu);
+                            _dbContext.SaveChanges();
+
+
+
+                            if (returnid != 0 && resu.ImpiHeaderPiNo != null && request.lineItem_Requests.Count > 0)
+                            {
+
+                                //  PURCHASE_INVOICE_LINE[] PostLineDataList = new PURCHASE_INVOICE_LINE[request.lineItem_Requests.Count];
+
+                                int index = 0;
+                                long LineNo = 0;
+                                foreach (var line in request.lineItem_Requests)
                                 {
-                                    NavERPController navERPController = new NavERPController(_configuration, _dbContext);
-                                    PURCHASE_INVOICE_LINE line = new PURCHASE_INVOICE_LINE();
-                                    line.documentType = "Invoice";
-                                    line.documentNo = "SI210401";
-                                    line.type = "G/L Account";
-                                    line.no_ = "100310";
-                                    line.LocationCode = "FICCI-DL";
-                                    line.quantity = "1";
-                                    line.unitPrice = 4000.0M;
-                                    line.lineAmount =4000.0M;
-                                    line.gSTGroupCode = "GOODS-12";
-                                    line.gST_Group_Type = "Goods";
-                                    line.hSN_SAC_Code = "40169200";
-                                    line.lineNo = 10000;
-                                    line.gSTCredit = 0.0M;
-    //                                "documentNo": "SI210401",
-    //"documentType": "Invoice",
-    //"type": "G/L Account",
-    //"no_": "100310",
-    //"lineNo": 10000,
-    //"LocationCode": "FICCI-DL",
-    //"quantity": "1",
-    //"unitPrice": 4000.0,
-    //"lineAmount": 4000.0,
-    //"gSTCredit": 0.0,
-    //"gSTGroupCode": "GOODS-12",
-    //"gST_Group_Type": "Goods",
-    //"hSN_SAC_Code": "40169200"
+                                    NavERPController navERPControllerLine = new NavERPController(_configuration, _dbContext);
 
+                                    PURCHASE_INVOICE_LINE PostLineData = new PURCHASE_INVOICE_LINE();
 
+                                    if (LineNo <= 0)
+                                    {
+                                        LineNo = 10000;
+                                    }
+                                    else
+                                    {
+                                        LineNo = Convert.ToInt32(LineNo) + 10000;
+                                    }
 
+                                    PostLineData.documentNo = resu.ImpiHeaderPiNo;
+                                    PostLineData.documentType = "Invoice";
+                                    PostLineData.type = "G/L Account";
+                                    PostLineData.lineNo = LineNo;    // Convert.ToInt32(line.ImpiLineNo);
+                                    PostLineData.quantity = Convert.ToInt32(line.ImpiQuantity);
+                                    PostLineData.unitPrice = line.ImpiUnitPrice;
+                                    PostLineData.hSN_SAC_Code = line.ImpiHsnsaccode;
+                                    PostLineData.no_ = line.ImpiGlNo;
+                                    PostLineData.gSTGroupCode = line.ImpiGstgroupCode;
+                                    PostLineData.LocationCode = line.ImpiLocationCode;
+                                    PostLineData.lineAmount = line.ImpiLineAmount;
+                                   // PostLineData.gST_Group_Type = "Goods";
 
-                                    dynamic response = await navERPController.PostPILineData(line);
+                                    dynamic erpResponse1 = await navERPController.PostPILineData(PostLineData);
+
+                                    ////   PostLineDataList[index] = PostLineData;
+                                    //    index++;
+                                    //  var updatedNumber = erpResponse1.Data.No;
+                                    // var resu = _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == returnId).FirstOrDefault();
+                                    // resu.ImpiHeaderPiNo = updatedNumber;
+                                    //   _dbContext.Update(resu);
+                                    // _dbContext.SaveChanges();
 
                                 }
 
-
-
-                                //NavERPController navERPController = new NavERPController(_configuration, _dbContext);
-                                //PURCHASE_INVOICE_LINE line = new PURCHASE_INVOICE_LINE();
-                                //line.documentType = k.DocumentType;
-                                //line.documentNo = k.ImpiDocumentNo;
-                                //line.type = "";
-                                //line.no_ = "";
-                                //line.LocationCode = "";
-                                //line.quantity =Convert.ToInt32(k.ImpiQuantity);
-                                //line.unitPrice = k.ImpiUnitPrice;
-                                //line.lineAmount = k.ImpiLineAmount;
+                                dynamic erpResponse2 = await navERPController.UploadFileInERP(resu.ImpiHeaderPiNo,resu.ImpiHeaderRecordNo);
 
                             }
 
@@ -347,6 +374,112 @@ namespace FICCI_API.Controller.API
                                 }
 
                             }
+
+                            if (request.IsDraft == false)
+                            {
+                                string htmlbody = InvoiceAssignhtmlBody(_mySettings.Website_link, data.ImpiHeaderCustomerName, data.ImpiHeaderCustomerCity, data.ImpiHeaderPanNo, data.ImpiHeaderCustomerGstNo, data.ImpiHeaderCustomerContactPerson, data.ImpiHeaderCustomerPhoneNo, data.ImpiHeaderProjectCode, data.ImpiHeaderProjectName, data.ImpiHeaderCustomerCode);
+                                SendEmail(data.ImpiHeaderTlApprover, data.ImpiHeaderCustomerEmailId, $"New PI Assigned for Approval : {data.ImpiHeaderCustomerName}", htmlbody, _mySettings);
+
+                            }
+
+                            if (data.ImpiHeaderId != 0 && data.ImpiHeaderPiNo != null)
+                            {
+                               
+                                NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+
+                                PURCHASE_INVOICE_HEADER_UPDATE PostData = new PURCHASE_INVOICE_HEADER_UPDATE();
+
+                                PostData.no = data.ImpiHeaderPiNo;
+                                PostData.sellToCustomerNo = data.ImpiHeaderCustomerCode;
+                                PostData.sellToCustomerName = data.ImpiHeaderCustomerName;
+                                //  PostData.sellToCustomerName2 = request.cus;
+                                PostData.sellToCity = data.ImpiHeaderCustomerCity;
+                                PostData.sellToAddress = data.ImpiHeaderCustomerAddress;
+                                PostData.sellToAddress2 = data.ImpiHeaderCustomerAddress;
+                                PostData.sellToPostCode = data.ImpiHeaderCustomerPinCode;
+                                //PostData.sellToCountryRegionCode = request.cpi;
+                                PostData.GST_No = data.ImpiHeaderCustomerGstNo;
+                                PostData.PAN_No = data.ImpiHeaderPanNo;
+
+                                PostData.DepartmentCode = data.ImpiHeaderProjectDepartmentCode;
+                                PostData.DepartmentName = data.ImpiHeaderProjectDepartmentName;
+                                PostData.ProjectCode = data.ImpiHeaderProjectCode;
+
+                                PostData.DivisionCode = data.ImpiHeaderProjectDivisionCode;
+                                PostData.DivisionName = data.ImpiHeaderProjectDivisionName;
+                                PostData.ApproverTL = data.ImpiHeaderTlApprover;
+                                PostData.ApproverCH = data.ImpiHeaderClusterApprover;
+                                PostData.ApproverSupport = data.ImpiHeaderSupportApprover;
+                                PostData.FinanceApprover = data.ImpiHeaderFinanceApprover;
+                                PostData.InvoicePortalOrder = false;
+                                PostData.InvoicePortalSubmitted = false;                                
+                                PostData.Cancelled = false;
+                                PostData.CancelRemark = data.ImpiHeaderCancelRemarks;
+                                PostData.CreatedByUser = "";
+
+                                dynamic erpResponse = await navERPController.UpdatePIData(PostData);
+                                //    var updatedNumber = erpResponse.Value.Data.no;
+                                //  var resu = _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == data.ImpiHeaderId).FirstOrDefault();
+                                // resu.ImpiHeaderPiNo = updatedNumber;
+                                // _dbContext.Update(resu);
+                                // _dbContext.SaveChanges();
+
+                                if (returnid != 0 && data.ImpiHeaderPiNo != null && request.lineItem_Requests.Count > 0)
+                                {
+
+                                    //  PURCHASE_INVOICE_LINE[] PostLineDataList = new PURCHASE_INVOICE_LINE[request.lineItem_Requests.Count];
+
+                                    int index = 0;
+                                    long LineNo = 0;
+                                    foreach (var line in request.lineItem_Requests)
+                                    {
+                                        NavERPController navERPControllerLine = new NavERPController(_configuration, _dbContext);
+                                        PURCHASE_INVOICE_LINE PostLineData = new PURCHASE_INVOICE_LINE();
+
+                                        if (LineNo <= 0)
+                                        {
+                                            LineNo = 10000;
+                                        }
+                                        else
+                                        {
+                                            LineNo = Convert.ToInt32(LineNo) + 10000;
+                                        }
+
+                                        PostLineData.documentNo = data.ImpiHeaderPiNo;
+                                        PostLineData.documentType = "Invoice";
+                                        PostLineData.type = "G/L Account";
+                                        PostLineData.lineNo = LineNo;    // Convert.ToInt32(line.ImpiLineNo);
+                                        PostLineData.quantity = Convert.ToInt32(line.ImpiQuantity);
+                                        PostLineData.unitPrice = line.ImpiUnitPrice;
+                                        PostLineData.hSN_SAC_Code = line.ImpiHsnsaccode;
+                                        PostLineData.no_ = line.ImpiGlNo;
+                                        PostLineData.gSTGroupCode = line.ImpiGstgroupCode;
+                                        PostLineData.LocationCode = line.ImpiLocationCode;
+                                        PostLineData.lineAmount = line.ImpiLineAmount;
+                                        //  PostLineData.gST_Group_Type = "Goods";
+
+                                        dynamic erpResponseDelete = await navERPController.DeletePILineData(PostLineData);
+                                        //dynamic erpResponse1 = await navERPController.UpdatePILineData(PostLineData);
+
+                                        dynamic erpResponse1 = await navERPController.PostPILineData(PostLineData);
+
+                                        ////   PostLineDataList[index] = PostLineData;
+                                        //    index++;
+                                        //  var updatedNumber = erpResponse1.Data.No;
+                                        // var resu = _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == returnId).FirstOrDefault();
+                                        // resu.ImpiHeaderPiNo = updatedNumber;
+                                        //   _dbContext.Update(resu);
+                                        // _dbContext.SaveChanges();
+
+                                    }
+
+                                    dynamic erpResponse2 = await navERPController.UploadFileInERP(data.ImpiHeaderPiNo,data.ImpiHeaderRecordNo);
+
+                                }
+
+                            }
+
+
                             purchaseInvoice_New.Status = true;
                             purchaseInvoice_New.Message = "Purchase Invoice Update Successfully";
                             return StatusCode(200, purchaseInvoice_New);
@@ -433,27 +566,7 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
                         purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
 
-                        ////error in auto generated model ImpiHeaderAttachment is not null
-                        //if (k.ImpiHeaderAttachment != null)
-                        //{
-                        //    string[]? valuesArray = k.ImpiHeaderAttachment.Split(',');
 
-                        //    // Display the result
-                        //    List<FicciImad> listing = new List<FicciImad>();
-
-                        //    foreach (string value in valuesArray)
-                        //    {
-
-                        //        var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value) && x.ImadActive !=false).FirstOrDefaultAsync();
-                        //        if (path != null)
-                        //        {
-
-                        //            listing.Add(path);
-                        //        }
-                        //    }
-
-                        //    purchaseInvoice_response.ImpiHeaderAttachment = listing;
-                        //}
                         purchaseInvoice_response.IsDraft = k.IsDraft;
                         purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
                         purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
@@ -473,6 +586,10 @@ namespace FICCI_API.Controller.API
                         purchaseInvoice_response.HeaderStatusId = k.HeaderStatusId;
                         purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
                         purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
+                        purchaseInvoice_response.CancelRemarks = k.ImpiHeaderCancelRemarks;
+                        purchaseInvoice_response.CancelOn = k.ImpiCancelOn;
+                        purchaseInvoice_response.CancelBy = k.ImpiCancelBy;
+                        purchaseInvoice_response.IsCancel = k.IsCancel;
                         purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
                         purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
                         purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
@@ -535,6 +652,168 @@ namespace FICCI_API.Controller.API
             }
         }
 
+
+        //[HttpGet]
+
+        //public async Task<IActionResult> GET(string email)
+        //{
+        //    PurchaseInvoice_New purchaseInvoice_New = new PurchaseInvoice_New();
+        //    try
+        //    {
+        //        if (email == null)
+        //        {
+        //            var response = new
+        //            {
+        //                status = true,
+        //                message = "Email is Mandatory field",
+        //            };
+        //            return Ok(response);
+        //        }
+        //        //var list = _dbContext.FicciImpiHeaders.Where(m => m.ImpiHeaderActive == true).ToList();
+        //        //if (email != null)
+        //        //{
+        //        //    list = list.Where(m => m.ImpiHeaderCreatedBy == email).ToList();
+        //        //}
+
+        //        var emp_Role = await _dbContext.FicciImums.Where(x => x.ImumEmail == email).Select(a => a.RoleId).FirstOrDefaultAsync();
+
+        //        var list = _dbContext.FicciImpiHeaders.Where(m => m.ImpiHeaderActive == true).ToList();
+        //        if (emp_Role != 1)
+        //        {
+        //            list = list.Where(m => m.ImpiHeaderCreatedBy == email).OrderByDescending(x => x.ImpiHeaderSubmittedDate).ToList();
+        //        }
+
+        //        if (list.Count > 0)
+        //        {
+        //            List<PurchaseInvoice_Response> purchaseInvoice_responsel = new List<PurchaseInvoice_Response>();
+        //            foreach (var k in list)
+        //            {
+        //                PurchaseInvoice_Response purchaseInvoice_response = new PurchaseInvoice_Response();
+        //                purchaseInvoice_response.HeaderId = k.ImpiHeaderId;
+        //                purchaseInvoice_response.HeaderPiNo = k.ImpiHeaderPiNo;
+        //                purchaseInvoice_response.ImpiHeaderInvoiceType = k.ImpiHeaderInvoiceType;
+        //                purchaseInvoice_response.ImpiHeaderProjectCode = k.ImpiHeaderProjectCode;
+        //                purchaseInvoice_response.ImpiHeaderProjectName = k.ImpiHeaderProjectName;
+        //                purchaseInvoice_response.ImpiHeaderProjectDepartmentCode = k.ImpiHeaderProjectDepartmentCode;
+        //                purchaseInvoice_response.ImpiHeaderProjectDepartmentName = k.ImpiHeaderProjectDepartmentName;
+        //                purchaseInvoice_response.ImpiHeaderProjectDivisionCode = k.ImpiHeaderProjectDivisionCode;
+        //                purchaseInvoice_response.ImpiHeaderProjectDivisionName = k.ImpiHeaderProjectDivisionName;
+        //                purchaseInvoice_response.ImpiHeaderPanNo = k.ImpiHeaderPanNo;
+        //                purchaseInvoice_response.ImpiHeaderGstNo = k.ImpiHeaderGstNo;
+        //                purchaseInvoice_response.ImpiHeaderCustomerName = k.ImpiHeaderCustomerName;
+        //                purchaseInvoice_response.ImpiHeaderCustomerCode = k.ImpiHeaderCustomerCode;
+        //                purchaseInvoice_response.ImpiHeaderCustomerAddress = k.ImpiHeaderCustomerAddress;
+        //                purchaseInvoice_response.ImpiHeaderCustomerCity = k.ImpiHeaderCustomerCity;
+        //                purchaseInvoice_response.ImpiHeaderCustomerState = k.ImpiHeaderCustomerState;
+        //                purchaseInvoice_response.ImpiHeaderCustomerPinCode = k.ImpiHeaderCustomerPinCode;
+        //                purchaseInvoice_response.ImpiHeaderCustomerGstNo = k.ImpiHeaderCustomerGstNo;
+        //                purchaseInvoice_response.ImpiHeaderCustomerContactPerson = k.ImpiHeaderCustomerContactPerson;
+        //                purchaseInvoice_response.ImpiHeaderCustomerEmailId = k.ImpiHeaderCustomerEmailId;
+        //                purchaseInvoice_response.ImpiHeaderCustomerPhoneNo = k.ImpiHeaderCustomerPhoneNo;
+        //                purchaseInvoice_response.ImpiHeaderCreatedBy = k.ImpiHeaderCreatedBy;
+
+        //                ////error in auto generated model ImpiHeaderAttachment is not null
+        //                //if (k.ImpiHeaderAttachment != null)
+        //                //{
+        //                //    string[]? valuesArray = k.ImpiHeaderAttachment.Split(',');
+
+        //                //    // Display the result
+        //                //    List<FicciImad> listing = new List<FicciImad>();
+
+        //                //    foreach (string value in valuesArray)
+        //                //    {
+
+        //                //        var path = await _dbContext.FicciImads.Where(x => x.ImadId == Convert.ToInt32(value) && x.ImadActive !=false).FirstOrDefaultAsync();
+        //                //        if (path != null)
+        //                //        {
+
+        //                //            listing.Add(path);
+        //                //        }
+        //                //    }
+
+        //                //    purchaseInvoice_response.ImpiHeaderAttachment = listing;
+        //                //}
+        //                purchaseInvoice_response.IsDraft = k.IsDraft;
+        //                purchaseInvoice_response.ImpiHeaderSubmittedDate = k.ImpiHeaderSubmittedDate;
+        //                purchaseInvoice_response.ImpiHeaderTotalInvoiceAmount = k.ImpiHeaderTotalInvoiceAmount;
+        //                purchaseInvoice_response.ImpiHeaderPaymentTerms = k.ImpiHeaderPaymentTerms;
+        //                purchaseInvoice_response.ImpiHeaderRemarks = k.ImpiHeaderRemarks;
+        //                purchaseInvoice_response.ImpiHeaderModifiedDate = k.ImpiHeaderModifiedOn;
+        //                purchaseInvoice_response.ImpiHeaderTlApprover = k.ImpiHeaderTlApprover;
+        //                purchaseInvoice_response.ImpiHeaderClusterApprover = k.ImpiHeaderClusterApprover;
+        //                purchaseInvoice_response.ImpiHeaderFinanceApprover = k.ImpiHeaderFinanceApprover;
+        //                purchaseInvoice_response.AccountApproverRemarks = k.AccountApproverRemarks;
+        //                purchaseInvoice_response.ImpiHeaderClusterApproverRemarks = k.ImpiHeaderClusterApproverRemarks;
+        //                purchaseInvoice_response.ImpiHeaderFinanceRemarks = k.ImpiHeaderFinanceRemarks;
+        //                purchaseInvoice_response.ImpiHeaderTlApproverRemarks = k.ImpiHeaderTlApproverRemarks;
+        //                purchaseInvoice_response.AccountApprover = k.AccountApprover;
+        //                purchaseInvoice_response.AccountApproveDate = k.AccountApproverDate;
+        //                purchaseInvoice_response.TlApproveDate = k.ImpiHeaderTlApproverDate;
+        //                purchaseInvoice_response.HeaderStatusId = k.HeaderStatusId;
+        //                purchaseInvoice_response.ClusterApproveDate = k.ImpiHeaderClusterApproverDate;
+        //                purchaseInvoice_response.FinanceApproveDate = k.ImpiHeaderFinanceApproverDate;
+        //                purchaseInvoice_response.ImpiHeaderAttachment = _dbContext.FicciImads.Where(x => x.ImadActive != false && x.ResourceId == k.ImpiHeaderId && x.ResourceTypeId == 2).ToList();
+        //                purchaseInvoice_response.HeaderStatus = _dbContext.StatusMasters.Where(x => x.StatusId == k.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
+        //                purchaseInvoice_response.WorkFlowHistory = _dbContext.FicciImwds.Where(x => x.CustomerId == purchaseInvoice_response.HeaderId && x.ImwdType == 2).ToList(); ;
+        //                var lindata = _dbContext.FicciImpiLines.Where(m => m.ImpiLineActive == true && m.PiHeaderId == k.ImpiHeaderId).ToList();
+        //                if (lindata.Count > 0)
+        //                {
+        //                    List<LineItem_request> lineItem_Requestl = new List<LineItem_request>();
+        //                    foreach (var l in lindata)
+        //                    {
+        //                        LineItem_request lineItem_Request = new LineItem_request();
+        //                        lineItem_Request.DocumentType = l.DocumentType;
+        //                        lineItem_Request.ImpiDocumentNo = l.ImpiDocumentNo;
+        //                        lineItem_Request.ImpiGlNo = l.ImpiGlNo;
+        //                        lineItem_Request.ImpiGstBaseAmount = l.ImpiGstBaseAmount;
+        //                        lineItem_Request.ImpiLineAmount = l.ImpiLineAmount;
+        //                        lineItem_Request.ImpiLinePiNo = DateTime.Now.ToString("yyyyMMddhhmmss");
+        //                        lineItem_Request.ImpiTotalGstAmount = l.ImpiTotalGstAmount;
+        //                        lineItem_Request.ImpiNetTotal = l.ImpiNetTotal;
+        //                        lineItem_Request.ImpiLocationCode = l.ImpiLocationCode;
+        //                        lineItem_Request.ImpiQuantity = l.ImpiQuantity;
+        //                        lineItem_Request.ImpiUnitPrice = l.ImpiUnitPrice;
+        //                        lineItem_Request.ImpiGstgroupCode = l.ImpiGstgroupCode;
+        //                        lineItem_Request.ImpiGstgroupType = l.ImpiGstgroupType;
+        //                        lineItem_Request.ImpiHsnsaccode = l.ImpiHsnsaccode;
+        //                        lineItem_Request.ImpiLineNo = l.ImpiLineNo;
+        //                        lineItem_Request.ImpiLinePiNo = l.ImpiLinePiNo;
+
+        //                        lineItem_Requestl.Add(lineItem_Request);
+        //                    }
+
+        //                    purchaseInvoice_response.lineItem_Requests = lineItem_Requestl;
+
+
+        //                }
+        //                purchaseInvoice_responsel.Add(purchaseInvoice_response);
+
+        //            }
+
+
+        //            purchaseInvoice_New.Status = true;
+        //            purchaseInvoice_New.Data = purchaseInvoice_responsel;
+        //            purchaseInvoice_New.Message = "Purchase Invoice list successfully";
+        //            return StatusCode(200, purchaseInvoice_New);
+        //        }
+        //        else
+        //        {
+        //            purchaseInvoice_New.Status = false;
+        //            purchaseInvoice_New.Message = "No Data found";
+        //            return StatusCode(200, purchaseInvoice_New);
+        //        }
+
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        purchaseInvoice_New.Status = false;
+        //        purchaseInvoice_New.Message = "Invalid Data";
+        //        return StatusCode(500, purchaseInvoice_New);
+        //    }
+        //}
+
         [HttpDelete("{headerid}")]
 
         public async Task<IActionResult> DELETE(int headerid)
@@ -563,17 +842,15 @@ namespace FICCI_API.Controller.API
             }
         }
 
-
-
         [HttpPost("CancelEmployee")]
         public async Task<IActionResult> CancelEmployee(CancelEmployee employee)
         {
             try
             {
-                if(employee.LoginId != null && employee.Remarks != null)
+                if (employee.LoginId != null && employee.Remarks != null)
                 {
                     var result = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == employee.HeaderId).FirstOrDefaultAsync();
-                    if(result == null)
+                    if (result == null)
                     {
                         return NotFound("No inovice found");
                     }
@@ -581,7 +858,47 @@ namespace FICCI_API.Controller.API
                     result.ImpiCancelBy = employee.LoginId;
                     result.ImpiHeaderCancelRemarks = employee.Remarks;
                     result.ImpiCancelOn = DateTime.Now;
+                    result.IsCancel = true;
                     await _dbContext.SaveChangesAsync();
+
+                    if (result != null)
+                    {
+                        NavERPController navERPController = new NavERPController(_configuration, _dbContext);
+
+                        PURCHASE_INVOICE_HEADER_UPDATE PostData = new PURCHASE_INVOICE_HEADER_UPDATE();
+
+                        PostData.no = result.ImpiHeaderPiNo;
+                        PostData.sellToCustomerNo = result.ImpiHeaderCustomerCode;
+                        PostData.sellToCustomerName = result.ImpiHeaderCustomerName;
+                        //  PostData.sellToCustomerName2 = request.cus;
+                        PostData.sellToCity = result.ImpiHeaderCustomerCity;
+                        PostData.sellToAddress = result.ImpiHeaderCustomerAddress;
+                        PostData.sellToAddress2 = result.ImpiHeaderCustomerAddress;
+                        PostData.sellToPostCode = result.ImpiHeaderCustomerPinCode;
+                        //PostData.sellToCountryRegionCode = request.cpi;
+                        PostData.GST_No = result.ImpiHeaderCustomerGstNo;
+                        PostData.PAN_No = result.ImpiHeaderPanNo;
+
+                        PostData.DepartmentCode = result.ImpiHeaderProjectDepartmentCode;
+                        PostData.DepartmentName = result.ImpiHeaderProjectDepartmentName;
+                        PostData.ProjectCode = result.ImpiHeaderProjectCode;
+
+                        PostData.DivisionCode = result.ImpiHeaderProjectDivisionCode;
+                        PostData.DivisionName = result.ImpiHeaderProjectDivisionName;
+                        PostData.ApproverTL = result.ImpiHeaderTlApprover;
+                        PostData.ApproverCH = result.ImpiHeaderClusterApprover;
+                        PostData.ApproverSupport = result.ImpiHeaderSupportApprover;
+                        PostData.FinanceApprover = result.ImpiHeaderFinanceApprover;
+                        PostData.InvoicePortalOrder = false;
+                        PostData.InvoicePortalSubmitted = false;
+                        PostData.Cancelled = true;
+                        PostData.CancelRemark = employee.Remarks;
+                        PostData.CreatedByUser = "";
+
+                        dynamic erpResponse = await navERPController.UpdatePIData(PostData);
+
+                    }
+
 
                     FicciImwd imwd = new FicciImwd();
                     imwd.ImwdScreenName = "Invoice Approver";
@@ -616,12 +933,71 @@ namespace FICCI_API.Controller.API
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
 
             }
         }
+
+
+        //[HttpPost("CancelEmployee")]
+        //public async Task<IActionResult> CancelEmployee(CancelEmployee employee)
+        //{
+        //    try
+        //    {
+        //        if(employee.LoginId != null && employee.Remarks != null)
+        //        {
+        //            var result = await _dbContext.FicciImpiHeaders.Where(x => x.ImpiHeaderId == employee.HeaderId).FirstOrDefaultAsync();
+        //            if(result == null)
+        //            {
+        //                return NotFound("No inovice found");
+        //            }
+        //            result.HeaderStatusId = 13;
+        //            result.ImpiCancelBy = employee.LoginId;
+        //            result.ImpiHeaderCancelRemarks = employee.Remarks;
+        //            result.ImpiCancelOn = DateTime.Now;
+        //            await _dbContext.SaveChangesAsync();
+
+        //            FicciImwd imwd = new FicciImwd();
+        //            imwd.ImwdScreenName = "Invoice Approver";
+        //            imwd.CustomerId = employee.HeaderId;
+        //            imwd.ImwdCreatedOn = DateTime.Now;
+        //            imwd.ImwdCreatedBy = employee.LoginId;
+        //            imwd.ImwdStatus = result.HeaderStatusId.ToString();
+        //            imwd.ImwdPendingAt = _dbContext.StatusMasters.Where(x => x.StatusId == result.HeaderStatusId).Select(a => a.StatusName).FirstOrDefault();
+        //            imwd.ImwdInitiatedBy = employee.LoginId;
+        //            imwd.ImwdRemarks = employee.Remarks;
+        //            imwd.ImwdRole = _dbContext.FicciImums.Where(x => x.ImumEmail == employee.LoginId).Select(x => x.Role.RoleName).FirstOrDefault();
+        //            imwd.ImwdType = 2;
+        //            _dbContext.Add(imwd);
+
+        //            _dbContext.SaveChanges();
+        //            var responseObject = new
+        //            {
+        //                status = true,
+        //                message = "Invoice has been Cancel",
+        //                data = result
+        //            };
+        //            return StatusCode(200, responseObject);
+        //        }
+        //        else
+        //        {
+        //            var responseObject = new
+        //            {
+        //                status = false,
+        //                message = "Some error occured"
+        //            };
+        //            return StatusCode(200, responseObject);
+        //        }
+
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+
+        //    }
+        //}
 
     }
     public class PO_delete

@@ -65,6 +65,11 @@ namespace FICCI_API.Models
         public DateTime? TlApproveDate { get; set; }
         public DateTime? ClusterApproveDate { get; set; }
         public DateTime? FinanceApproveDate { get; set; }
+        public string? CancelRemarks { get; set; }
+        public DateTime? CancelOn { get; set; }
+        public string? CancelBy { get; set; }
+        public bool? IsCancel { get; set; }
+
 
         public int? HeaderStatusId { get; set; }
         public List<FicciImwd>? WorkFlowHistory { get; set; }

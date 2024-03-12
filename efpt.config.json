@@ -168,6 +168,10 @@
          "ObjectType": 1
       },
       {
+         "Name": "[dbo].[prc_Truncate_table]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[prc_UserMaster_Delete]",
          "ObjectType": 1
       },
@@ -184,7 +188,7 @@
          "ObjectType": 2
       }
    ],
-   "UiHint": "developdemo.FICCI_DB_APPLICATIONS.dbo",
+   "UiHint": "developdemo.FICCI_DB_APPLICATIONS_FINAL.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

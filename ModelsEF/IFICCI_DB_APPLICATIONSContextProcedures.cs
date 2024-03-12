@@ -23,6 +23,7 @@ namespace FICCI_API.ModelsEF
         Task<List<prc_EmployeeMaster_listResult>> prc_EmployeeMaster_listAsync(int? IMEM_ID, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<prc_FICCI_IMUM_listResult>> prc_FICCI_IMUM_listAsync(int? IMUM_ID, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<prc_Role_listResult>> prc_Role_listAsync(int? Role_id, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<int> prc_Truncate_tableAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<prc_UserMaster_DeleteResult>> prc_UserMaster_DeleteAsync(int? IMUM_ID, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<prc_UserMaster_FormResult>> prc_UserMaster_FormAsync(bool? IsUpdate, string IMUM_EMPID, int? IMUM_ID, string IMUM_NAME, string IMUM_EMAIL, int? RoleID, bool? IMUM_ACTIVE, string Username, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }

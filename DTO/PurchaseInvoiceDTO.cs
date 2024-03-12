@@ -39,6 +39,7 @@ namespace FICCI_API.DTO
 
     }
 
+
     public partial class PURCHASE_INVOICE_HEADER
     {
 
@@ -47,8 +48,8 @@ namespace FICCI_API.DTO
         //[JsonPropertyName("Document_Type")]
         //public string Document_Type { get; set; }
 
-        //  [JsonPropertyName("no")]
-        //   public string no { get; set; }
+        //[JsonPropertyName("no")]
+        //public string no { get; set; }
 
         [JsonPropertyName("sellToCustomerName")]
         public string sellToCustomerName { get; set; }
@@ -112,6 +113,7 @@ namespace FICCI_API.DTO
 
         [JsonPropertyName("PAN_No")]
         public string PAN_No { get; set; }
+
         [JsonPropertyName("Cancelled")]
         public bool Cancelled { get; set; }
         [JsonPropertyName("CancelRemark")]
@@ -123,9 +125,97 @@ namespace FICCI_API.DTO
         [JsonPropertyName("CreatedByUser")]
         public string CreatedByUser { get; set; }
 
+
     }
 
 
+    public partial class PURCHASE_INVOICE_HEADER_UPDATE
+    {
+
+        //  public PURCHASE_INVOICE_LINE[] purchase_LineModels;      
+
+        //[JsonPropertyName("Document_Type")]
+        //public string Document_Type { get; set; }
+
+        [JsonPropertyName("no")]
+        public string no { get; set; }
+
+        [JsonPropertyName("sellToCustomerName")]
+        public string sellToCustomerName { get; set; }
+
+        [JsonPropertyName("sellToCustomerName2")]
+        public string sellToCustomerName2 { get; set; }
+
+        [JsonPropertyName("sellToCustomerNo")]
+        public string sellToCustomerNo { get; set; }
+
+        [JsonPropertyName("ProjectCode")]
+        public string ProjectCode { get; set; }
+        [JsonPropertyName("DepartmentName")]
+        public string DepartmentName { get; set; }
+
+        [JsonPropertyName("DepartmentCode")]
+        public string DepartmentCode { get; set; }
+
+        [JsonPropertyName("DivisionCode")]
+        public string DivisionCode { get; set; }
+
+        [JsonPropertyName("DivisionName")]
+        public string DivisionName { get; set; }
+
+        [JsonPropertyName("ApproverTL")]
+        public string ApproverTL { get; set; }
+
+        [JsonPropertyName("ApproverCH")]
+        public string ApproverCH { get; set; }
+
+        [JsonPropertyName("ApproverSupport")]
+        public string ApproverSupport { get; set; }
+
+        [JsonPropertyName("FinanceApprover")]
+        public string FinanceApprover { get; set; }
+
+        [JsonPropertyName("InvoicePortalOrder")]
+        public bool InvoicePortalOrder { get; set; }
+
+        [JsonPropertyName("InvoicePortalSubmitted")]
+        public bool InvoicePortalSubmitted { get; set; }
+
+        [JsonPropertyName("sellToCity")]
+        public string sellToCity { get; set; }
+
+        [JsonPropertyName("sellToAddress")]
+
+        public string sellToAddress { get; set; }
+
+        [JsonPropertyName("sellToAddress2")]
+        public string sellToAddress2 { get; set; }
+
+        [JsonPropertyName("sellToPostCode")]
+        public string sellToPostCode { get; set; }
+
+        [JsonPropertyName("sellToCountryRegionCode")]
+        public string sellToCountryRegionCode { get; set; }
+
+        [JsonPropertyName("GST_No")]
+        public string GST_No { get; set; }
+
+        [JsonPropertyName("PAN_No")]
+        public string PAN_No { get; set; }
+
+        [JsonPropertyName("Cancelled")]
+        public bool Cancelled { get; set; }
+        [JsonPropertyName("CancelRemark")]
+        public string CancelRemark { get; set; }
+
+        [JsonPropertyName("Status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("CreatedByUser")]
+        public string CreatedByUser { get; set; }
+
+
+    }
     public partial class PURCHASE_INVOICE_HEADER_RESPONSE
     {
 
@@ -184,6 +274,16 @@ namespace FICCI_API.DTO
 
         public string PAN_No { get; set; }
 
+        public bool Cancelled { get; set; }
+
+        public string CancelRemark { get; set; }
+
+
+        public string Status { get; set; }
+
+
+        public string CreatedByUser { get; set; }
+
 
     }
     public partial class PURCHASE_INVOICE_LINE
@@ -206,7 +306,7 @@ namespace FICCI_API.DTO
 
 
         [JsonPropertyName("quantity")]
-        public string quantity { get; set; }
+        public int quantity { get; set; }
         [JsonPropertyName("unitPrice")]
 
         public Nullable<decimal> unitPrice { get; set; }
@@ -217,8 +317,8 @@ namespace FICCI_API.DTO
         [JsonPropertyName("gSTGroupCode")]
         public string gSTGroupCode { get; set; }
 
-        [JsonPropertyName("gST_Group_Type")]
-        public string gST_Group_Type { get; set; }
+        //[JsonPropertyName("gST_Group_Type")]
+        //public string gST_Group_Type { get; set; }
 
         [JsonPropertyName("hSN_SAC_Code")]
         public string hSN_SAC_Code { get; set; }
@@ -226,12 +326,11 @@ namespace FICCI_API.DTO
         [JsonPropertyName("lineNo")]
         public long lineNo { get; set; }
 
-        [JsonPropertyName("gSTCredit")]
-        public decimal gSTCredit { get; set; }
+        //[JsonPropertyName("gSTCredit")]
+        //public decimal gSTCredit { get; set; }
 
 
     }
-
     public partial class VMS_PURCHASE_LINE_RESPONSE
     {
 
@@ -241,7 +340,7 @@ namespace FICCI_API.DTO
         public string no_ { get; set; }
         //public long lineNo { get; set; }
         public string LocationCode { get; set; }
-        public int quantity { get; set; }
+        public Nullable<decimal> quantity { get; set; }
         public Nullable<decimal> unitPrice { get; set; }
         public Nullable<decimal> lineAmount { get; set; }
         //  public decimal gSTCredit { get; set; }
@@ -249,15 +348,6 @@ namespace FICCI_API.DTO
         public string gST_Group_Type { get; set; }
         public string hSN_SAC_Code { get; set; }
         public long lineNo { get; set; }
-    }
-
-
-
-    public class CancelEmployee
-    {
-        public string LoginId { get; set; }
-        public string Remarks { get; set; }
-        public int HeaderId { get; set; }
     }
 
     public partial class TAX_INVOICE_HEADER_RESPONSE
@@ -309,19 +399,12 @@ namespace FICCI_API.DTO
         public string sellToCountryRegionCode { get; set; }
         public string GST_No { get; set; }
         public string PAN_NO { get; set; }
-        public bool Cancelled { get; set; }
 
-        public string CancelRemark { get; set; }
-
-
-        public string Status { get; set; }
-
-
-       // public string CreatedByUser { get; set; }
-
-        public TAX_INVOICE_LINE_RESPONSE[] TaxLineDetails { get; set; }
+        public TAX_INVOICE_LINE_RESPONSE[] getTaxInvoiceInfoLines { get; set; }
 
     }
+
+
     public partial class TAX_INVOICE_LINE_RESPONSE
     {
 
@@ -344,6 +427,7 @@ namespace FICCI_API.DTO
         public string hSN_SAC_Code { get; set; }
 
     }
+
     public partial class TAX_INVOICE_ATTACHMENT
     {
 
@@ -355,6 +439,17 @@ namespace FICCI_API.DTO
         public string FileName { get; set; }
         public string Attachment { get; set; }
     }
+
+
+
+    public class CancelEmployee
+    {
+        public string LoginId { get; set; }
+        public string Remarks { get; set; }
+        public int HeaderId { get; set; }
+    }
+
+    
 
 
 }

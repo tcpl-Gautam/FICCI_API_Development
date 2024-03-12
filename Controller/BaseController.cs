@@ -51,6 +51,38 @@ namespace FICCI_API.Controller
         }
 
         [NonAction]
+        public string InvoiceAssignhtmlBody(string EmailLink, string custName, string CityCode, string PAN, string GST, string ContactPerson, string? PhoneNo, string projectCode, string projectName, string customerCode)
+        {
+            //string template = $@"Dear User,
+            //                    <br/>Following Customer has been assigned in the Invoice portal for your necessary approval.
+            //                   <br/><strong>Customer No:</strong> {customerNo}
+            //                   <br/><strong>Customer Name:</strong> {custName}
+            //                   <br/><strong>Customer City:</strong> {CityCode}
+            //                   <br/><strong>Customer PAN No:</strong>{PAN}
+            //                   <br/><strong>Customer GST No:</strong>{GST}
+            //                  <br/>To Access Invoice Portal: <a href='{EmailLink}' class='cta-button'>Click Here</a>
+            //                  <br/>Note:To open the Invoice portal, please open it in Microsoft Edge or In Google Chrome
+            //                  <br/><br/><br/>Regards
+            //                  <br/>FICCI Team";
+            string template = $@"<p style=""font-family: Arial, sans-serif; font-size: 13px;"">
+Dear User,<br><br>
+Following Performa Invoice has been assigned in the Invoice portal for your necessary approval.<br><br>
+<strong>Project Code</strong>   : {projectCode} <br>
+<strong>Project Name</strong>   : {projectName} <br>
+<strong>Customer Code</strong>   : {customerCode} <br>
+<strong>Customer Name</strong>   : {custName} <br>
+<strong>Customer City</strong> : {CityCode}<br>
+<strong>Customer PAN No</strong>. : {PAN}<br>
+<strong>Customer GST No</strong>. : {GST}<br>
+To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
+<strong>Note</strong>: To open the Invoice portal, please open it in Microsoft Edge or In Google Chrome Regards <strong>FICCI Team</strong><br><br>
+<strong>Regards</strong><br>FICCI Team";
+
+            return template;
+
+        }
+
+        [NonAction]
         public string ApprovalhtmlBody(string header, string EmailLink, string custName, string CityCode, string PAN, string GST, string ContactPerson, string? PhoneNo)
         {
             //string template = $@"Dear User,</br>Following Customer has been  {header} in the Invoice portal:
@@ -64,7 +96,7 @@ namespace FICCI_API.Controller
             //                  <br/><br/>Regards
             //                  <br/>FICCI Team";
 
-            string template = $@"<p style=""font-family: Arial, sans-serif; font-size: 13px;"">Dear User,<br><br>Following Customer has been {header} in the Invoice Portal:<br><br><strong>Customer Name</strong>   : {custName} <br><strong>Customer City</strong> : {CityCode}<br> <strong>Customer PAN No</strong>. : {PAN}<br><strong>Customer GST No</strong>. : {GST}<br><strong>Customer Contact Person</strong>. : {ContactPerson}<br><strong>Customer Phone No.</strong>. : {PhoneNo}<br><br>To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br><strong>Note</strong>: To open the Invoice portal, please open it in Microsoft Edge or In Google Chrome Regards <strong>FICCI Team</strong><br><br><strong>Regards</strong><br>FICCI Team";
+            string template = $@"<p style=""font-family: Arial, sans-serif; font-size: 13px;"">Dear User,<br><br>Following Customer has been {header} in the Invoice Portal:<br><br><strong>Customer Name</strong>   : {custName} <br><strong>Customer City</strong> : {CityCode}<br> <strong>Customer PAN No</strong>. : {PAN}<br><strong>Customer GST No</strong>. : {GST}<br><strong>Customer Contact Person</strong>. : {ContactPerson}<br><strong>Customer Phone No.</strong>. : {PhoneNo}<br><br>To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br><strong>Note</strong>: To open the Invoice portal, please open it in Microsoft Edge or In Google Chrome.<br><br><strong>Regards</strong><br>FICCI Team";
             return template;
 
         }

@@ -18,4 +18,6 @@ public partial class Userloginlog
     public bool? LoginStatus { get; set; }
 
     public DateTime? ExpiryDate { get; set; }
+
+    public string RefreshToken { get; set; }
 }
