@@ -144,6 +144,10 @@ namespace FICCI_API.DTO
         public int GstTypeId { get; set; }
         public string GstTypeName { get; set; }
     }
+    public class ErpDetailCustNo
+    {
+        public string GstNumber { get; set; }
+    }
 
     public class GstRegistrationNo
     {

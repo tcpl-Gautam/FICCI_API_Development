@@ -292,12 +292,51 @@ namespace FICCI_API.Controller.API
 
 
 
-        [HttpGet("GstRegistrationNo")]
-        public async Task<IActionResult> GstRegistrationNo(string customerNo)
+        [HttpGet("ErpDetailCustNo")]
+        public async Task<IActionResult> ErpDetailCustNo(string customerNo)
         {
             try
             {
                 var custType = await _dbContext.Erpcustomers.Where(x => x.CustNo == customerNo).ToListAsync();
+                if (custType.Count > 0)
+                {
+                    var custResponse = custType.Select(c => new ErpDetailCustNo
+                    {
+                        GstNumber = c.GstregistrationNo,
+
+
+                    }).ToList();
+                    var response = new
+                    {
+                        status = true,
+                        message = "List fetch successfully",
+                        data = custResponse
+                    };
+                    return Ok(response);
+                }
+                else
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No list found",
+                        data = custType
+                    };
+                    return NotFound(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GstRegistrationNo")]
+        public async Task<IActionResult> GstRegistrationNo(string gstNo)
+        {
+            try
+            {
+                var custType = await _dbContext.Erpcustomers.Where(x => x.GstregistrationNo == gstNo).ToListAsync();
                 if (custType.Count > 0)
                 {
                     var custResponse = custType.Select(c => new GstRegistrationNo
