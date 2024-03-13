@@ -143,6 +143,9 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.City)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Code)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Contact)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -668,7 +671,6 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("IMPI_CancelOn");
             entity.Property(e => e.ImpiHeaderActive).HasColumnName("IMPI_HEADER_ACTIVE");
-            entity.Property(e => e.ImpiHeaderAttachment).HasColumnName("IMPI_HEADER_ATTACHMENT");
             entity.Property(e => e.ImpiHeaderCancelRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_CANCEL_REMARKS");
@@ -1333,7 +1335,6 @@ public partial class FICCI_DB_APPLICATIONSContext : DbContext
             entity.Property(e => e.ImpiCancelOn)
                 .HasColumnType("datetime")
                 .HasColumnName("IMPI_CancelOn");
-            entity.Property(e => e.ImpiHeaderAttachment).HasColumnName("IMPI_HEADER_ATTACHMENT");
             entity.Property(e => e.ImpiHeaderCancelRemarks)
                 .IsUnicode(false)
                 .HasColumnName("IMPI_HEADER_CANCEL_REMARKS");

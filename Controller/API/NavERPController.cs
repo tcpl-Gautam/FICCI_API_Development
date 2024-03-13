@@ -986,6 +986,50 @@ namespace FICCI_API.Controller.API
 
         }
 
+        [HttpGet("GetShiptoCustomer")]
+        public async Task<IActionResult> GetShiptoCustomer()
+        {
+            try
+            {
+                List<ShiptoCustomer> CustomerList = await GetList<ShiptoCustomer>("ShipToCustomer");
+                //    _dbContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE ERPCustomer");
+                foreach (var k in CustomerList)
+                {
+                    Erpcustomer cust = new Erpcustomer();
+                    cust.CustNo = k.CustomerNo;
+                    cust.Code = k.Code;
+                    cust.CustName = k.Name;
+                    cust.CustName2 = k.Name2;
+                    cust.CustAddress = k.Address;
+                    cust.CustAddress2 = k.Address2;
+                    cust.City = k.City;
+                    cust.StateCode = k.State;
+                    cust.PinCode = k.PostCode;
+                    cust.CountryRegionCode = k.CountryRegionCode;
+                    cust.GstregistrationNo = k.GSTRegistrationNo;
+                    cust.GstcustomerType = k.GSTCustomerType;
+                    cust.Contact = k.Contact;
+                    cust.PanNo = k.PAN_No;
+                    cust.Email = k.emial;
+                    cust.PrimaryContactNo = k.PrimaryContactNo;
+                    _dbContext.Add(cust);
+                    _dbContext.SaveChanges();
+                }
+                var apiResponse = new
+                {
+                    data = CustomerList,
+                    status = true,
+                    message = $"{CustomerList.Count} records found.",
+                };
+                return Ok(apiResponse);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = false, message = "An error occurred while fetching the detail." });
+            }
+        }
+
         [HttpPost("PostPIData")]
         //Submit customer not drafted
         public async Task<IActionResult> PostPIData(PURCHASE_INVOICE_HEADER purchase_header)

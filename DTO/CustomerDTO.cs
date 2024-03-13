@@ -145,6 +145,26 @@ namespace FICCI_API.DTO
         public string GstTypeName { get; set; }
     }
 
+    public class GstRegistrationNo
+    {
+        public string CustNo { get; set; }
+        public string? Code { get; set; }
+        public string? CustName { get; set; }
+        public string? CustName2 { get; set; }
+        public string? Address { get; set; }
+        public string? Address2 { get; set; }
+        public string? City { get; set; }
+        public string? Contact { get; set; }
+        public string? PinCode { get; set; }
+        public string? StateCode { get; set; }
+        public string? CountryCode { get; set; }
+        public string GstNumber { get; set; }
+        public string? GstCustomerType { get; set; }
+        public string? PAN { get; set; }
+        public string? Email { get; set; }
+        public string? PrimaryContact { get; set; }
+    }
+
     public class new_Customer
     {
         public Boolean Status { get; set; }

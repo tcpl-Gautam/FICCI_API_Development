@@ -319,8 +319,8 @@ namespace FICCI_API.Controller.API
                         {
                             subject = "New PI Approved by Finance : " + result.ImpiHeaderCustomerName + "";
                             htmlbody = InvoiceApprovalhtmlBody(res[0].Status, _mySettings.Website_link, result.ImpiHeaderCustomerCode, result.ImpiHeaderCustomerName, result.ImpiHeaderCustomerCity, result.ImpiHeaderPanNo, result.ImpiHeaderCustomerGstNo, result.ImpiHeaderProjectName, result.ImpiHeaderProjectCode);
-                            MailMethod(result.ImpiHeaderCustomerEmailId, "" + result.ImpiHeaderTlApprover + "," + result.ImpiHeaderClusterApprover + "," + result.ImpiHeaderSupportApprover + "", subject, htmlbody, "Invoice", cust.LoginId, Convert.ToInt32(res[0].HeaderId));
-                            return StatusCode(200, crud);
+                            MailMethod(result.ImpiHeaderCustomerEmailId, "" + result.ImpiHeaderTlApprover + ","  + result.ImpiHeaderSupportApprover + "", subject, htmlbody, "Invoice", cust.LoginId, Convert.ToInt32(res[0].HeaderId));
+                          //  return StatusCode(200, crud);
                         }
                         //else if (cust.StatusId == 5)
                         //{

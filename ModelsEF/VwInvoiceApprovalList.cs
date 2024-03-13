@@ -75,8 +75,6 @@ public partial class VwInvoiceApprovalList
 
     public DateTime? ImpiHeaderModifiedOn { get; set; }
 
-    public string ImpiHeaderAttachment { get; set; }
-
     public string ImpiHeaderProjectCode { get; set; }
 
     public string ApproverEmail { get; set; }

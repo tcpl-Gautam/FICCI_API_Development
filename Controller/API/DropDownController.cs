@@ -290,6 +290,61 @@ namespace FICCI_API.Controller.API
             }
         }
 
+
+
+        [HttpGet("GstRegistrationNo")]
+        public async Task<IActionResult> GstRegistrationNo(string customerNo)
+        {
+            try
+            {
+                var custType = await _dbContext.Erpcustomers.Where(x => x.CustNo == customerNo).ToListAsync();
+                if (custType.Count > 0)
+                {
+                    var custResponse = custType.Select(c => new GstRegistrationNo
+                    {
+                        CustNo = c.CustNo,
+                        Code = c.Code,
+                        CustName = c.CustName,
+                        CustName2 = c.CustName2,
+                        Address = c.CustAddress,
+                        Address2 = c.CustAddress2,
+                        City = c.City,
+                        Contact = c.Contact,
+                        PinCode = c.PinCode,
+                        StateCode = c.StateCode,
+                        CountryCode = c.CountryRegionCode,
+                        GstNumber = c.GstregistrationNo,
+                        GstCustomerType = c.GstcustomerType,
+                        PAN = c.PanNo,
+                        Email = c.Email,
+                        PrimaryContact = c.PrimaryContactNo
+
+                    }).ToList();
+                    var response = new
+                    {
+                        status = true,
+                        message = "Gst Number List fetch successfully",
+                        data = custResponse
+                    };
+                    return Ok(response);
+                }
+                else
+                {
+                    var response = new
+                    {
+                        status = true,
+                        message = "No Gst List list found",
+                        data = custType
+                    };
+                    return NotFound(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("GetProject")]
         public async Task<IActionResult> GetProject(int id = 0)
         {

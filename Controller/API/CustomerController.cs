@@ -216,8 +216,8 @@ namespace FICCI_API.Controller.API
                             customer.CustomerTlApprover = _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemManagerEmail).FirstOrDefault().ToString() == null
                                 ? null : _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemManagerEmail).FirstOrDefault().ToString();
 
-                            customer.CustomerClusterApprover = _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemClusterEmail).FirstOrDefault().ToString() == null
-                                 ? null : _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemClusterEmail).FirstOrDefault().ToString();
+                            //customer.CustomerClusterApprover = _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemClusterEmail).FirstOrDefault().ToString() == null
+                            //     ? null : _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemClusterEmail).FirstOrDefault().ToString();
                             var k = _dbContext.FicciImems.Where(x => x.ImemEmail == data.LoginId).Select(x => x.ImemDepartmentHeadEmail).FirstOrDefault();
                             if(k != null)
                             {

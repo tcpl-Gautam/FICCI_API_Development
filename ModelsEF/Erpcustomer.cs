@@ -11,6 +11,8 @@ public partial class Erpcustomer
 
     public string CustNo { get; set; }
 
+    public string Code { get; set; }
+
     public string CustName { get; set; }
 
     public string CustName2 { get; set; }

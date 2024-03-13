@@ -93,8 +93,6 @@ public partial class FicciImpiHeader
 
     public bool? IsDraft { get; set; }
 
-    public string ImpiHeaderAttachment { get; set; }
-
     public int? HeaderStatusId { get; set; }
 
     public string AccountApprover { get; set; }

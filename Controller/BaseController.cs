@@ -256,7 +256,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
                         smtp.Credentials = NetworkCred;
                         smtp.Port = Convert.ToInt32(_mySettings.Port);
                         smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                         smtp.Send(mail);
+                        // smtp.Send(mail);
 
 
                     }
@@ -301,7 +301,7 @@ To Access Invoice Portal : <a href='{EmailLink}'>Click Here</a><br>
         [NonAction]
         public string UploadFile1(List<IFormFile>? file1, string loginId, int headerid, string? folder, int ResourceTypeId, string ResourceType, string ScreenName)
         {
-            string timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
             string fileids = "";
             if (file1 == null || !file1.Any())
             {

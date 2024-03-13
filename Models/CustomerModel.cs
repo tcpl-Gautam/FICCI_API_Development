@@ -49,6 +49,6 @@ namespace FICCI_API.Models
 
         [JsonProperty("PrimaryContactNo")]
         public string? PrimaryContactNo { get; set; }
-       
+
     }
 }
