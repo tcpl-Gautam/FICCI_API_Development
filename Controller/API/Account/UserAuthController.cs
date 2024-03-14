@@ -76,7 +76,7 @@ namespace FICCI_API.Controller.API.Account
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Login(UserRequestDto requestData)
+        public async Task<IActionResult> Login([FromBody]UserRequestDto requestData)
         {
             try
             {
