@@ -115,6 +115,7 @@ namespace FICCI_API.Controller.API
             }
         }
 
+        [Authorize]
         [HttpGet("GetCity")]
         public async Task<IActionResult> GetCity()
         {

@@ -9,6 +9,11 @@ using FICCI_API.Controller;
 using FICCI_API.Models.Services;
 using FICCI_API.DTO;
 using FICCI_API.Models.JWT;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Azure;
+using Newtonsoft.Json.Linq;
 
 namespace FICCI_API.Controller.API.Account
 {
@@ -27,77 +32,89 @@ namespace FICCI_API.Controller.API.Account
            // this.jwtSettings = jwtSettings;
         }
 
+        private async Task<UserRequestDto> AuthenticateUser(UserRequestDto request)
+        {
+            try
+            {
+
+
+                bool emailValid = await _dbContext.FicciImums.AnyAsync(x => x.ImumEmail == request.Email && x.ImumPassword == request.Password);
+                if (emailValid)
+                {
+                    return request;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid credentials: Email and/or password incorrect.");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private async Task<string> GenerateToken(UserRequestDto user)
+        {
+            try
+            {
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], null,
+                    expires: DateTime.Now.AddMinutes(1), signingCredentials: credentials);
+                return new JwtSecurityTokenHandler().WriteToken(token);
+
+           
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(UserRequestDto requestData)
         {
             try
             {
+                IActionResult response = Unauthorized();
+
                 if (requestData != null)
                 {
-
-                    //check if email exist in database
-                    bool emailValid = await _dbContext.FicciImums.AnyAsync(x => x.ImumEmail == requestData.Email);
-                    if (!emailValid)
+                    var user = await AuthenticateUser(requestData); 
+                    if(user != null)
                     {
-                        var response = new
-                        {
-                            status = false,
-                            message = "Email does not exist",
-                        };
-                        return StatusCode(200, response);
+                        var token = await GenerateToken(user);
+                        var res = await _dbContext.FicciImums
+                                        .Where(x => x.ImumEmail == requestData.Email && x.ImumPassword == requestData.Password && x.ImumActive != false)
+                                        .Include(x => x.Role)
+                                        .Select(user => new LoginData
+                                        {
+                                            Email = user.ImumEmail,
+                                            Name = user.ImumName,
+                                            EmpId = user.ImumEmpid,
+                                            RoleName = _dbContext.TblFicciRoles.Where(m => m.RoleId == user.RoleId).Select(x => x.RoleName).FirstOrDefault().ToString(),
+                                            IsApprover = _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email || m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
+                                            Invoice_IsApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email || m.ImpiHeaderClusterApprover == requestData.Email || m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                                            Invoice_IsTLApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                                            Invoice_IsCHApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderClusterApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                                            Invoice_IsFinanceApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
+                                            Token = token
+                                        })
+                                        .FirstOrDefaultAsync();
+                        return Ok(res);
                     }
-
-                    //TokenService token = new TokenService(_configuration);
-                    //var generateToken = await token.CreateToken(requestData);
-
-                    //var userlog = LogUserData(requestData.Email,"123",true);
-                    //if(userlog == false)
-                    //{
-                    //    return StatusCode(500, new { status = false, message = "An error occurred while saving data ." });
-
-                    //}
-                    //checks password and email for authenticate
-                    var res = await _dbContext.FicciImums
-                        .Where(x => x.ImumEmail == requestData.Email && x.ImumPassword == requestData.Password && x.ImumActive != false)
-                        .Include(x => x.Role)
-                        .Select(user => new LoginData
-                        {
-                            Email = user.ImumEmail,
-                            Name = user.ImumName,
-                            EmpId = user.ImumEmpid,
-                            RoleName = _dbContext.TblFicciRoles.Where(m => m.RoleId == user.RoleId).Select(x => x.RoleName).FirstOrDefault().ToString(),
-                            IsApprover = _dbContext.FicciImems.Any(m => (m.ImemManagerEmail == requestData.Email || m.ImemDepartmentHeadEmail == requestData.Email || m.ImemClusterEmail == requestData.Email && m.ImemActive != false)),
-                            Invoice_IsApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email || m.ImpiHeaderClusterApprover == requestData.Email || m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
-                            Invoice_IsTLApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderTlApprover == requestData.Email && m.ImpiHeaderActive != false)),
-                            Invoice_IsCHApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderClusterApprover == requestData.Email && m.ImpiHeaderActive != false)),
-                            Invoice_IsFinanceApprover = _dbContext.FicciImpiHeaders.Any(m => (m.ImpiHeaderFinanceApprover == requestData.Email && m.ImpiHeaderActive != false)),
-                            Token = "123"
-                        })
-                        .FirstOrDefaultAsync();
-
-
-
-                    if (res == null)
+                    else
                     {
-                        var response = new
-                        {
-                            status = false,
-                            message = "Password is incorrect",
-                            data = res
-                        };
-                        return Ok(response);
+                        return Unauthorized();
                     }
-                    var respons = new
-                    {
-                        status = true,
-                        message = "Login Successful",
-                        data = res,
-                    };
-                    return Ok(respons);
                 }
                 else
                 {
-                    return Unauthorized("User does not exist. Please check Email and Password");
+                    return response;
 
                 }
             }

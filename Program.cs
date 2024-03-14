@@ -9,11 +9,31 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using FICCI_API.DTO;
 using Microsoft.Extensions.Configuration;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 //var path = Directory.GetCurrentDirectory();
 // Add services to the container.
 builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
 //builder.Services.AddIdentityServices(builder.Configuration);
 //builder.Services.AddApplicationServices(builder.Configuration);
 // Add Jwt Setings
@@ -98,8 +118,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.MapControllerRoute(name: "default", pattern: "{controller=Swagger}/{action=Index}");
+app.UseAuthentication();
+
 app.UseAuthorization();
 
-app.UseAuthentication();
 
 app.Run();
